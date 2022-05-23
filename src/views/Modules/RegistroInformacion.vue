@@ -24,10 +24,10 @@
         </select>
       </div>
       <div class="flex-none my-auto text-white font-md p-2 ml-10">
-        <button @click="buscar()" class="btn-buscar">Buscar</button>
+        <button @click="buscar()" class="btn-buscar animacion">Buscar</button>
       </div>
       <div class="flex-none my-auto text-white font-md p-2 ml-10">
-        <button @click="buscar()" class="btn-buscar">Todos</button>
+        <button @click="buscar()" class="btn-buscar animacion">Todos</button>
       </div>
       <div class="flex-none my-auto ml-right text-white">
         Tiempo de actualizacion
@@ -43,12 +43,16 @@
     <TablaInformacionTelepeaje :dataCruces="cruces"/>
     <p class="mt-10">Próxima actualización en {{ contador.slice(3)  }}</p>
   </div>
+  <div class="mt-20 -mb-14">
+    <Paginacion :total-pages="totalPaginas" :total="100" :current-page="currentPage" :has-more-pages="hasMorePages" @pagechanged="showMore"/>
+  </div>
   <Footer/>
 </template>
 <script>
 const API = process.env.VUE_APP_URL_API_PRODUCCION
 
 import TablaInformacionTelepeaje from "../../components/Tabla-RegistroInformacion.vue";
+import Paginacion from "../../components/Paginacion.vue"
 import Navbar from "../../components/Navbar.vue";
 import Footer from "../../components/Footer";
 import { notify } from "@kyvg/vue3-notification";
@@ -57,7 +61,7 @@ import axios from "axios";
 import moment from 'moment'
 export default {
   name: "RegistroInformacion",
-  components: { TablaInformacionTelepeaje, Navbar, Footer},
+  components: { TablaInformacionTelepeaje, Navbar, Footer, Paginacion},
   setup() {
     const tramo = ref('')
     const plaza = ref(null)
@@ -69,6 +73,11 @@ export default {
     const formato  = ref('')
     const expires_in = ref(0)
     const interval =ref('')
+    //Paginacion
+    const totalPaginas = ref(0) //variable que indica el número total de páginas por resultado
+    const currentPage = ref(1) //variable que indica la página en la que estás dentro de la paginación, en la primer carga siempre es la página 1
+    const hasMorePages = ref(true) //variable para poder cambiar de páginas con los botones
+    const numRespuesta = ref(10)//Variable que indica el número de respuestas por página
 
     contador.value = moment.utc(seconds.value).format('HH:mm:ss');
     expires_in.value = seconds.value;
@@ -144,7 +153,7 @@ export default {
     }
     onMounted(setInterval_)
 
-    return { setInterval_, actualizar, buscar, tiempos, tramo, plaza, carril, cruces, tiempo, contador, seconds, formato, expires_in, interval}
+    return { setInterval_, actualizar, buscar, tiempos, tramo, plaza, carril, cruces, tiempo, contador, seconds, formato, expires_in, interval, totalPaginas, currentPage, hasMorePages, numRespuesta}
 }
 }
 </script>
