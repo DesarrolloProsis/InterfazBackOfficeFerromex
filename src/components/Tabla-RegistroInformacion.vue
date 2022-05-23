@@ -1,5 +1,6 @@
 <template>
 <div class="responsive-table">
+  <!-- <table class="tftable"> -->
   <table class="tftable">
     <tr>
       <th>Fecha</th>
@@ -47,16 +48,15 @@ export default {
 
 .tftable th {
   font-size: 14px;
-  background-color: #2c5282;
+  background-color: #e9e9e9;
   border-width: 5px;
   padding: 8px;
   border-style: solid;
   border-color: white;
-  text-align: left;
-  color: white;
+  color: black;
   font-weight: 400;
   text-align: center;
-  border-radius: 15px;
+  border-radius: 35px;
   margin: 3px;
 }
 
