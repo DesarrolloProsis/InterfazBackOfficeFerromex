@@ -16,7 +16,7 @@
 </template>
 <script>
 import Navbar from "../../components/Navbar.vue";
-import Footer from "../../components/Footer-login";
+import Footer from "../../components/Footer";
 import { ref } from 'vue'
 import ModuloConfiguracion from "../../components/Modulo-configuracion";
 export default {

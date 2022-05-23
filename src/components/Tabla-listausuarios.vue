@@ -1,12 +1,19 @@
 <template>
   <div class="responsive-table">          
     <table class="tftable">
-      <tr>
-        <th>Nombre de Usuario</th>
-        <th>Nombre</th>
-        <th>Rol</th>
-        <th >Plazas</th>
-        <th class="w-56">Acciones</th>
+      <tr class="h-10">
+        <th>
+          <label class="rounded-full px-28 bg-gray-200 ring-2 ring-gray-500 p-2 text-black">Nombre de Usuario</label>
+        </th>
+        <th>
+          <label class="rounded-full px-28 bg-gray-200 ring-2 ring-gray-500 p-2 text-black">Nombre</label>
+        </th>
+        <th>
+          <label class="rounded-full px-28 bg-gray-200 ring-2 ring-gray-500 p-2 text-black">Estatus</label>
+        </th>
+        <th class="w-56">
+          <label class="rounded-full px-28 bg-gray-200 ring-2 ring-gray-500 p-2 text-black">Acciones</label>
+        </th>
       </tr>
       <tr v-for="(usuario, index) in dataUsuarios" :key="index">
         <td :class="{'text-gray-300': !usuario.estatus}">{{ usuario.usuario }}</td>
@@ -594,7 +601,7 @@ export default {
 }
 .tftable th {
   font-size: 14px;
-  background-color: #2c5282;
+  background-color: #ffffff;
   border-width: 5px;
   padding: 8px;
   border-style: solid;

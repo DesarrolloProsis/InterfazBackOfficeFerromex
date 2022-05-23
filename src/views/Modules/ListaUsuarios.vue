@@ -1,33 +1,31 @@
 <template>
   <Navbar/>
-  <h1 class="title font-titulo font-bold">Lista de Usuarios Registrados</h1>
-  <div class="container mx-auto px-0 pt-4">
-    <div class="flex flex-wrap bg-blue rounded-lg">
-      <div class="flex-none filter-style mt-2">
-        <FormTramoPlaza @cambiar-tramo-plaza="recibir_tramo_plaza" :tipo="'Antifraude'"/>
+  <h1 class="title font-titulo font-bold">Lista de Usuarios</h1>
+  <div class="container mx-auto px-0 pb-24 pt-4">
+    <div class="flex flex-wrap ferromex-color p-1 rounded-lg">
+      <div class="flex-none my-auto text-white font-md p-2 ml-10">
+        Nombre:<input v-model="nombre" type="text" class="rounded ml-2" />
       </div>
-      <div class="flex-none filter-style mt-3">
-        Nombre:
-        <input v-model="nombre" type="text" class="rounded" />
-      </div>
-      <div class="flex-none filter-style mt-3">
-        Estatus:
+      <div class="flex-none my-auto text-white font-md p-2">
+        Estatus:  
         <select v-model="estatus" class="flex-none filter-style color-black rounded" name="select" placeholder="Selecciona">
-          <option hidden selected>Seleccione</option>
+          <option hidden selected>Seleccione </option>
           <option value="true">Activo</option>
           <option value="false">Inactivo</option>
         </select>
       </div>
-      <div class="flex-none filter-style">
-        <button @click="buscar(nombre,estatus, plaza)" class="btn-buscar">Buscar</button>
-        <button @click="todos()" class="btn-buscar ml-1">Todos</button>
+      <div class="flex-none my-auto text-white font-md p-2 ml-10">
+        <button @click="buscar()" class="btn-buscar animacion">Buscar</button>
       </div>
-      <div class="flex-1 ml-64 hidden">
-        <FilesDownload @download-api="downloadApi"/>
+      <div class="flex-none my-auto text-white font-md p-2 ml-10">
+        <button @click="buscar()" class="btn-buscar animacion">Todos</button>
       </div>
-    </div>
-    <div class="mb-6">
-      <button @click="abrirModal" :class="{'hidden':!habilitar}" class="w-full botonIconBuscar justify-center mt-3 -mb-8">Agregar Usuario</button>
+      <div class="flex-none my-auto text-white font-md p-2 ml-52">
+        <button @click="abrirModal" class="btn-buscar animacion">Agregar Usuario</button>
+      </div>
+      <div class="flex-none my-auto font-md p-2 ml-3 w-66">
+        <FilesDownload @download-api="downloadApi" class=""/>
+      </div>
     </div>
     <TablaListaUsuarios @refrescarTabla="refrescar_tabla" :dataUsuarios="perfiles" :plazaBusqueda="plaza" />
     <div class="mt-20 -mb-14">
@@ -97,10 +95,9 @@
 </template>
 <script>
 const API = process.env.VUE_APP_URL_API_PRODUCCION
-import FormTramoPlaza from '../../components/Form-tramoplaza.vue';
 import TablaListaUsuarios from "../../components/Tabla-listausuarios";
 import Navbar from "../../components/Navbar.vue";
-import Footer from "../../components/Footer-login";
+import Footer from "../../components/Footer.vue";
 import Multiselect from '@vueform/multiselect';
 import Servicio from '../../Servicios/Token-Services';
 import FilesDownload from '../../components/Files-descargar.vue'
@@ -118,7 +115,6 @@ export default {
     Multiselect,
     FilesDownload,
     Spinner,
-    FormTramoPlaza,
     Paginacion,
     
   },
@@ -492,13 +488,6 @@ export default {
 }
 .btn-carriles:focus {
   outline: 0;
-}
-.btn-buscar {
-  background-color: #017296;
-  color: white;
-  height: 100%;
-  padding: 0px 5px;
-  border-radius: 5px;
 }
 .btn-buscar:focus {
   outline: 0;
