@@ -2,14 +2,16 @@
   <div class="flex justify-between bg-nav">
     <div class="flex-none">
       <router-link to="/inicio" class="inline-block pl-5 pt-1 text-white text-xl" tag="div">
-      <img class="logo inline" src="~@/assets/logoProsis.png" >
-      Inicio 
+      <img class="logo inline rounded-full" src="~@/assets/ferromex.jpg">
+      Ferromex 
       </router-link>
     </div>
     <span class="text-white mt-2">Bienvenido {{ nombre }}</span>
-    <div class="flex-none border border-red-600 rounded-lg bg-red-500 animacion -mt-1">
-      <router-link to="/" tag="div">
-        <button class="btn-salir mt-2" @click="logout()">Salir</button>
+    <div class="flex-none -mt-2 animacion">
+      <router-link class="" to="/" tag="div">
+        <button class="" @click="logout()">
+          <fa icon="arrow-right-from-bracket" class="w-10 h-8 mt-3 mr-2 text-white"/>
+        </button>
       </router-link>
     </div>
   </div>
@@ -17,7 +19,7 @@
 <script>
 const API = process.env.VUE_APP_URL_API_PRODUCCION
 import Servicio from '../Servicios/Token-Services';
-//import jwt_decode from "jwt-decode";
+//import jwt_decode from "jwt-decode"; <font-awesome-icon icon="fa-solid fa-arrow-right-from-bracket" />
 import axios from "axios";
 export default{
   data(){
@@ -62,7 +64,7 @@ export default{
 </script>
 <style scoped>
 .bg-nav {
-  background-color: #2c5282;
+  background-color: #000000;
   padding: 10px;
 }
 .btn-salir {
@@ -74,6 +76,7 @@ export default{
   outline: none;
 }
 .logo{
-  width:30px;
+  width: 45px;
+  height: 45px;
 }
 </style>

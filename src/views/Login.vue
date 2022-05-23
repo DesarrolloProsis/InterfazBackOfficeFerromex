@@ -7,29 +7,23 @@
         <!-- <p id="login-title" class="font-titulo font-bold">Monitoreo de Pagos Electrónicos</p> -->
         <img class="img-centered rounded-full " src="~@/assets/Login/logoferromex.png" />
         <div class="bg-login-module" style="max-width: 800px; margin: auto">
-          <div class="error" v-if="mensaje != ''">
-              {{mensaje}}
-          </div>
+          <div class="error" v-if="mensaje != ''">{{mensaje}}</div>
           <div class="input-container">
-            <img class="w-10 h-10 mt-1 mr-2 transform -rotate-180" src="~@/assets/Login/iniciar-sesion.png" />
+            <fa icon="circle-user" class="w-10 h-8 mt-1 mr-2 text-red-700"/>
+            <!-- <img class="w-10 h-10 mt-1 mr-2 transform -rotate-180" src="~@/assets/Login/iniciar-sesion.png" /> -->
             <input id="username" v-model="user" class="input-field" type="text" placeholder="Usuario" />
           </div>
           <div class="input-container">
-            <img class="w-10 h-10 mt-1 mr-2" src="~@/assets/Login/password.png" />            
+            <!-- <img class="w-10 h-10 mt-1 mr-2" src="~@/assets/Login/password.png" />             -->
+            <fa icon="key" class="w-10 h-6 mt-3 mr-2 text-red-700"/>
             <input id="password" v-model="pass" class="input-field" type="password" placeholder="Contraseña" />
           </div>
           <button class="btn mt-12" @click="login()">Iniciar Sesión</button>
         </div>
       </div>
     </div>
-    <div id="login-bg" class=" hidden md:block"></div>
   </div>
-  <Footer 
-    titulocentro = "BOSQUE DE CIRUELOS NO 99,COL. BOSQUES DE LAS LOMAS, MÉXICO, D.F.,C.P. 11700"
-    tituloderecha = "V 2.0.5"
-    tituloizquierda = ""
-    color = "red"
-  />  
+  <Footer titulocentro = "BOSQUE DE CIRUELOS NO 99,COL. BOSQUES DE LAS LOMAS, MÉXICO, D.F.,C.P. 11700" tituloderecha = "V 2.0.5" tituloizquierda = "" color = "red"/>  
 </div>
 </template>
 
