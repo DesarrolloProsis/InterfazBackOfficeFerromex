@@ -1,6 +1,6 @@
 <template>
   <Navbar/>
-  <h1 class="title font-bold font-titulo">Configuración</h1>
+  <h1 class="title font-bold font-titulo">Gestión de Usuarios</h1>
   <div class="container mx-auto px-auto pb-20 pt-0 md:px-48 md:pt-10 my-32">
     <div class="flex flex-wrap">
       <ModuloConfiguracion
@@ -28,8 +28,8 @@ export default {
   setup() {
     const modulos = ref([
         {
-          img_src: "Configuracion/lista-roles.png",
-          nombre: "Administración de Roles",
+          img_src: "Configuracion/skill.png",
+          nombre: "Roles de Usuario",
           ruta: "/configuracion/administracion-perfiles",
         },
         {
