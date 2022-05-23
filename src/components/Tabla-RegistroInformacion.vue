@@ -2,12 +2,22 @@
 <div class="responsive-table">
   <!-- <table class="tftable"> -->
   <table class="tftable">
-    <tr>
-      <th>Fecha</th>
-      <th>Hora</th>
-      <th>Tag</th>
-      <th>Carril</th>
-      <th>Tarifa</th>
+    <tr class="h-10">
+      <th class="">
+        <label class="rounded-full text-lg px-28 bg-gray-200 ring-2 ring-gray-500 p-2">Fecha</label>
+      </th>
+      <th>
+        <label class="rounded-full text-lg px-28 bg-gray-200 ring-2 ring-gray-500 p-2">Hora</label>
+      </th>
+      <th>
+        <label class="rounded-full text-lg px-28 bg-gray-200 ring-2 ring-gray-500 p-2">Tag</label>
+      </th>
+      <th>
+        <label class="rounded-full text-lg px-28 bg-gray-200 ring-2 ring-gray-500 p-2">Carril</label>
+      </th>
+      <th>
+        <label class="rounded-full text-lg px-28 bg-gray-200 ring-2 ring-gray-500 p-2">Tarifa</label>
+      </th>
     </tr>
     <tr v-for="(cruce, index) in dataCruces" :key="index">
       <td>{{ moment(cruce.fecha).format("YYYY-MM-DD  HH:mm:ss a") }}</td>
@@ -48,7 +58,7 @@ export default {
 
 .tftable th {
   font-size: 14px;
-  background-color: #e9e9e9;
+  background-color: #ffffff;
   border-width: 5px;
   padding: 8px;
   border-style: solid;
