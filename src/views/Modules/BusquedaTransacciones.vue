@@ -1,35 +1,43 @@
 <template>
   <Navbar/>
   <div class="container mx-auto px-0 pb-100">
-    <h1 class="title-center font-titulo font-bold pb-4">Búsqueda de Transacciones en Plaza</h1>
+    <h1 class="title-center font-titulo font-bold pb-4 mb-2">Mantenimiento de Tag's</h1>
   <div>
     <div class="-mt-4 mx-2 md:mx-0">
         <div class="flex flex-col md:flex-row bg-blue rounded-lg border-gray-200 pb-0 mb-4">          
-            <div class="flex-1 flex flex-col md:flex-row md:space-x-2 -mb-2">
-              <div class="w-full flex-2">
-                <FormTramoPlaza @cambiar-tramo-plaza="recibir_tramo_plaza" :tipo="'Antifraude'"/>
-              </div>
-              <div class="w-full flex-2 -mt-2">
-                <div class="my-2 p-1 bg-white flex border border-gray-200 rounded">
-                  <input v-model="tag" class="inp-icon  w-full text-gray-800 " placeholder="Buscar No. Tag" type="text" />
+            <div class="flex-1 flex flex-col md:flex-row md:space-x-2">
+              <div class="w-full inline-flex flex-2 justify-center">
+                <label for="tag" class="text-white mt-3">TAG:</label>
+                <div class="my-2 bg-white flex border border-gray-200 rounded ml-2">
+                  <input id="tag" v-model="tag" class="inp-icon  w-full text-gray-800 " placeholder="Buscar No. Tag" type="text" />
                 </div>
               </div>
-              <div class="w-full flex-2 -mt-2">
-                <div class="my-2 p-1 bg-white flex border border-gray-200 rounded">
+              <div class="w-full inline-flex flex-2 justify-center">
+                <label for="tag" class="text-white mt-3">ESTATUS:</label>
+                <div class="my-2 p-1 bg-white flex border border-gray-200 rounded ml-2">
+                  <select v-model="estaus"  class="w-full text-gray-800">
+                    <option value="">Estatus</option>
+                    <option value=""></option>
+                  </select>
+                </div>
+              </div>
+              <div class="w-full inline-flex flex-2 justify-center">
+                <label for="tag" class="text-white mt-3">FECHA:</label>
+                <div class="my-2 p-1 bg-white flex border border-gray-200 rounded ml-2">
                   <input v-model="fecha" type="date" class=" w-full text-gray-800 "> 
                 </div>
               </div>
-              <div class="w-full flex-1 -mt-2">
-                <div class="my-2 p-1 bg-white flex border border-gray-200 rounded btn-search ">                      
-                  <button :disabled="modalLoading" :class="{'cursor-not-allowed': modalLoading}" @click="serch(plaza, tag, fecha)">Buscar</button>
+              <div class="w-full flex-1 ">
+                <div class="my-2 p-1 bg-red-200 flex border border-red-200 rounded hover:bg-red-700 hover:text-white">                      
+                  <button :disabled="modalLoading" class="font-bold" :class="{'cursor-not-allowed': modalLoading}" @click="serch( tag, estatus, fecha)">Buscar</button>
                 </div>
               </div>
-              <div class="w-full flex-1 -mt-2">
-                <div class="my-2 p-1 bg-white flex border border-gray-200 rounded btn-search ">                      
-                  <button :disabled="modalLoading" :class="{'cursor-not-allowed': modalLoading}" @click="limpiar(plaza)">Todos</button>
+              <div class="w-full flex-1">
+                <div class="my-2 p-1 bg-red-200 flex border border-red-200 rounded hover:bg-red-700 hover:text-white">                      
+                  <button :disabled="modalLoading" class="font-bold" :class="{'cursor-not-allowed': modalLoading}" @click="limpiar(plaza)">Todos</button>
                 </div>
               </div>
-              <FilesDownload @download-api="downloadApi" class="-mt-1"/>
+              <FilesDownload @download-api="downloadApi" class="justify-center"/>
             </div>
         </div>
     </div>
@@ -43,7 +51,7 @@
 <script>
 const API = process.env.VUE_APP_URL_API_PRODUCCION
 import TablaBusquedaTransacciones from "../../components/Tabla-busquedatransacciones.vue";
-import FormTramoPlaza from '../../components/Form-tramoplaza.vue'
+
 import Navbar from "../../components/Navbar.vue";
 import Footer from "../../components/Footer-login";
 import axios from "axios";
@@ -58,8 +66,7 @@ export default {
   components: {
     TablaBusquedaTransacciones,
     Navbar,
-    Footer,
-    FormTramoPlaza,    
+    Footer,   
     FilesDownload,
     Paginacion,
     Spinner
@@ -410,7 +417,7 @@ export default {
 }
 
 .bg-blue {
-  background-color: #2c5282;
+  background-color: #BB2028;
   padding: 10px 5px;
 }
 
@@ -429,15 +436,7 @@ export default {
   border-radius: 5px;
 }
 
-.btn-search {
-  background-color: #017296;
-  color: white;
-  height: 70%;
-  padding: 0px 10px;
-  border-radius: 5px;
-  border: 1px solid black;
-  
-}
+
 
 .btn-buscar:focus {
   outline: 0;
