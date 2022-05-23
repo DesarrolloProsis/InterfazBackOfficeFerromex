@@ -1,7 +1,7 @@
 <template>
     <Navbar/>
-    <h1 class="title font-bold font-titulo">Bitácoras</h1>
-    <div class="container mx-auto px-auto pb-20 pt-0 md:px-48 md:pt-10 my-32">
+    <h1 class="title font-bold font-titulo">Generación de Reportes</h1>
+    <div class="container mx-auto px-auto pt-0 md:px-48 md:pt-10 ">
         <div class="flex flex-wrap">
             <ModuloBitacoras
                 v-for="(modulo, index) in modulos"
@@ -21,7 +21,7 @@ import Servicio from '../../Servicios/Token-Services';
 //import jwt_decode from "jwt-decode";
 import { ref } from 'vue'
 import Navbar from "../../components/Navbar.vue";
-import Footer from "../../components/Footer-login";
+import Footer from "../../components/Footer";
 
 import ModuloBitacoras from "../../components/Modulo-bitacoras";
 export default {
@@ -43,21 +43,21 @@ export default {
             modulos.value = [
                 {
                     img_src: "Menu/bitacoras.png",
-                    nombre: "Bitácora De Antifraude",
+                    nombre: "Reportes Operativos",
                     ruta: "/inicio/bitacora-antifraude",
-                    color: "green"
+                    color: "red"
                 },
                 {
                     img_src: "Menu/bitacoras.png",
-                    nombre: "Bitácora De Listas",
-                    ruta: "/inicio/bitacora-listas",
+                    nombre: "Cruces Ferromex",
+                    ruta: "/inicio/monitoreo-servicios",
                     color: "red"
                 },
                 {
                     img_src: "Menu/bitacoras.png",
                     nombre: "Bitácora De Accesos",
                     ruta: "/inicio/bitacora-accesos",
-                    color: "yellow"
+                    color: "red"
                 },
             ]
         }else{
@@ -69,22 +69,22 @@ export default {
                     color: "green"
                 }, */
                 {
-                    img_src: "Menu/bitacoras.png",
-                    nombre: "Bitácora De Antifraude",
-                    ruta: "/inicio/bitacora-antifraude",
+                    img_src: "Menu/capacidad-de-almacenamiento.png",
+                    nombre: "Reportes Operativos",
+                    ruta: "/inicio/Reportes-Operativos",
                     color: "red"
                 },
                 {
-                    img_src: "Menu/bitacoras.png",
-                    nombre: "Bitácora De Listas",
+                    img_src: "Menu/monitoreo-servicios.png",
+                    nombre: "Cruces Ferromex",
                     ruta: "/inicio/bitacora-listas",
-                    color: "yellow"
+                    color: "red"
                 },
                 {
-                    img_src: "Menu/bitacoras.png",
-                    nombre: "Bitácora De Accesos",
+                    img_src: "Menu/almacenamiento-de-base-de-datos.png",
+                    nombre: "Concentrados Ferromex",
                     ruta: "/inicio/bitacora-accesos",
-                    color: "blue"
+                    color: "red"
                 }
             ]    
         }

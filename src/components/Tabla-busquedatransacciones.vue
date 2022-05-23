@@ -6,13 +6,13 @@
           <label class="rounded-full px-28 bg-gray-200 ring-2 ring-gray-500 p-2 font-bold text-black">Tag</label>
         </th>
         <th class="">
-          <label class="rounded-full px-28 bg-gray-200 ring-2 ring-gray-500 p-2">Estatus</label>
+          <label class="rounded-full px-28 bg-gray-200 ring-2 ring-gray-500 p-2 text-black">Estatus</label>
         </th>
         <th class="">
-          <label class="rounded-full px-28 bg-gray-200 ring-2 ring-gray-500 p-2">Fecha de Registro</label>
+          <label class="rounded-full px-28 bg-gray-200 ring-2 ring-gray-500 p-2 text-black">Fecha de Registro</label>
           </th>
         <th class="">
-          <label class="rounded-full px-28 bg-gray-200 ring-2 ring-gray-500 p-2">Acciones</label>
+          <label class="rounded-full px-28 bg-gray-200 ring-2 ring-gray-500 p-2 text-black">Acciones</label>
           </th>
       </tr>
       <tr v-for="(cruces, index) in dataCruces" :key="index">
