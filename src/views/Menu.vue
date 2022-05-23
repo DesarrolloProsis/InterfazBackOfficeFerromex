@@ -17,7 +17,7 @@
 <script>
 import Navbar from "../components/Navbar";
 import ModulosComp from "../components/Moldulo-menu";
-import Footer from "../components/Footer-login";
+import Footer from "../components/Footer";
 export default {
   components: {
     Navbar,
