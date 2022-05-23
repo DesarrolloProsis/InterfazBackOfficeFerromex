@@ -16,7 +16,7 @@
 </template>
 <script>
 import Navbar from "../../components/Navbar.vue";
-import Footer from "../../components/Footer";
+import Footer from "../../components/Footer-login";
 import { ref } from 'vue'
 import ModuloConfiguracion from "../../components/Modulo-configuracion";
 export default {
@@ -28,7 +28,7 @@ export default {
   setup() {
     const modulos = ref([
         {
-          img_src: "Configuracion/skill.png",
+          img_src: "Configuracion/lista-roles.png",
           nombre: "Roles de Usuario",
           ruta: "/configuracion/administracion-perfiles",
         },
