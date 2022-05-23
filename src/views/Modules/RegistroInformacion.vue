@@ -3,7 +3,7 @@
   <div class="container mx-auto">
     <h1 class="title-center font-titulo font-bold pb-4">Registro de Información de Telepeaje</h1>
     <div class="flex flex-wrap ferromex-color p-1 rounded-lg">
-      <div class="flex-none my-auto text-white font-md p-2">
+      <div class="flex-none my-auto text-white font-md p-2 ml-20">
         Fecha:<input v-model="fecha" type="date" class="rounded ml-2" />
       </div>
       <div class="flex-none my-auto text-white font-md p-2">
@@ -23,15 +23,15 @@
           <option value="seis">B</option>
         </select>
       </div>
-      <div class="flex-none my-auto text-white font-md p-2 ml-10">
+      <div class="flex-none my-auto text-white font-md p-2 ml-39">
         <button @click="buscar()" class="btn-buscar animacion">Buscar</button>
       </div>
       <div class="flex-none my-auto text-white font-md p-2 ml-10">
         <button @click="buscar()" class="btn-buscar animacion">Todos</button>
       </div>
       <div class="flex-none my-auto ml-right text-white">
-        Tiempo de actualizacion
-        <select v-model="tiempo" @change="tiempos(tiempo)" class="text-gray-800 w-16 rounded">
+        <select v-model="tiempo" @change="tiempos(tiempo)" class="text-gray-800 w-55 rounded">
+          <option value="" disabled>Tiempo de Actualización</option>
           <option value="tres">3 min</option>
           <option value="seis">6 min</option>
           <option value="nueve">9 min</option>
