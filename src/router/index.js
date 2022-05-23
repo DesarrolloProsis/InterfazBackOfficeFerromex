@@ -16,7 +16,9 @@ import ListaUsuarios from "@/views/Modules/ListaUsuarios.vue";
 import Bitacoras from "@/views/Modules/Bitacoras.vue";
 import BitacoraAntifraude from "@/views/Modules/BitacoraAntifraude.vue";
 import BitacoraListas from "@/views/Modules/BitacoraListas.vue"
+import ReportesOperativos from '@/views/Modules/ReportesOperativos.vue'
 import Servicio from '../Servicios/Token-Services'
+
 const routes = [{
     path: "/",
     name: "Login",
@@ -130,6 +132,15 @@ const routes = [{
     meta: {
       requiresCookie: true,
       nombre:"Estatus Tag"
+    }
+  },
+  {
+    path: "/inicio/Reportes-Operativos",
+    name: "Reportes Operativos",
+    component: ReportesOperativos,
+    meta: {
+      requiresCookie: true,
+      nombre:"Reportes Operativos"
     }
   },
   {

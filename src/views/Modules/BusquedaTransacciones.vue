@@ -4,7 +4,7 @@
     <h1 class="title-center font-titulo font-bold pb-4 mb-2">Mantenimiento de Tag's</h1>
   <div>
     <div class="-mt-4 mx-2 md:mx-0">
-        <div class="flex flex-col md:flex-row bg-blue rounded-lg border-gray-200 pb-0 mb-4">          
+        <div class="flex flex-col md:flex-row bg-ferromex rounded-lg border-gray-200 pb-0 mb-4">          
             <div class="flex-1 flex flex-col md:flex-row md:space-x-2">
               <div class="w-full inline-flex flex-2 justify-center">
                 <label for="tag" class="text-white my-auto">TAG:</label>
@@ -13,7 +13,7 @@
                 </div>
               </div>
               <div class="w-full inline-flex flex-2 justify-center">
-                <label for="tag" class="text-white my-auto">ESTATUS:</label>
+                <label for="tag" class="text-white my-auto">Estatus:</label>
                 <div class="mt-3 p-1 bg-white flex border border-gray-200 rounded ml-2 h-6 w-40">
                   <select v-model="estaus"  class="w-full text-gray-800">
                     <option value="">Estatus</option>
@@ -22,7 +22,7 @@
                 </div>
               </div>
               <div class="w-full inline-flex flex-2 justify-center">
-                <label for="tag" class="text-white my-auto">FECHA:</label>
+                <label for="tag" class="text-white my-auto">Fecha:</label>
                 <div class="mt-3 p-1 bg-white flex border border-gray-200 rounded ml-2 h-6 w-40">
                   <input v-model="fecha" type="date" class=" w-full text-gray-800 "> 
                 </div>
@@ -418,7 +418,7 @@ export default {
   padding-top: 20px;
 }
 
-.bg-blue {
+.bg-ferromex {
   background-color: #BB2028;
   padding: 10px 5px;
 }
