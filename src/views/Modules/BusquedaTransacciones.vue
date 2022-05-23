@@ -7,14 +7,14 @@
         <div class="flex flex-col md:flex-row bg-blue rounded-lg border-gray-200 pb-0 mb-4">          
             <div class="flex-1 flex flex-col md:flex-row md:space-x-2">
               <div class="w-full inline-flex flex-2 justify-center">
-                <label for="tag" class="text-white mt-3">TAG:</label>
-                <div class="my-2 bg-white flex border border-gray-200 rounded ml-2">
+                <label for="tag" class="text-white my-auto">TAG:</label>
+                <div class="mt-3 bg-white flex border border-gray-200 rounded ml-2 h-6 w-40">
                   <input id="tag" v-model="tag" class="inp-icon  w-full text-gray-800 " placeholder="Buscar No. Tag" type="text" />
                 </div>
               </div>
               <div class="w-full inline-flex flex-2 justify-center">
-                <label for="tag" class="text-white mt-3">ESTATUS:</label>
-                <div class="my-2 p-1 bg-white flex border border-gray-200 rounded ml-2">
+                <label for="tag" class="text-white my-auto">ESTATUS:</label>
+                <div class="mt-3 p-1 bg-white flex border border-gray-200 rounded ml-2 h-6 w-40">
                   <select v-model="estaus"  class="w-full text-gray-800">
                     <option value="">Estatus</option>
                     <option value=""></option>
@@ -22,23 +22,25 @@
                 </div>
               </div>
               <div class="w-full inline-flex flex-2 justify-center">
-                <label for="tag" class="text-white mt-3">FECHA:</label>
-                <div class="my-2 p-1 bg-white flex border border-gray-200 rounded ml-2">
+                <label for="tag" class="text-white my-auto">FECHA:</label>
+                <div class="mt-3 p-1 bg-white flex border border-gray-200 rounded ml-2 h-6 w-40">
                   <input v-model="fecha" type="date" class=" w-full text-gray-800 "> 
                 </div>
               </div>
-              <div class="w-full flex-1 ">
-                <div class="my-2 p-1 bg-red-200 flex border border-red-200 rounded hover:bg-red-700 hover:text-white">                      
-                  <button :disabled="modalLoading" class="font-bold" :class="{'cursor-not-allowed': modalLoading}" @click="serch( tag, estatus, fecha)">Buscar</button>
+              <div class="w-full flex-1">
+                <div class="mt-3 bg-red-200 flex border border-red-200 rounded hover:bg-red-700 hover:text-white w-20">                      
+                  <button :disabled="modalLoading" class="font-bold w-full" :class="{'cursor-not-allowed': modalLoading}" @click="serch( tag, estatus, fecha)">Buscar</button>
                 </div>
               </div>
               <div class="w-full flex-1">
-                <div class="my-2 p-1 bg-red-200 flex border border-red-200 rounded hover:bg-red-700 hover:text-white">                      
-                  <button :disabled="modalLoading" class="font-bold" :class="{'cursor-not-allowed': modalLoading}" @click="limpiar(plaza)">Todos</button>
+                <div class="mt-3 bg-red-200 flex border border-red-200 rounded hover:bg-red-700 hover:text-white w-20">                      
+                  <button :disabled="modalLoading" class="font-bold w-full" :class="{'cursor-not-allowed': modalLoading}" @click="limpiar(plaza)">Todos</button>
                 </div>
               </div>
-              <FilesDownload @download-api="downloadApi" class="justify-center"/>
-            </div>
+              <div class="w-full flex-2">
+                <FilesDownload @download-api="downloadApi" class=""/>
+              </div>
+              </div>
         </div>
     </div>
   </div>
@@ -53,7 +55,7 @@ const API = process.env.VUE_APP_URL_API_PRODUCCION
 import TablaBusquedaTransacciones from "../../components/Tabla-busquedatransacciones.vue";
 
 import Navbar from "../../components/Navbar.vue";
-import Footer from "../../components/Footer-login";
+import Footer from "../../components/Footer";
 import axios from "axios";
 import FilesDownload from '../../components/Files-descargar.vue'
 import ServiceFiles from '../../Servicios/Files-Service'
@@ -435,8 +437,6 @@ export default {
   border: 1px solid black;
   border-radius: 5px;
 }
-
-
 
 .btn-buscar:focus {
   outline: 0;
