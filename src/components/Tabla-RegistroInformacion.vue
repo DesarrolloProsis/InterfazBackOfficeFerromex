@@ -2,13 +2,15 @@
 <div class="responsive-table">
   <table class="tftable">
     <tr>
-      <th>Fecha de Cruce</th>
+      <th>Fecha</th>
+      <th>Hora</th>
+      <th>Tag</th>
       <th>Carril</th>
-      <th>ID TAG</th>
-      <th>Clase Cajero</th>
+      <th>Tarifa</th>
     </tr>
     <tr v-for="(cruce, index) in dataCruces" :key="index">
       <td>{{ moment(cruce.fecha).format("YYYY-MM-DD  HH:mm:ss a") }}</td>
+      <td>{{ cruce.carril }}</td>
       <td>{{ cruce.carril }}</td>
       <td>{{ cruce.tag }}</td>
       <td>{{ cruce.clase }}</td>

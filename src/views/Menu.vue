@@ -44,8 +44,8 @@ export default {
         {
           titulo: "Registro de información de Telepeaje",
           imagen: "Menu/monitoreo-cruces.png",
-          ruta: "/inicio/monitoreo-cruces",
-          nombre:"Monitoreo Cruces",
+          ruta: "/inicio/registro-informacion-telepeaje",
+          nombre:"Registro De Informacion De Telepeaje",
           isInactive:false
         },
         /* {

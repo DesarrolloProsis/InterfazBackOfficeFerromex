@@ -1,15 +1,35 @@
 <template>
   <Navbar/>
-  <div class="container mx-auto px-0 pb-100">
-    <h1 class="title-center font-titulo font-bold pb-4">Transacciones de Telepeaje en Tiempo Real</h1>
-    <div class="flex flex-wrap bg-blue rounded-lg">
-      <div class="flex-none ">
-        <FormTramoPlaza @cambiar-tramo-plaza="recibir_tramo_plaza" :carrilesForm="true" :tipo="'Antifraude'"/>
+  <div class="container mx-auto">
+    <h1 class="title-center font-titulo font-bold pb-4">Registro de Información de Telepeaje</h1>
+    <div class="flex flex-wrap ferromex-color p-1 rounded-lg">
+      <div class="flex-none my-auto text-white font-md p-2">
+        Fecha:<input v-model="fecha" type="date" class="rounded ml-2" />
       </div>
-      <div class="flex-none mt-1 filter-style">
-        <button @click="buscar(plaza, carril)" class="btn-buscar">Buscar</button>
+      <div class="flex-none my-auto text-white font-md p-2">
+        TAG:<input v-model="tag" type="text" class="rounded ml-2" />
       </div>
-      <div class="flex-none mt-1 ml-right text-white">
+      <div class="flex-none my-auto text-white font-md p-2">
+        Carril:
+        <select v-model="carril" class="text-gray-800 w-16 rounded">
+          <option value="tres">A1</option>
+          <option value="seis">A2</option>
+        </select>
+      </div>
+      <div class="flex-none my-auto text-white font-md p-2">
+        Cuerpo:
+        <select v-model="carril" class="text-gray-800 w-16 rounded">
+          <option value="tres">A</option>
+          <option value="seis">B</option>
+        </select>
+      </div>
+      <div class="flex-none my-auto text-white font-md p-2 ml-10">
+        <button @click="buscar()" class="btn-buscar">Buscar</button>
+      </div>
+      <div class="flex-none my-auto text-white font-md p-2 ml-10">
+        <button @click="buscar()" class="btn-buscar">Todos</button>
+      </div>
+      <div class="flex-none my-auto ml-right text-white">
         Tiempo de actualizacion
         <select v-model="tiempo" @change="tiempos(tiempo)" class="text-gray-800 w-16 rounded">
           <option value="tres">3 min</option>
@@ -20,24 +40,24 @@
         </select>
       </div>
     </div>
-    <TablaCruces :dataCruces="cruces"/>
+    <TablaInformacionTelepeaje :dataCruces="cruces"/>
     <p class="mt-10">Próxima actualización en {{ contador.slice(3)  }}</p>
   </div>
   <Footer/>
 </template>
 <script>
 const API = process.env.VUE_APP_URL_API_PRODUCCION
-import FormTramoPlaza from '../../components/Form-tramoplaza.vue';
-import TablaCruces from "../../components/Tabla-cruces.vue";
+
+import TablaInformacionTelepeaje from "../../components/Tabla-RegistroInformacion.vue";
 import Navbar from "../../components/Navbar.vue";
-import Footer from "../../components/Footer-login";
+import Footer from "../../components/Footer";
 import { notify } from "@kyvg/vue3-notification";
 import { onMounted, ref } from 'vue'
 import axios from "axios";
 import moment from 'moment'
 export default {
-  name: "MonitoreoCruces",
-  components: { TablaCruces, Navbar, Footer, FormTramoPlaza},
+  name: "RegistroInformacion",
+  components: { TablaInformacionTelepeaje, Navbar, Footer},
   setup() {
     const tramo = ref('')
     const plaza = ref(null)
@@ -53,7 +73,7 @@ export default {
     contador.value = moment.utc(seconds.value).format('HH:mm:ss');
     expires_in.value = seconds.value;
 
-    function setInterval_() {
+    function setInterval_() { //Funcion que genera la cuenta regresiva para la actualización en automatico
       interval.value = setInterval(() => {
         if(expires_in.value === 1){
           expires_in.value = seconds.value
@@ -65,7 +85,7 @@ export default {
         }
       }, 1000)
     }
-    function actualizar(plaza,carril){
+    function actualizar(plaza,carril){ //Función que va a actualizar de manera automatica la buqueda de la información con base del tiempo seleccionado
       if(plaza != undefined && carril != undefined){
         cruces.value = []
         axios.get(`${API}/Transacciones/Last20Transaccions/${plaza}/${carril}`)
@@ -97,60 +117,14 @@ export default {
         })
       }
     }
-    function buscar(plaza,carril){
-      cruces.value = []
-      if(plaza == '' || plaza == null || plaza == undefined){
-        notify({
-          title:'Sin Información',
-          text:'Se debe seleccionar la plaza para realizar la busqueda',
-          type: 'warn'
-        });
-      }else{
-        if(carril == undefined){
-        let carril = null
-        axios.get(`${API}/Transacciones/Last20Transaccions/${plaza}/${carril}`)
-        .then((result)=>{
-          result.data.body.forEach((e) =>{
-            let obj = {
-              carril: e.carril,
-              clase: e.claseCajero,
-              fecha: e.fechaDeCruce,
-              tag: e.idTag
-            }
-            cruces.value.push(obj)
-          })
-        })
-        }else{
-          cruces.value = []
-          axios.get(`${API}/Transacciones/Last20Transaccions/${plaza}/${carril}`)
-          .then((result)=>{
-            if((result.data.status == 'Ok') && (result.data.body.length > 0)){
-              result.data.body.forEach((e) =>{
-                let obj = {
-                  carril: e.carril,
-                  clase: e.claseCajero,
-                  fecha: e.fechaDeCruce,
-                  tag: e.idTag
-                }
-                cruces.value.push(obj)
-              })
-            }else{
-              notify({
-                title:'Sin Información',
-                text:'No se encontraron transacciones',
-                type: 'warn'
-              });
-            }
-          })
-        }
-      }
+    function buscar(){ //Función que realiza la busqueda en la base con un evento click
+      notify({
+        title:'Sin Información',
+        text:'No se encontraron transacciones',
+        type: 'warn'
+      });
     }
-    function recibir_tramo_plaza(value){
-      tramo.value = value.tramo
-      plaza.value = value.plaza
-      carril.value = value.carril
-    }
-    function tiempos(minutos){
+    function tiempos(minutos){ //función donde se indica los segundos para poder reiniciar la busqueda dependiendo de la opción seleccionada
       if(minutos == 'tres'){
         seconds.value = 180
         expires_in.value = seconds.value
@@ -168,26 +142,17 @@ export default {
         expires_in.value = seconds.value
       }
     }
-
-
     onMounted(setInterval_)
 
-    return { setInterval_, actualizar, recibir_tramo_plaza, buscar, tiempos, tramo, plaza, carril, cruces, tiempo, contador, seconds, formato, expires_in, interval}
+    return { setInterval_, actualizar, buscar, tiempos, tramo, plaza, carril, cruces, tiempo, contador, seconds, formato, expires_in, interval}
 }
 }
 </script>
 <style scoped>
-.pb-100 {
-  padding-bottom: 100px;
-}
 .title-center {
   text-align: center;
   font-size: 25px;
   padding-top: 20px;
-}
-.bg-blue {
-  background-color: #2c5282;
-  padding: 10px 5px;
 }
 .ml-right {
   display: block;
@@ -205,48 +170,10 @@ export default {
   border: 1px solid black;
   padding: 0px 5px;
 }
-
-.btn-carriles {
-  background-color: #017296;
-  color: white;
-  font-size: 15px;
-  height: 100%;
-  padding: 0px 5px;
-  border: 1px solid black;
-  border-radius: 5px;
-}
-.btn-buscar {
-  background-color: #017296;
-  color: white;
-  height: 100%;
-  padding: 0px 10px;
-  border-radius: 5px;
-  border: 1px solid black;
-}
-.btn-buscar:focus {
-  outline: 0;
-}
-.btn-carriles:focus {
-  outline: 0;
-}
-.color-black {
-  color: black !important;
-}
-.color-black:focus {
-  outline: 0;
-}
 @media (max-width: 769px) {
   .filter-style {
     padding-top: 5px;
     padding-bottom: 15px;
-  }
-  .btn-carriles {
-    background-color: #017296;
-    color: white;
-    font-size: 15px;
-    padding: 10px 5px;
-    border: 1px solid black;
-    border-radius: 5px;
   }
 }
 </style>

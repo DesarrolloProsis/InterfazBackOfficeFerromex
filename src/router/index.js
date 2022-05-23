@@ -5,7 +5,7 @@ import Menu from "@/views/Menu.vue";
 import MonitoreoServicios from "@/views/Modules/MonitoreoServicios.vue";
 import MonitoreoCarriles from "@/views/Modules/MonitoreoCarriles.vue";
 import BitacoraAlarmas from "@/views/Modules/BitacoraAlarmas.vue";
-import MonitoreoCruces from "@/views/Modules/MonitoreoCruces.vue";
+import RegistroDeInformacionDeTelepeaje from "@/views/Modules/RegistroInformacion.vue";
 import EnvioTransacciones from "@/views/Modules/EnvioTransacciones.vue";
 import BusquedaTransacciones from "@/views/Modules/BusquedaTransacciones.vue";
 import BitacoraAccesos from "@/views/Modules/BitacoraAccesos.vue";
@@ -70,9 +70,9 @@ const routes = [{
     }
   },
   {
-    path: "/inicio/monitoreo-cruces",
-    name: "MonitoreoCruces",
-    component: MonitoreoCruces,
+    path: "/inicio/registro-informacion-telepeaje",
+    name: "RegistroDeInformacionDeTelepeaje",
+    component: RegistroDeInformacionDeTelepeaje,
     meta: {
       requiresCookie: true,
       nombre:"Monitoreo Cruces"
