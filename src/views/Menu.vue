@@ -1,6 +1,6 @@
 <template>
   <Navbar></Navbar>
-  <div class="bg-gray-100 flex flex-wrap items-center full-height">
+  <div class="bg-gray-100 grid grid-cols-2 items-center full-height">
     <ModulosComp
       v-for="(modulo, index) in modulos"
       :key="index"
@@ -27,7 +27,7 @@ export default {
   data() {
     return {
       modulos: [
-        {
+        /* {
           titulo: "Monitoreo de Servicios en Tiempo Real",
           imagen: "Menu/monitoreo-servicios.png",
           ruta: "/inicio/monitoreo-servicios",
@@ -40,23 +40,23 @@ export default {
           ruta: "/inicio/monitoreo-carriles",
           nombre:"Monitoreo Carriles",
           isInactive:false
-        },
+        }, */
         {
-          titulo: "Transacciones de Telepeaje en Tiempo Real",
+          titulo: "Registro de información de Telepeaje",
           imagen: "Menu/monitoreo-cruces.png",
           ruta: "/inicio/monitoreo-cruces",
           nombre:"Monitoreo Cruces",
           isInactive:false
         },
-        {
+        /* {
           titulo: "Envío de Transacciones al Operador de Telepeaje",
           imagen: "Menu/envio-transacciones.png",
           ruta: "/inicio/envio-transacciones",
           nombre:"Envio Transacciones",
           isInactive:false
-        },
+        }, */
         {
-          titulo: "Búsqueda de Transacciones",
+          titulo: "Mantenimiento de Tags`s",
           imagen: "Menu/busqueda-transacciones.png",
           ruta: "/inicio/busqueda-transacciones",
           nombre:"Busqueda Cruces",
@@ -69,25 +69,25 @@ export default {
           nombre:"Bitacora Accesos",
           isInactive:false
         }, */
-        {
-          titulo: "Bitácoras",
-          imagen: "Menu/bitacoras.png",
-          ruta: "/bitacoras",
-          nombre:"Bitacoras",
-          isInactive:false
-        },
-        {
+        /* {
           titulo: "Estatus de TAGs",
           imagen: "Menu/estatus-tags.png",
           ruta: "/inicio/estatus-tags",
           nombre:"Estatus Tag",
           isInactive:false
-        },
+        }, */
         {
-          titulo: "Configuración",
+          titulo: "Gestión de usuarios",
           imagen: "Menu/configuracion.png",
           ruta: "/configuracion",
           nombre:"Configuracion",
+          isInactive:false
+        },
+        {
+          titulo: "Generación de Reportes",
+          imagen: "Menu/bitacoras.png",
+          ruta: "/bitacoras",
+          nombre:"Bitacoras",
           isInactive:false
         },
       ],

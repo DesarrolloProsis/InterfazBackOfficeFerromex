@@ -1,17 +1,13 @@
 <template>
-  <div v-if="mostrar(nombre)" :class="{inactive:isInactive}"  class="w-1/2 md:w-1/4 p-5">
-    <div class="bg-blue-100 m-2 rounded-lg animacion">
+  <div v-if="mostrar(nombre)" :class="{inactive:isInactive}"  class="w-69 mx-auto p-1">
+    <div class="ferromex-color border border-black m-2 rounded-3xl animacion">
       <router-link :to="ruta" tag="div" class="">
-      <fa icon="coffee" class="h-52 text-blue-800"/>
-      <!-- <img class="imagen-modulo  "  :src="require('@/assets/' + imagen)" /> -->
+      <img class="imagen-modulo" :src="require('@/assets/' + imagen)" />
     </router-link>
-    <h1 class="text-center py-5 font-titulo font-bold">{{ titulo }}</h1>
+    <h1 class="text-center text-white text-xl py-5 font-titulo">{{ titulo }}</h1>
     </div>
   </div>
 </template>
-
-
-
 <script>
 //import jwt_decode from "jwt-decode";
 import Servicio from '../Servicios/Token-Services';
