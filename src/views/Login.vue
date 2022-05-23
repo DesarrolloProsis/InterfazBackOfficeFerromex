@@ -1,12 +1,12 @@
 <template>
-<div class="login">
-  <Header/>
+<div class="login ">
+  <!-- <Header/> -->
   <div class="flex h-screen  min-700">
-    <div id="" class="flex absolute justify-center items-center mx-auto h-screen w-screen min-700-imp">
+    <div id="" class="flex absolute justify-center items-center mx-auto h-12 w-screen min-700-imp">
       <div class="absolute justify-end ">
-        <p id="login-title" class="font-titulo font-bold">Monitoreo de Pagos Electrónicos</p>
-        <img class="img-centered" src="~@/assets/Login/top-user-logo.png" />
-        <div class="bg-login-module" style="max-width: 500px; margin: auto">
+        <!-- <p id="login-title" class="font-titulo font-bold">Monitoreo de Pagos Electrónicos</p> -->
+        <img class="img-centered rounded-full " src="~@/assets/Login/logoferromex.png" />
+        <div class="bg-login-module" style="max-width: 800px; margin: auto">
           <div class="error" v-if="mensaje != ''">
               {{mensaje}}
           </div>
@@ -18,21 +18,24 @@
             <img class="w-10 h-10 mt-1 mr-2" src="~@/assets/Login/password.png" />            
             <input id="password" v-model="pass" class="input-field" type="password" placeholder="Contraseña" />
           </div>
-            <button class="btn" @click="login()">Iniciar Sesión</button>
+          <button class="btn mt-12" @click="login()">Iniciar Sesión</button>
         </div>
       </div>
     </div>
-    <div id="min-figura" class="ml-auto figura min-figura  "></div>
     <div id="login-bg" class=" hidden md:block"></div>
   </div>
-  <Footer/>
+  <Footer 
+    titulocentro = "BOSQUE DE CIRUELOS NO 99,COL. BOSQUES DE LAS LOMAS, MÉXICO, D.F.,C.P. 11700"
+    tituloderecha = "V 2.0.5"
+    tituloizquierda = ""
+    color = "red"
+  />  
 </div>
 </template>
 
 <script>
 const API = process.env.VUE_APP_URL_API_PRODUCCION
 import Footer from "../components/Footer-login.vue";
-import Header from "../components/Header-login.vue";
 import axios from "axios";
 import serviceToken from '../Servicios/Token-Services'
 //import jwt_decode from "jwt-decode";
@@ -40,7 +43,6 @@ export default {
 
   components: {
     Footer,
-    Header
   },
   props: {
     msg: String,
@@ -123,20 +125,13 @@ export default {
     visibility: hidden;
   }
 }
-
-#login-bg {
-  /*background-color: blue;*/
-  background-image: url("~@/assets/Login/bg-login.png");
-  background-size: cover;
-}
-
 #login-form {
   background-color: #ddd8d8;
   min-height: 100vh;
 }
 
 .bg-login-module {
-  background-color: #ebf8ff;
+  background-color: #f5fafd;
   padding: 100px 50px;
   border-radius: 10px;
   
@@ -167,14 +162,14 @@ export default {
 
 /* Set a style for the submit button */
 .btn {
-  background-color: #2c5282;
+  background-color: #BB2028;
   color: white;
-  padding: 15px 20px;
+  padding: 15px;
   border: none;
   cursor: pointer;
   width: 100%;
   opacity: 0.9;
-  border-radius: 25px;
+  border-radius: 10px;
 }
 
 .btn:focus {
