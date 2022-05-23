@@ -1,6 +1,6 @@
 <template>
   <Navbar/>
-  <h1 class="title font-titulo font-bold">Administración de Roles</h1>
+  <h1 class="title font-titulo font-bold">Roles de Usuario</h1>
     <!-- Modal Rol -->
   <div class="sticky inset-0 " :class="{'modal-container': userModal}">
     <div v-if="userModal" class="rounded-lg  justify-center border absolute inset-x-0 bg-white border-gray-400 w-69  mx-auto px-12 py-10 shadow-2xl mt-66">
@@ -26,32 +26,37 @@
       </div>
     </div>
   </div>
+  <!-- Header Rol  -->
   <div class="container mx-auto px-0 pb-24 pt-4">    
-    <div class="flex flex-wrap bg-blue rounded-lg">
-      <div class="flex-none filter-style">
-        <FormTramoPlaza @cambiar-tramo-plaza="recibir_tramo_plaza" :tipo="'Antifraude'"/>
+    <div class="flex flex-wrap ferromex-color p-1 rounded-lg">
+      <div class="flex-none my-auto text-white font-md p-2 ml-10">
+        Nombre:<input v-model="tag" type="text" class="rounded ml-2" />
       </div>
-      <div class="flex-none filter-style">
-        Nombre:
-        <input v-model="nombre" type="text" class="rounded "/>
-      </div>
-      <div class="flex-none filter-style">
-        Estatus:
+      <div class="flex-none my-auto text-white font-md p-2">
+        Estatus:  
         <select v-model="estatus" class="flex-none filter-style color-black rounded" name="select" placeholder="Selecciona">
           <option hidden selected>Seleccione </option>
           <option value="true">Activo</option>
           <option value="false">Inactivo</option>
         </select>
       </div>
-      <div class="flex-none filter-style">
-        <button @click="buscar(nombre,estatus)"  class="btn-buscar">Buscar</button>
-        <button @click="todos()"  class="btn-buscar mx-3">Todos</button>
+      <div class="flex-none my-auto text-white font-md p-2 ml-10">
+        <button @click="buscar()" class="btn-buscar animacion">Buscar</button>
+      </div>
+      <div class="flex-none my-auto text-white font-md p-2 ml-10">
+        <button @click="buscar()" class="btn-buscar animacion">Todos</button>
+      </div>
+      <div class="flex-none my-auto text-white font-md p-2 ml-56">
+        <button @click="abrir_modal_new_rol" class="btn-buscar animacion">Agregar Rol</button>
+      </div>
+      <div class="flex-none my-auto font-md p-2 ml-3 w-66">
+        <FilesDownload @download-api="downloadApi" class=""/>
       </div>
     </div>
-    <div class="mb-6">
-      <button @click="abrir_modal_new_rol" :class="{'hidden':!habilitar}" class="w-full botonIconBuscar justify-center mt-3 -mb-8">Agregar Rol</button>
-    </div>    
     <TablaListaPerfiles :dataPerfiles="roles"/>
+    <div class="mt-20 -mb-14">
+      <Paginacion :total-pages="totalPaginas" :total="100" :current-page="currentPage" :has-more-pages="hasMorePages" @pagechanged="showMore"/>
+    </div>
   </div>
   <!-- MODAL CARGANDO -->
   <Spinner :modalLoading="modalLoading"/>
@@ -60,10 +65,11 @@
 
 <script>
 import TablaListaPerfiles from "../../components/Tabla-listaperfiles";
-import FormTramoPlaza from '../../components/Form-tramoplaza.vue';
+import Paginacion from "../../components/Paginacion.vue"
+import FilesDownload from '../../components/Files-descargar.vue'
 import Spinner from '../../components/Spn.vue'
 import Navbar from "../../components/Navbar.vue";
-import Footer from "../../components/Footer-login";
+import Footer from "../../components/Footer";
 import axios from 'axios';
 import Multiselect from '@vueform/multiselect'
 import { notify } from "@kyvg/vue3-notification";
@@ -76,8 +82,9 @@ export default {
     Navbar,
     Multiselect,
     Footer,
-    FormTramoPlaza,
-    Spinner
+    Spinner,
+    FilesDownload,
+    Paginacion
   },
   setup(){
     
@@ -89,17 +96,19 @@ export default {
     const userModal = ref(false)
     const habilitar = ref(false)
     const modalLoading = ref(false)
+    //Paginacion
+    const totalPaginas = ref(0) //variable que indica el número total de páginas por resultado
+    const currentPage = ref(1) //variable que indica la página en la que estás dentro de la paginación, en la primer carga siempre es la página 1
+    const hasMorePages = ref(true) //variable para poder cambiar de páginas con los botones
+    const numRespuesta = ref(10)//Variable que indica el número de respuestas por página
+    //addEmi
+    const formato = ref('')
     const newRol = reactive({ nombre: "", vistas: [] })
-    const optionRoles = [{text: 'Monitoreo Servicio', alias: 'monitoreoServicios'},
-                         {text: 'Monitoreo Carriles', alias: 'monitoreoCarriles'},
-                         {text: 'Monitoreo Cruces', alias: 'monitoreoCruces'},
-                         {text: 'Envio Transacciones', alias: 'envioTransacciones'},
-                         {text: 'Busqueda Cruces', alias: 'busquedaCruces'},
-                         {text: 'Bitacora Accesos', alias: 'bitacoraAccesos'},
-                         {text: 'Bitacoras', alias: 'bitacoras'},
-                         {text: 'Estatus Tags', alias: 'estatusTags'},
-                         {text: 'Configuracion', alias: 'configuracion'}]
-    
+    const optionRoles = [{text: 'Registro de Información de Telepeaje', alias: 'RegistroInformacion'},
+                          {text: 'Mantenimiento Tags', alias: 'ManteniminetoTag'},
+                          {text: 'Gestión de Usuarios', alias: 'GestionUsuarios'},
+                          {text: 'Generación de Reportes', alias: 'GeneracionReportes'},
+                        ]
     const buscar_roles = async () => { 
       axios.get(`${API}/CatalogoRoles/null/null/${plaza.value}`)
         .then((response) => {
@@ -115,15 +124,10 @@ export default {
       //objeto para post api
       let objRol = {}
       objRol['nombreRol'] = newRol.nombre
-      objRol['monitoreoServicios'] = false,
-      objRol['monitoreoCarriles'] = false,
-      objRol['monitoreoCruces'] = false,
-      objRol['envioTransacciones'] = false,
-      objRol['busquedaCruces'] = false,
-      objRol['bitacoraAccesos'] = false,
-      objRol['bitacoras'] = false,
-      objRol['estatusTags'] = false,
-      objRol['configuracion'] = false,
+      objRol['RegistroInformacion'] = false,
+      objRol['ManteniminetoTag'] = false,
+      objRol['GestionUsuarios'] = false,
+      objRol['GeneracionReportes'] = false,
       objRol['dateStamp'] = new Date(),
       objRol['activo'] = true                 
       //Validamos que plazas selecciono el usuario y modificamos objRol            
@@ -179,7 +183,7 @@ export default {
       plaza.value = value.plaza
     }
     //onMounted(buscar_roles)
-    return { roles, userModal, buscar_roles, abrir_modal_new_rol, newRol, optionRoles, craer_nuevo_rol, nombre, estatus, buscar, todos, recibir_tramo_plaza, habilitar, modalLoading }
+    return { roles, userModal, buscar_roles, abrir_modal_new_rol, newRol, optionRoles, craer_nuevo_rol, nombre, estatus, buscar, todos, recibir_tramo_plaza, habilitar, modalLoading, formato, totalPaginas, currentPage, hasMorePages, numRespuesta }
 
   }, 
 };
@@ -227,16 +231,6 @@ export default {
   border-radius: 5px;
 }
 .btn-carriles:focus {
-  outline: 0;
-}
-.btn-buscar {
-  background-color: #017296;
-  color: white;
-  height: 100%;
-  padding: 0px 5px;
-  border-radius: 5px;
-}
-.btn-buscar:focus {
   outline: 0;
 }
 .color-black {

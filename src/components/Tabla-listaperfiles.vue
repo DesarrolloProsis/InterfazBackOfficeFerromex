@@ -1,11 +1,17 @@
 <template>
   <div class="responsive-table">
     <table class="tftable">
-      <tr class="">
-        <th>Perfil</th>             
-        <!-- <th>Estatus</th>
-        <th>Modulos</th>  -->  
-        <th>Acciones</th>
+      <tr class="h-10">
+        <th>
+          <label class="rounded-full px-28 bg-gray-200 ring-2 ring-gray-500 p-2 text-black">Perfil</label>
+        </th>             
+        <th>
+          <label class="rounded-full px-28 bg-gray-200 ring-2 ring-gray-500 p-2 text-black">Estatus</label>
+        </th>
+        <!--<th>Modulos</th>  -->  
+        <th>
+          <label class="rounded-full px-28 bg-gray-200 ring-2 ring-gray-500 p-2 text-black">Acciones</label>
+        </th>
       </tr>
       <tr v-for="(perfiles, index) in dataPerfiles" :key="index">
         <td :class="{'text-gray-300': perfiles.activo == false}">{{ perfiles.nombreRol }}</td>
@@ -27,6 +33,7 @@
     </table>
   </div>
   <br />
+  <!-- Editar Rol -->
   <div class="sticky inset-0 " :class="{'modal-container': isModulosActive}">
     <div v-if="isModulosActive" class="rounded-lg  justify-center border absolute inset-x-0 bg-white border-gray-400 w-69  mx-auto px-12 py-10 shadow-2xl mt-60">
       <p class="text-gray-900 font-bold text-2xl -mt-8 mb-8 text-center">Actualizar Módulos {{ perfilSelected.perfil }}</p>
@@ -221,7 +228,7 @@ export default {
 }
 .tftable th {
   font-size: 14px;
-  background-color: #2c5282;
+  background-color: #ffffff;
   border-width: 5px;
   padding: 8px;
   border-style: solid;
