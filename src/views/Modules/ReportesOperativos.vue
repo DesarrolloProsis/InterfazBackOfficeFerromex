@@ -3,7 +3,7 @@
     <h1 class="title font-bold font-titulo">Reportes Operativos</h1>
     <div class="container mx-auto px-auto pt-0 md:px-48 md:pt-10 ">
         <div class="flex flex-wrap">
-            <div class="w-full p-7 -mt-12 md:w-1/3" :class="{'ml-20': mostrar == 'false'}">
+            <button  type="button" class="w-full p-7 -mt-12 md:w-1/3"  @click="showModal = true">
                     <div class="rounded-lg  animacion flex flex-col bg-ferromex border-2 border-gray-900" >
                         <div class="text-center">
                             <fa icon="calendar-day" class="text-white h-32"/>
@@ -12,8 +12,8 @@
                             <h1>Transacciones Detalle Dia</h1>
                         </div>
                     </div>
-            </div>
-            <div class="w-full p-7 -mt-12 md:w-1/3" :class="{'ml-20': mostrar == 'false'}">
+            </button>
+            <button class="w-full p-7 -mt-12 md:w-1/3" >
                     <div class="rounded-lg  animacion flex flex-col bg-ferromex border-2 border-gray-900" >
                         <div class="text-center">
                             <fa icon="calendar-week" class="text-white h-32"/>
@@ -22,8 +22,8 @@
                             <h1>Transacciones Detalle Semana</h1>
                         </div>
                     </div>
-            </div>
-            <div class="w-full p-7 -mt-12 md:w-1/3" :class="{'ml-20': mostrar == 'false'}">
+            </button>
+            <button class="w-full p-7 -mt-12 md:w-1/3" >
                     <div class="rounded-lg  animacion flex flex-col bg-ferromex border-2 border-gray-900" >
                         <div class="text-center">
                             <fa icon="calendar-days" class="text-white h-32"/>
@@ -32,61 +32,38 @@
                             <h1>Transacciones Detalle Mes</h1>
                         </div>
                     </div>
-            </div>
+            </button>
         </div>
     </div>
     <Footer/>
+    <Modal :show="showModal" />
 </template>
 <script>
-import Servicio from '../../Servicios/Token-Services';
+//import Servicio from '../../Servicios/Token-Services';
 //import jwt_decode from "jwt-decode";
 import { ref } from 'vue'
 import Navbar from "../../components/Navbar.vue";
 import Footer from "../../components/Footer";
+import Modal from "../../components/Modal.vue"
 
 export default {
     components: {
         Navbar,
         Footer,
+        Modal
     },
-    setup() {
+    setup(){
+        const showModal = ref(false)
         const modulos = ref([])
-        const carriles = ref(true)
-        //if(Servicio.getCookie("Token")){
-        if(Servicio.obtenerToken()){
-            //let info = jwt_decode(Servicio.getCookie("Token"))
-            let info = Servicio.obtenerInfoUser()
-            carriles.value = info['Monitoreo Carriles']
-        }
-        if(carriles.value == 'false'){
+
+        
+        // //if(Servicio.getCookie("Token")){
+        // if(Servicio.obtenerToken()){
+        //     //let info = jwt_decode(Servicio.getCookie("Token"))
+        //     let info = Servicio.obtenerInfoUser()
+        //     carriles.value = info['Monitoreo Carriles']
+        // }
             modulos.value = [
-                {
-                    img_src: "Menu/bitacoras.png",
-                    nombre: "Transacciones Detalle Dia",
-                    ruta: "/inicio/bitacora-antifraude",
-                    color: "red"
-                },
-                {
-                    img_src: "Menu/bitacoras.png",
-                    nombre: "Transacciones Detalle Semana",
-                    ruta: "/inicio/monitoreo-servicios",
-                    color: "red"
-                },
-                {
-                    img_src: "Menu/bitacoras.png",
-                    nombre: "Transacciones Detalle Mes",
-                    ruta: "/inicio/bitacora-accesos",
-                    color: "red"
-                },
-            ]
-        }else{
-            modulos.value = [
-                /* {
-                    img_src: "Menu/bitacoras.png",
-                    nombre: "Bitácora De Alarmas",
-                    ruta: "/inicio/monitoreo-carriles/bitacora-alarmas",
-                    color: "green"
-                }, */
                 {
                     img_src: "Menu/capacidad-de-almacenamiento.png",
                     nombre: "Transacciones Detalle Dia",
@@ -106,9 +83,9 @@ export default {
                     color: "red"
                 }
             ]    
-        }
+        
 
-        return {modulos, carriles}
+        return {modulos, /*carriles*/ showModal}
     }
 }
 </script>
