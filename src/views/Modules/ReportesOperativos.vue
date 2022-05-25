@@ -3,7 +3,7 @@
     <h1 class="title font-bold font-titulo">Reportes Operativos</h1>
     <div class="container mx-auto px-auto pt-0 md:px-48 md:pt-10">
         <div class="flex flex-wrap">
-            <button  type="button" class="w-full p-7 -mt-12 md:w-1/2"  @click="showModal = !showModal">
+            <router-link to="/inicio/ReportesCajero" class="w-full p-7 -mt-12 md:w-1/2">
                     <div class="rounded-lg  animacion flex flex-col bg-ferromex border-2 border-gray-900" >
                         <div class="text-center">
                             <fa icon="dollar-sign" class="text-white h-32 p-2"/>
@@ -12,11 +12,11 @@
                             <h1>Cajero</h1>
                         </div>
                     </div>
-            </button>
+            </router-link>
             <router-link to="/inicio/ReportesTurno" class="w-full p-7 -mt-12 md:w-1/2">
                     <div class="rounded-lg  animacion flex flex-col bg-ferromex border-2 border-gray-900" >
                         <div class="text-center">
-                            <fa icon="calendar-week" class="text-white h-32 p-2"/>
+                            <fa icon="calendar-check" class="text-white h-32 p-2"/>
                         </div>
                         <div class="text-center py-5 font-titulo font-bold text-white ">
                             <h1>Turno</h1>
@@ -26,8 +26,6 @@
         </div>
     </div>
     <Footer/>
-    <Modal :show="showModal"></Modal>
-    <Modal :show="showModalTurno"></Modal>
 </template>
 <script>
 //import Servicio from '../../Servicios/Token-Services';
@@ -35,17 +33,16 @@
 import { ref } from 'vue'
 import Navbar from "../../components/Navbar.vue";
 import Footer from "../../components/Footer";
-import Modal from "../../components/Modal.vue"
+
 
 export default {
     components: {
         Navbar,
         Footer,
-        Modal
+      
     },
     setup(){
-        const showModal = ref(false)
-        const showModalTurno = ref(false)
+       
         const modulos = ref([])
 
         
@@ -70,7 +67,7 @@ export default {
                 },
                 
             ]  
-        return {modulos,showModal,showModalTurno}
+        return {modulos}
     }
 }
 </script>

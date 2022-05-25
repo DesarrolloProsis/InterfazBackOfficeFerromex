@@ -18,6 +18,8 @@ import BitacoraAntifraude from "@/views/Modules/BitacoraAntifraude.vue";
 import BitacoraListas from "@/views/Modules/BitacoraListas.vue"
 import ReportesOperativos from '@/views/Modules/ReportesOperativos.vue'
 import ReporteTurno from '../views/Modules/ReporteTurno.vue'
+import ReporteCajero from '../views/Modules/ReporteCajero.vue'
+import Cruces from '../views/Modules/Cruces.vue'
 import Servicio from '../Servicios/Token-Services'
 
 
@@ -152,6 +154,24 @@ const routes = [{
     meta: {
       requiresCookie: true,
       nombre:"Reporte Turno"
+    }
+  },
+  {
+    path: "/inicio/ReportesCajero",
+    name: "Reporte Cajero",
+    component: ReporteCajero,
+    meta: {
+      requiresCookie: true,
+      nombre:"Reporte Cajero"
+    }
+  },
+  {
+    path: "/inicio/Cruces",
+    name: "Cruces",
+    component: Cruces,
+    meta: {
+      requiresCookie: true,
+      nombre:"Cruces"
     }
   },
   {

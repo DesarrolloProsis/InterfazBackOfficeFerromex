@@ -37,8 +37,18 @@
                   <button :disabled="modalLoading" class="font-bold w-full" :class="{'cursor-not-allowed': modalLoading}" @click="limpiar(plaza)">Todos</button>
                 </div>
               </div>
+              <div class="w-full flex-1">
+                <div class="mt-3 bg-green-200 flex border border-green-200 rounded hover:bg-green-700 hover:text-white w-20">                      
+                  <button :disabled="modalLoading" class="font-bold w-full " :class="{'cursor-not-allowed': modalLoading}" @click="showModal = !showModal">+ TAG</button>
+                </div>
+              </div>
               <div class="w-full flex-2">
-                <FilesDownload @download-api="downloadApi" class=""/>
+                <div class="mt-3 bg-blue-200 flex border border-blue-200 rounded hover:bg-blue-700 hover:text-white ">                      
+                  <button :disabled="modalLoading" class="font-bold w-full " :class="{'cursor-not-allowed': modalLoading}">
+                    Descargar
+                    <fa icon="download" class="text-black hover:text-white"/>
+                  </button>
+                </div>
               </div>
               </div>
         </div>
@@ -48,6 +58,24 @@
   </div>
   <Paginacion :total-pages="totalPaginas" :total="100" :current-page="currentPage" :has-more-pages="hasMorePages" @pagechanged="showMore"/>  
   <Spinner :modalLoading="modalLoading"/>
+  <Modal :show="showModal">
+        <h1 class="text-4xl font-bold font-titulo text-center mt-4">Cruces Totales</h1>
+            <div class="flex w-full justify-center gap-20 mt-10">
+                <div class="flex flex-col gap-10">
+                    <div>
+                        <label for="">TAG</label>
+                    </div>
+                </div>
+                <div class="flex flex-col gap-10">
+                    <div>
+                        <input type="text" class="border border-gray-500 rounded">
+                    </div>
+                </div>
+            </div>
+            <div class="flex w-full justify-center mt-10 mb-8">
+                <button class="border w-40 bg-ferromex text-white">Agregar TAG</button>
+            </div>
+  </Modal>
 <Footer/>
 </template>
 <script>
@@ -57,21 +85,21 @@ import TablaBusquedaTransacciones from "../../components/Tabla-busquedatransacci
 import Navbar from "../../components/Navbar.vue";
 import Footer from "../../components/Footer";
 import axios from "axios";
-import FilesDownload from '../../components/Files-descargar.vue'
 import ServiceFiles from '../../Servicios/Files-Service'
 import Paginacion from "../../components/Paginacion.vue"
 import { notify } from "@kyvg/vue3-notification";
 import Spinner from '../../components/Spn.vue'
 import { ref } from 'vue'
+import Modal from "../../components/Modal.vue"
 export default {
   name: "BusquedaCruces",
   components: {
     TablaBusquedaTransacciones,
     Navbar,
     Footer,   
-    FilesDownload,
     Paginacion,
-    Spinner
+    Spinner,
+    Modal
   },
   setup() {
     const cruces = ref([])
@@ -87,6 +115,7 @@ export default {
     const hasMorePages = ref(true)
     const modalLoading = ref(false)
     const numRespuesta = ref(10)
+    const showModal = ref(false)
     //Función que busca las transacciones en la plaza, con o sin filtros
     function serch(plaza,tag, fecha){
       modalLoading.value = true
@@ -388,7 +417,7 @@ export default {
       }
     }
 
-    return{ serch, limpiar, showMore, recibir_tramo_plaza, downloadApi, cruces, token, tag, fecha, formato, tramo, plaza, page, totalPaginas, currentPage, hasMorePages, modalLoading}
+    return{ serch, limpiar, showMore, recibir_tramo_plaza, downloadApi, cruces, token, tag, fecha, formato, tramo, plaza, page, totalPaginas, currentPage, hasMorePages, modalLoading,showModal}
   }
 }
 </script>

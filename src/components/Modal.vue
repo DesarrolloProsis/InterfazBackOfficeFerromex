@@ -9,10 +9,11 @@
               aria-modal="true"
               aria-labelledby="modal-headline"
           >
-            <slot>
-              <button class="w-full flex flex-row-reverse p-4">
+          <button class="w-full flex flex-row-reverse p-3">
                 <fa icon="x" class="h-5" @click="closeModal()" />
-              </button>
+          </button>
+            <slot>
+              
             </slot>
           </div>
       </div>

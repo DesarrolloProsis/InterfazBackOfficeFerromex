@@ -1,36 +1,35 @@
 <template>
 <Navbar/>
-
-  <h1 class="text-4xl font-bold font-titulo text-center mb-4">Reporte Turno</h1>
-  <div class="flex w-full justify-center gap-10">
+  <h1 class="text-4xl font-bold font-titulo text-center">Reporte Turno</h1>
+  <div class="flex w-full justify-center gap-20 mt-10">
     <div class="flex flex-col gap-10">
         <div>
-            <label for="">Primer label</label>
+            <label for="">Plaza de Cobro</label>
         </div>
         <div>
-            <label for="">Segundo label</label>
+            <label for="">Turno</label>
         </div>
         <div>
-            <label for="">Tercer label</label>
+            <label for="">Fecha</label>
         </div>
-        <div>
-            <label for="">Cuarto label</label>
-        </div>
+        
     </div>
     <div class="flex flex-col gap-10">
          <div>
-            <label for="">Primer label</label>
+            <label for="">Mazanillo</label>
         </div>
         <div>
-            <label for="">Segundo label</label>
+            <select>
+                <option>Seleccione un turno</option>
+            </select>
         </div>
         <div>
-            <label for="">Tercer label</label>
-        </div>
-        <div>
-            <label for="">Cuarto label</label>
+            <input type="date">
         </div>
     </div>
+  </div>
+  <div class="flex w-full justify-center mt-20">
+      <button class="border w-40">Generar Reporte</button>
   </div>
 <Footer/>
 </template>
