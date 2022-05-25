@@ -1,42 +1,33 @@
 <template>
     <Navbar/>
     <h1 class="title font-bold font-titulo">Reportes Operativos</h1>
-    <div class="container mx-auto px-auto pt-0 md:px-48 md:pt-10 ">
+    <div class="container mx-auto px-auto pt-0 md:px-48 md:pt-10">
         <div class="flex flex-wrap">
-            <button  type="button" class="w-full p-7 -mt-12 md:w-1/3"  @click="showModal = true">
+            <button  type="button" class="w-full p-7 -mt-12 md:w-1/2"  @click="showModal = !showModal">
                     <div class="rounded-lg  animacion flex flex-col bg-ferromex border-2 border-gray-900" >
                         <div class="text-center">
-                            <fa icon="calendar-day" class="text-white h-32"/>
+                            <fa icon="dollar-sign" class="text-white h-32 p-2"/>
                         </div>
                         <div class="text-center py-5 font-titulo font-bold text-white">
-                            <h1>Transacciones Detalle Dia</h1>
+                            <h1>Cajero</h1>
                         </div>
                     </div>
             </button>
-            <button class="w-full p-7 -mt-12 md:w-1/3" >
+            <router-link to="/inicio/ReportesTurno" class="w-full p-7 -mt-12 md:w-1/2">
                     <div class="rounded-lg  animacion flex flex-col bg-ferromex border-2 border-gray-900" >
                         <div class="text-center">
-                            <fa icon="calendar-week" class="text-white h-32"/>
+                            <fa icon="calendar-week" class="text-white h-32 p-2"/>
                         </div>
                         <div class="text-center py-5 font-titulo font-bold text-white ">
-                            <h1>Transacciones Detalle Semana</h1>
+                            <h1>Turno</h1>
                         </div>
                     </div>
-            </button>
-            <button class="w-full p-7 -mt-12 md:w-1/3" >
-                    <div class="rounded-lg  animacion flex flex-col bg-ferromex border-2 border-gray-900" >
-                        <div class="text-center">
-                            <fa icon="calendar-days" class="text-white h-32"/>
-                        </div>
-                        <div class="text-center py-5 font-titulo font-bold text-white">
-                            <h1>Transacciones Detalle Mes</h1>
-                        </div>
-                    </div>
-            </button>
+            </router-link>
         </div>
     </div>
     <Footer/>
-    <Modal :show="showModal" />
+    <Modal :show="showModal"></Modal>
+    <Modal :show="showModalTurno"></Modal>
 </template>
 <script>
 //import Servicio from '../../Servicios/Token-Services';
@@ -54,6 +45,7 @@ export default {
     },
     setup(){
         const showModal = ref(false)
+        const showModalTurno = ref(false)
         const modulos = ref([])
 
         
@@ -66,26 +58,19 @@ export default {
             modulos.value = [
                 {
                     img_src: "Menu/capacidad-de-almacenamiento.png",
-                    nombre: "Transacciones Detalle Dia",
+                    nombre: "Cajero",
                     ruta: "/inicio/bitacora-antifraude",
                     color: "red"
                 },
                 {
                     img_src: "Menu/monitoreo-servicios.png",
-                    nombre: "Transacciones Detalle Semana",
+                    nombre: "Turno",
                     ruta: "/inicio/bitacora-listas",
                     color: "red"
                 },
-                {
-                    img_src: "Menu/almacenamiento-de-base-de-datos.png",
-                    nombre: "Transacciones Detalle Mes",
-                    ruta: "/inicio/bitacora-accesos",
-                    color: "red"
-                }
-            ]    
-        
-
-        return {modulos, /*carriles*/ showModal}
+                
+            ]  
+        return {modulos,showModal,showModalTurno}
     }
 }
 </script>

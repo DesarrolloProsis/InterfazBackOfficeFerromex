@@ -17,7 +17,9 @@ import Bitacoras from "@/views/Modules/Bitacoras.vue";
 import BitacoraAntifraude from "@/views/Modules/BitacoraAntifraude.vue";
 import BitacoraListas from "@/views/Modules/BitacoraListas.vue"
 import ReportesOperativos from '@/views/Modules/ReportesOperativos.vue'
+import ReporteTurno from '../views/Modules/ReporteTurno.vue'
 import Servicio from '../Servicios/Token-Services'
+
 
 const routes = [{
     path: "/",
@@ -141,6 +143,15 @@ const routes = [{
     meta: {
       requiresCookie: true,
       nombre:"Reportes Operativos"
+    }
+  },
+  {
+    path: "/inicio/ReportesTurno",
+    name: "Reporte Turno",
+    component: ReporteTurno,
+    meta: {
+      requiresCookie: true,
+      nombre:"Reporte Turno"
     }
   },
   {

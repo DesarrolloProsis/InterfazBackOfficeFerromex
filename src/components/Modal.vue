@@ -10,7 +10,10 @@
               aria-labelledby="modal-headline"
           >
             <slot>
-              Este es mi modal</slot>
+              <button class="w-full flex flex-row-reverse p-4">
+                <fa icon="x" class="h-5" @click="closeModal()" />
+              </button>
+            </slot>
           </div>
       </div>
     </div>
@@ -33,12 +36,16 @@ export default {
     watch(
       () => props.show,
       show => {
-        showModal.value = show;
-        console.log(showModal.value)
+        showModal.value = true;
+        console.log(show)
         },
     );
+    function closeModal() {
+        showModal.value = false;
+    }
     return {
       showModal,
+      closeModal
     }
   }
 }
