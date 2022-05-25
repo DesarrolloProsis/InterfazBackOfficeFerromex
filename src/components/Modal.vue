@@ -10,7 +10,7 @@
               aria-labelledby="modal-headline"
           >
           <button class="w-full flex flex-row-reverse p-3">
-                <fa icon="x" class="h-5" @click="closeModal()" />
+                <fa icon="x" class="h-4" @click="closeModal()" />
           </button>
             <slot>
               

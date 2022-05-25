@@ -52,5 +52,8 @@
 .ferromex-color{
     background-color: #BB2028;
 }
+.input{
+    @apply border border-gray-500 rounded w-44
+}
 @tailwind components;
 @tailwind utilities;

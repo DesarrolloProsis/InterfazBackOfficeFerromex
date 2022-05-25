@@ -22,15 +22,15 @@
             <label for="">Mazanillo</label>
         </div>
         <div>
-            <input type="text" placeholder="XXXXX"/>
+            <input type="text" placeholder="XXXXX" class="input"/>
         </div>
         <div>
-            <select>
+            <select class="input">
                 <option>Selecciones un turno</option>
             </select>
         </div>
         <div>
-            <input type="date">
+            <input type="date" class="input">
         </div>
     </div>
   </div>

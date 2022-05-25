@@ -16,18 +16,14 @@
           </th>
       </tr>
       <tr v-for="(cruces, index) in dataCruces" :key="index">
+        <td>{{cruces.tag}}</td>
+        <td>{{cruces.estatus}}</td>
         <td>{{moment(cruces.fecha).format("YYYY-MM-DD  HH:mm:ss a")}}</td>
-        <td>{{cruces.carril}}</td>
-        <td>{{cruces.tipo}}</td>
-        <td> 
-          <span v-if="cruces.tag == ''">Efectivo</span> 
-          <span v-else>{{cruces.medioPago}}</span>
-        </td>
-        <td>${{cruces.tarifa}}</td>
-        <td> 
-          <span v-if="cruces.tag == '' ">N/A</span> 
-          <span v-else>{{cruces.tag}}</span> 
-        </td>
+        <td><select class="input">
+          <option>Activar</option>
+          <option>Deshabilitar</option>
+          <option>Eliminar</option>
+        </select></td>
       </tr>
     </table>
   </div>

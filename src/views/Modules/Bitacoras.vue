@@ -41,19 +41,19 @@
                 </div>
                 <div class="flex flex-col gap-10">
                     <div>
-                        <input type="date">
+                        <input type="date" class="input">
                     </div>
                     <div>
-                        <input type="month">
+                        <input type="month" class="input">
                     </div>
                     <div>
-                        <input type="week">
+                        <input type="week" class="input">
                     </div>
                     
                 </div>
             </div>
             <div class="flex w-full justify-center mt-10 mb-8">
-                <button class="border w-40 bg-ferromex text-white">Generar Reporte</button>
+                <button class="border w-40 bg-ferromex text-white ferromex-color">Generar Reporte</button>
             </div>
     </Modal>
 </template>

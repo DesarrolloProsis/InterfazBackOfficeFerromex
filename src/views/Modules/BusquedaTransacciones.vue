@@ -15,7 +15,7 @@
               <div class="w-full inline-flex flex-2 justify-center">
                 <label for="tag" class="text-white my-auto">Estatus:</label>
                 <div class="mt-3 p-1 bg-white flex border border-gray-200 rounded ml-2 h-6 w-40">
-                  <select v-model="estaus"  class="w-full text-gray-800">
+                  <select v-model="estaus"  class="w-full h-full text-gray-800">
                     <option value="">Estatus</option>
                     <option value=""></option>
                   </select>
@@ -28,7 +28,7 @@
                 </div>
               </div>
               <div class="w-full flex-1">
-                <div class="mt-3 bg-red-200 flex border border-red-200 rounded hover:bg-red-700 hover:text-white w-20">                      
+                <div class="mt-3 bg-red-200 flex border border-red-200 rounded hover:bg-red-700 hover:text-white w-20 ">                      
                   <button :disabled="modalLoading" class="font-bold w-full" :class="{'cursor-not-allowed': modalLoading}" @click="serch( tag, estatus, fecha)">Buscar</button>
                 </div>
               </div>
@@ -38,8 +38,8 @@
                 </div>
               </div>
               <div class="w-full flex-1">
-                <div class="mt-3 bg-green-200 flex border border-green-200 rounded hover:bg-green-700 hover:text-white w-20">                      
-                  <button :disabled="modalLoading" class="font-bold w-full " :class="{'cursor-not-allowed': modalLoading}" @click="showModal = !showModal">+ TAG</button>
+                <div class="mt-3 bg-green-200 flex border border-green-200 rounded hover:bg-green-700 hover:text-white w-32">                      
+                  <button :disabled="modalLoading" class="font-bold w-full " :class="{'cursor-not-allowed': modalLoading}" @click="showModal = !showModal">Agregar TAG</button>
                 </div>
               </div>
               <div class="w-full flex-2">
@@ -102,7 +102,40 @@ export default {
     Modal
   },
   setup() {
-    const cruces = ref([])
+    const cruces = ref([
+    {
+      tag: 'XXXXX',
+      estatus: 'Activo',
+      fecha: '2022/05/22'
+    },
+    {
+      tag: 'XXXXX01',
+      estatus: 'Activo',
+      fecha: '2022/05/22'
+    },
+    {
+      tag: 'XXXXX02',
+      estatus: 'Activo',
+      fecha: '2022/05/22'
+    },
+    {
+      tag: 'XXXXX03',
+      estatus: 'Activo',
+      fecha: '2022/05/22'
+    },
+    {
+      tag: 'XXXXX04',
+      estatus: 'Inctivo',
+      fecha: '2022/05/22'
+    },
+    {
+      tag: 'XXXXX05',
+      estatus: 'Activo',
+      fecha: '2022/05/22'
+    }
+      
+
+    ])
     const token = ref("")
     const tag = ref(null)
     const fecha = ref(null)
@@ -155,119 +188,6 @@ export default {
               });
             }
           })
-        /*if((tag == '' || tag == undefined || tag == null) && (fecha == '' || fecha == undefined || fecha == null)){
-          //axios.get(`${API}/Transacciones/BusquedaTransacciones/${plaza}/${page.value}/null/null`)
-          axios.get(`${API}/Transacciones/BusquedaTransacciones/PaginacionCompleta/${plaza}/null/null/${page.value}/${numRespuesta.value}`)
-          .then((result)=>{
-            if(result.data.status == "Ok"){
-              modalLoading.value = false
-              totalPaginas.value = result.data.numberPages
-              currentPage.value = result.data.now
-              result.data.body.forEach((e)=>{
-                let obj = {
-                  tag: e.noTag,
-                  carril: e.carril,
-                  fecha: e.fecha,
-                  medioPago: e.nombrePago,
-                  tipo: e.tipoVehiculo,
-                  tarifa: e.tarifa
-                }
-                cruces.value.push(obj)
-              })
-            }else{
-              modalLoading.value = false
-              notify({
-                title:'Sin Información',
-                text:'No sé tiene conexión hacia la plaza seleccionada',
-                type: 'warn'
-              });
-            }
-          })
-        }else if ((tag != '' || tag != undefined || tag != null) && (fecha == '' || fecha == undefined || fecha == null)){
-          //axios.get(`${API}/Transacciones/BusquedaTransacciones/${plaza}/${page.value}/null/${tag}`)
-          axios.get(`${API}/Transacciones/BusquedaTransacciones/PaginacionCompleta/${plaza}/null/${tag}/${page.value}/${numRespuesta.value}`)
-          .then((result)=>{
-            if((result.data.status == "Ok") && (result.data.body.length > 0)){
-              modalLoading.value = false
-              totalPaginas.value = result.data.numberPages
-              currentPage.value = result.data.now
-              result.data.body.forEach((e)=>{
-                let obj = {
-                  tag: e.noTag,
-                  carril: e.carril,
-                  fecha: e.fecha,
-                  medioPago: e.nombrePago,
-                  tipo: e.tipoVehiculo,
-                  tarifa: e.tarifa
-                }
-                cruces.value.push(obj)
-              })
-            }else{
-              modalLoading.value = false
-              notify({
-                title:'Sin Información',
-                text:'No se encontró el tag ingresado',
-                type: 'warn'
-              });
-            }
-          })
-        }else if ((fecha != '' || fecha != undefined || fecha != null) && (tag == '' || tag == undefined || tag == null)){
-          //axios.get(`${API}/Transacciones/BusquedaTransacciones/${plaza}/${page.value}/${fecha}/null`)
-          axios.get(`${API}/Transacciones/BusquedaTransacciones/PaginacionCompleta/${plaza}/${fecha}/null/${page.value}/${numRespuesta.value}`)
-          .then((result)=>{
-            if((result.data.status == "Ok") && (result.data.body.length > 0)){
-              modalLoading.value = false
-              totalPaginas.value = result.data.numberPages
-              currentPage.value = result.data.now
-              result.data.body.forEach((e)=>{
-                let obj = {
-                  tag: e.noTag,
-                  carril: e.carril,
-                  fecha: e.fecha,
-                  medioPago: e.nombrePago,
-                  tipo: e.tipoVehiculo,
-                  tarifa: e.tarifa
-                }
-                cruces.value.push(obj)
-              })
-            }else{
-              modalLoading.value = false
-              notify({
-                title:'Sin Información',
-                text:'No se encontraron transacciones en la fecha indicada',
-                type: 'warn'
-              });
-            }
-          })
-        }else if((tag != '' || tag != undefined || tag != null) && (fecha != '' || fecha != undefined || fecha != null)){
-          //axios.get(`${API}/Transacciones/BusquedaTransacciones/${plaza}/${page.value}/${fecha}/${tag}`)
-          axios.get(`${API}/Transacciones/BusquedaTransacciones/PaginacionCompleta/${plaza}/${fecha}/${tag}/${page.value}/${numRespuesta.value}`)
-          .then((result)=>{
-            if((result.data.status == "Ok") && (result.data.body.length > 0)){
-              modalLoading.value = false
-              totalPaginas.value = result.data.numberPages
-              currentPage.value = result.data.now
-              result.data.body.forEach((e)=>{
-                let obj = {
-                  tag: e.noTag,
-                  carril: e.carril,
-                  fecha: e.fecha,
-                  medioPago: e.nombrePago,
-                  tipo: e.tipoVehiculo,
-                  tarifa: e.tarifa
-                }
-                cruces.value.push(obj)
-              })
-            }else{
-              modalLoading.value = false
-              notify({
-                title:'Sin Información',
-                text:'No se encontraron transacciones',
-                type: 'warn'
-              });
-            }
-          })
-        }*/
       }
     }
     //Función que limpia los input de busqueda y regresa las transacciones de la plaza sin filtros
@@ -276,7 +196,6 @@ export default {
       cruces.value = []
       fecha.value = null
       tag.value = null
-      //axios.get(`${API}/Transacciones/BusquedaTransacciones/${plaza}/${page.value}/null/null`)
       axios.get(`${API}/Transacciones/BusquedaTransacciones/PaginacionCompleta/${plaza}/null/null/${page.value}/${numRespuesta.value}`)
       .then((result)=>{
         if(result.data.status == "Ok"){
@@ -308,7 +227,6 @@ export default {
     function showMore(page){
       if((fecha.value == '' || fecha.value == null || fecha.value == undefined) && (tag.value == '' || tag.value == null || tag.value == undefined)){
         cruces.value = []
-        //axios.get(`${API}/Transacciones/BusquedaTransacciones/${plaza}/${page}/${fecha}/${tag}`)
         axios.get(`${API}/Transacciones/BusquedaTransacciones/PaginacionCompleta/${plaza.value}/null/null/${page}/${numRespuesta.value}`)
         .then((result)=>{
           if(result.data.status == "Ok"){
@@ -330,7 +248,6 @@ export default {
         })
       }else{
         cruces.value = []
-        //axios.get(`${API}/Transacciones/BusquedaTransacciones/${plaza}/${page}/${fecha}/${tag}`)
         axios.get(`${API}/Transacciones/BusquedaTransacciones/PaginacionCompleta/${plaza.value}/${fecha.value}/${tag.value}/${page}/${numRespuesta.value}`)
         .then((result)=>{
           if(result.data.status == "Ok"){
