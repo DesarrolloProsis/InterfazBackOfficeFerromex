@@ -2,6 +2,14 @@ module.exports = {
   purge: ['./index.html', './src/**/*.{vue,js,ts,jsx,tsx}'],
   darkMode: false, // or 'media' or 'class'
   theme: {
+    screens:{
+      'sm': {'min': '320px', 'max': '765px'},
+      'md': {'min': '766px', 'max': '1023px'},
+      'lg': {'min': '1024px', 'max': '1279px'},
+      'xl': {'min': '1280px', 'max':'2040px'},
+      '4k': {'min': '2040px', 'max':'3840px'},
+      'laptop': {'min': '768px', 'max':'1366px'}
+    },
     color: {
       
     },

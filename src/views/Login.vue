@@ -82,7 +82,8 @@ export default {
       params.append('client_secret','')
       axios.post(`${API}/identity/token`, params)
       .then((result) => {
-        console.log(result);
+        serviceToken.guardarToken(result.data.access_token)
+        this.$router.push('/inicio')
       }).catch((error) => {
         console.log(error);
       })
