@@ -18,7 +18,7 @@
             <fa icon="key" class="w-10 h-6 mt-3 mr-2 text-red-700"/>
             <input id="password" v-model="pass" class="input-field" type="password" placeholder="Contraseña" />
           </div>
-          <button class="btn mt-12" @click="login()">Iniciar Sesión</button>
+          <button class="btn mt-12" @click="pruebas()">Iniciar Sesión</button>
         </div>
       </div>
     </div>
@@ -73,6 +73,20 @@ export default {
         this.mensaje = "Escribe tu Usuario y Contraseña."
       }
     },
+    pruebas: function(){
+      var params = new URLSearchParams ()
+      params.append('grant_type','password')
+      params.append('username',this.user)//429401@capufe.com
+      params.append('password',this.pass)
+      params.append('client_id','')
+      params.append('client_secret','')
+      axios.post(`${API}/identity/token`, params)
+      .then((result) => {
+        console.log(result);
+      }).catch((error) => {
+        console.log(error);
+      })
+    }
   }
 };
 </script>
