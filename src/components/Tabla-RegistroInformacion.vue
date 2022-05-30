@@ -3,19 +3,19 @@
   <!-- <table class="tftable"> -->
   <table class="tftable">
     <tr class="h-10">
-      <th class="">
+      <th class="md:w-10">
         <label class="rounded-full text-lg px-28 bg-gray-200 ring-2 ring-gray-500 p-2">Fecha</label>
       </th>
-      <th>
+      <th class="md:w-10">
         <label class="rounded-full text-lg px-28 bg-gray-200 ring-2 ring-gray-500 p-2">Hora</label>
       </th>
-      <th>
+      <th class="md:w-10">
         <label class="rounded-full text-lg px-28 bg-gray-200 ring-2 ring-gray-500 p-2">Tag</label>
       </th>
-      <th>
+      <th class="md:w-10">
         <label class="rounded-full text-lg px-28 bg-gray-200 ring-2 ring-gray-500 p-2">Carril</label>
       </th>
-      <th>
+      <th class="md:w-10">
         <label class="rounded-full text-lg px-28 bg-gray-200 ring-2 ring-gray-500 p-2">Tarifa</label>
       </th>
     </tr>

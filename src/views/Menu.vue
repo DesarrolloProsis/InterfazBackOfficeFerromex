@@ -1,6 +1,6 @@
 <template>
   <Navbar></Navbar>
-  <div class="bg-gray-100 grid grid-cols-2 items-center full-height">
+  <div class="bg-gray-100 grid grid-cols-2 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 items-center full-height">
     <ModulosComp
       v-for="(modulo, index) in modulos"
       :key="index"
