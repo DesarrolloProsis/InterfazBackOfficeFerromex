@@ -1,9 +1,9 @@
 <template>
     <Navbar/>
-    <h1 class="title font-bold font-titulo">Reportes Operativos</h1>
-    <div class="container mx-auto px-auto pt-0 md:px-48 md:pt-10">
+    <h1 class="title font-bold font-titulo 2xl:my-28">Reportes Operativos</h1>
+    <div class="container mx-auto px-auto px-48 pt-10">
         <div class="flex flex-wrap">
-            <router-link to="/inicio/ReportesCajero" class="w-full p-7 -mt-12 md:w-1/2">
+            <router-link to="/inicio/ReportesCajero" class="p-7 -mt-12 w-1/2">
                     <div class="rounded-lg  animacion flex flex-col bg-ferromex border-2 border-gray-900" >
                         <div class="text-center">
                             <fa icon="dollar-sign" class="text-white h-32 p-2"/>
@@ -13,7 +13,7 @@
                         </div>
                     </div>
             </router-link>
-            <router-link to="/inicio/ReportesTurno" class="w-full p-7 -mt-12 md:w-1/2">
+            <router-link to="/inicio/ReportesTurno" class="p-7 -mt-12 w-1/2">
                     <div class="rounded-lg  animacion flex flex-col bg-ferromex border-2 border-gray-900" >
                         <div class="text-center">
                             <fa icon="calendar-check" class="text-white h-32 p-2"/>

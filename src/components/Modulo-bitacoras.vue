@@ -1,7 +1,7 @@
 <template>
-    <div class="w-full p-7 -mt-12 md:w-1/3" :class="{'ml-20': mostrar == 'false'}">
+    <div class="p-7 -mt-12 w-1/3" :class="{'ml-20': mostrar == 'false'}">
         <router-link :to="ruta" tag="div">
-            <div class="rounded-lg  animacion flex flex-col bg-ferromex border-2 border-gray-900" >
+            <div class="rounded-lg animacion flex flex-col bg-ferromex border-2 border-gray-900" >
                 <div>
                     <img class="img" :src="require('@/assets/' + img_src)" />
                 </div>

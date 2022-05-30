@@ -1,5 +1,6 @@
 <template>
 <Navbar/>
+<div class="min-h-full p-10 2xl:my-32">
   <h1 class="text-4xl font-bold font-titulo text-center">Reporte Cajero</h1>
   <div class="flex w-full justify-center gap-20 mt-10">
     <div class="flex flex-col gap-10">
@@ -37,6 +38,7 @@
   <div class="flex w-full justify-center mt-20">
       <button class="border w-40 bg-ferromex text-white">Generar Reporte</button>
   </div>
+</div>
 <Footer/>
 </template>
 

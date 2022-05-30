@@ -1,6 +1,6 @@
 <template>
 <div class="flex-1">
-    <div class="flex justify-center mb-32 -my-14">
+    <div class="flex justify-center">
 		<ul class="pagination bg-white p-2 shadow-sm rounded">
 			<li class="pagination-item">
 				<span
