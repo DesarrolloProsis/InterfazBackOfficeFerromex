@@ -40,7 +40,6 @@ export default {
 </script>
 <style scoped>
 .responsive-table {
-    padding-top: 20px;
   overflow-x: auto;
   overflow-y: auto;
   max-height: 600px;

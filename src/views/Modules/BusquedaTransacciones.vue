@@ -1,52 +1,46 @@
 <template>
   <Navbar/>
-  <div class="container mx-auto px-0 pb-100">
+  <div class="container mx-auto px-0 mb-4 2xl:my-28">
     <h1 class="title-center font-titulo font-bold pb-4 mb-2">Mantenimiento de Tag's</h1>
   <div>
     <div class="-mt-4 mx-2 md:mx-0">
-        <div class="flex flex-col md:flex-row bg-ferromex rounded-lg border-gray-200 pb-0 mb-4">          
-            <div class="flex-1 flex flex-col md:flex-row md:space-x-2">
+        <div class="flex flex-col  bg-ferromex rounded-lg border-gray-200 pb-0 mb-4">          
+            <div class="flex-1 flex flex-row space-x-2">
               <div class="w-full inline-flex flex-2 justify-center">
                 <label for="tag" class="text-white my-auto">TAG:</label>
-                <div class="mt-3 bg-white flex border border-gray-200 rounded ml-2 h-6 w-40">
-                  <input id="tag" v-model="tag" class="inp-icon  w-full text-gray-800 " placeholder="Buscar No. Tag" type="text" />
-                </div>
+                  <input id="tag" v-model="tag" class="my-auto bg-white flex border border-gray-200 rounded ml-2 h-6 w-40" placeholder="Buscar No. Tag" type="text" />
               </div>
               <div class="w-full inline-flex flex-2 justify-center">
                 <label for="tag" class="text-white my-auto">Estatus:</label>
-                <div class="mt-3 p-1 bg-white flex border border-gray-200 rounded ml-2 h-6 w-40">
-                  <select v-model="estaus"  class="w-full h-full text-gray-800">
+                  <select v-model="estaus"  class="my-auto p-1 bg-white flex border border-gray-200 rounded ml-2 h-6 w-40">
                     <option value="">Estatus</option>
                     <option value=""></option>
                   </select>
-                </div>
               </div>
               <div class="w-full inline-flex flex-2 justify-center">
                 <label for="tag" class="text-white my-auto">Fecha:</label>
-                <div class="mt-3 p-1 bg-white flex border border-gray-200 rounded ml-2 h-6 w-40">
-                  <input v-model="fecha" type="date" class=" w-full text-gray-800 "> 
+                  <input v-model="fecha" type="date" class="my-auto p-1 bg-white flex border border-gray-200 rounded ml-2 h-6 w-40 "> 
+              </div>
+              <div class="w-full flex-1">
+                <div class="h-full my-auto text-white font-md p-2 ">                      
+                  <button :disabled="modalLoading" class="btn-buscar animacion" :class="{'cursor-not-allowed': modalLoading}" @click="serch( tag, estatus, fecha)">Buscar</button>
                 </div>
               </div>
               <div class="w-full flex-1">
-                <div class="mt-3 bg-red-200 flex border border-red-200 rounded hover:bg-red-700 hover:text-white w-20 ">                      
-                  <button :disabled="modalLoading" class="font-bold w-full" :class="{'cursor-not-allowed': modalLoading}" @click="serch( tag, estatus, fecha)">Buscar</button>
+                <div class="h-full my-auto text-white font-md p-2">                      
+                  <button :disabled="modalLoading" class="btn-buscar animacion" :class="{'cursor-not-allowed': modalLoading}" @click="limpiar(plaza)">Todos</button>
                 </div>
               </div>
               <div class="w-full flex-1">
-                <div class="mt-3 bg-red-200 flex border border-red-200 rounded hover:bg-red-700 hover:text-white w-20">                      
-                  <button :disabled="modalLoading" class="font-bold w-full" :class="{'cursor-not-allowed': modalLoading}" @click="limpiar(plaza)">Todos</button>
-                </div>
-              </div>
-              <div class="w-full flex-1">
-                <div class="mt-3 bg-green-200 flex border border-green-200 rounded hover:bg-green-700 hover:text-white w-32">                      
-                  <button :disabled="modalLoading" class="font-bold w-full " :class="{'cursor-not-allowed': modalLoading}" @click="showModal = !showModal">Agregar TAG</button>
+                <div class="h-full my-auto text-white font-md p-2 w-40">                      
+                  <button :disabled="modalLoading" class="btn-buscar animacion" :class="{'cursor-not-allowed': modalLoading}" @click="showModal = !showModal">Agregar TAG</button>
                 </div>
               </div>
               <div class="w-full flex-2">
-                <div class="mt-3 bg-blue-200 flex border border-blue-200 rounded hover:bg-blue-700 hover:text-white ">                      
-                  <button :disabled="modalLoading" class="font-bold w-full " :class="{'cursor-not-allowed': modalLoading}">
+                <div class="h-full my-auto text-white font-md p-2">                      
+                  <button :disabled="modalLoading" class="botonIconBuscar animacion" :class="{'cursor-not-allowed': modalLoading}">
                     Descargar
-                    <fa icon="download" class="text-black hover:text-white"/>
+                    <fa icon="download" class="hover:text-white"/>
                   </button>
                 </div>
               </div>
