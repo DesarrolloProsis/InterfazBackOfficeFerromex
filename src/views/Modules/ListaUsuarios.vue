@@ -20,7 +20,7 @@
       <div class="flex-none my-auto text-white font-md p-2 ml-10">
         <button @click="buscar()" class="btn-buscar animacion">Todos</button>
       </div>
-      <div class="flex-none my-auto text-white font-md p-2 md:ml-56 lg:ml-66 xl:ml-69">
+      <div class="flex-none my-auto text-white font-md p-2 md:ml-32 lg:ml-56 xl:ml-69">
         <button @click="abrirModal" class="btn-buscar animacion">Agregar Usuario</button>
       </div>
       <!-- <div class="flex-none my-auto font-md p-2 ml-3 w-66">

@@ -1,7 +1,7 @@
 <template>
   <Navbar/>
   <h1 class="title font-bold font-titulo">Gestión de Usuarios</h1>
-  <div class="container mx-auto px-auto pb-20 pt-0 md:px-48 md:pt-10 my-32">
+  <div class="container mx-auto px-auto pb-20 pt-0 md:px-48 md:pt-1 md:my-10 my-32">
     <div class="flex flex-wrap">
       <ModuloConfiguracion
         v-for="(modulo, index) in modulos"
@@ -16,7 +16,7 @@
 </template>
 <script>
 import Navbar from "../../components/Navbar.vue";
-import Footer from "../../components/Footer-login";
+import Footer from "../../components/Footer";
 import { ref } from 'vue'
 import ModuloConfiguracion from "../../components/Modulo-configuracion";
 export default {
