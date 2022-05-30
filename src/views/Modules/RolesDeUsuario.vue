@@ -30,11 +30,11 @@
   <div class="container mx-auto px-0 pb-24 pt-4">    
     <div class="flex flex-wrap ferromex-color p-1 rounded-lg">
       <div class="flex-none my-auto text-white font-md p-2 ml-10">
-        Nombre:<input v-model="tag" type="text" class="rounded ml-2 md:w-20" />
+        Nombre:<input v-model="tag" type="text" class="rounded ml-2 md:w-20 2xl:w-44"/>
       </div>
       <div class="flex-none my-auto text-white font-md p-2">
         Estatus:  
-        <select v-model="estatus" class="flex-none filter-style color-black rounded" name="select" placeholder="Selecciona">
+        <select v-model="estatus" class="flex-none filter-style color-black rounded 2xl:w-44" name="select" placeholder="Selecciona">
           <option hidden selected>Seleccione </option>
           <option value="true">Activo</option>
           <option value="false">Inactivo</option>
@@ -46,7 +46,7 @@
       <div class="flex-none my-auto text-white font-md p-2 ml-10">
         <button @click="buscar()" class="btn-buscar animacion">Todos</button>
       </div>
-      <div class="flex-none my-auto text-white font-md p-2 md:ml-32 xl:ml-80">
+      <div class="flex-none my-auto text-white font-md p-2 md:ml-32 2xl:ml-69">
         <button @click="abrir_modal_new_rol" class="btn-buscar animacion">Agregar Rol</button>
       </div>
       <!-- <div class="flex-none my-auto font-md p-2 ml-3 w-66">

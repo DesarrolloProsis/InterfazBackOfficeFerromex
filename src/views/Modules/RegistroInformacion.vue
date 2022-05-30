@@ -4,10 +4,10 @@
     <h1 class="title-center font-titulo font-bold pb-4">Registro de Información de Telepeaje</h1>
     <div class="flex flex-wrap ferromex-color p-1 rounded-lg">
       <div class="flex-none my-auto text-white font-md p-2 ml-20 md:ml-1">
-        Fecha:<input v-model="fecha" type="date" class="rounded ml-2 md:w-10" />
+        Fecha:<input v-model="fecha" type="date" class="rounded ml-2 md:w-10 xl:w-44" />
       </div>
       <div class="flex-none my-auto text-white font-md p-2">
-        TAG:<input v-model="tag" type="text" class="rounded ml-2 md:w-10" />
+        TAG:<input v-model="tag" type="text" class="rounded ml-2 md:w-10 xl:w-44" />
       </div>
       <div class="flex-none my-auto text-white font-md p-2">
         Carril:
@@ -19,8 +19,8 @@
       <div class="flex-none my-auto text-white font-md p-2">
         Cuerpo:
         <select v-model="carril" class="text-gray-800 w-16 rounded">
-          <option value="tres">A</option>
-          <option value="seis">B</option>
+          <option value="uno">A</option>
+          <option value="dos">B</option>
         </select>
       </div>
       <div class="flex-none my-auto text-white font-md p-2 ml-39 md:ml-10">
