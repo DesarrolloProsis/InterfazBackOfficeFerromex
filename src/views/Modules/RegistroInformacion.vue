@@ -3,7 +3,7 @@
   <div class="container mx-auto">
     <h1 class="title-center font-titulo font-bold pb-4">Registro de Información de Telepeaje</h1>
     <div class="flex flex-wrap ferromex-color p-1 rounded-lg">
-      <div class="flex-none my-auto text-white font-md p-2 ml-20">
+      <div class="flex-none my-auto text-white font-md p-2 ml-20 md:ml-1">
         Fecha:<input v-model="fecha" type="date" class="rounded ml-2" />
       </div>
       <div class="flex-none my-auto text-white font-md p-2">
@@ -23,7 +23,7 @@
           <option value="seis">B</option>
         </select>
       </div>
-      <div class="flex-none my-auto text-white font-md p-2 ml-39">
+      <div class="flex-none my-auto text-white font-md p-2 ml-39 md:ml-10">
         <button @click="buscar()" class="btn-buscar animacion">Buscar</button>
       </div>
       <div class="flex-none my-auto text-white font-md p-2 ml-10">

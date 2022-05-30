@@ -46,12 +46,12 @@
       <div class="flex-none my-auto text-white font-md p-2 ml-10">
         <button @click="buscar()" class="btn-buscar animacion">Todos</button>
       </div>
-      <div class="flex-none my-auto text-white font-md p-2 ml-56">
+      <div class="flex-none my-auto text-white font-md p-2 md:ml-56 lg:ml-66 xl:ml-69">
         <button @click="abrir_modal_new_rol" class="btn-buscar animacion">Agregar Rol</button>
       </div>
-      <div class="flex-none my-auto font-md p-2 ml-3 w-66">
+      <!-- <div class="flex-none my-auto font-md p-2 ml-3 w-66">
         <FilesDownload @download-api="downloadApi" class=""/>
-      </div>
+      </div> -->
     </div>
     <TablaListaPerfiles :dataPerfiles="roles"/>
     <div class="mt-20 -mb-14">
@@ -66,7 +66,7 @@
 <script>
 import TablaListaPerfiles from "../../components/Tabla-listaperfiles";
 import Paginacion from "../../components/Paginacion.vue"
-import FilesDownload from '../../components/Files-descargar.vue'
+//import FilesDownload from '../../components/Files-descargar.vue'
 import Spinner from '../../components/Spn.vue'
 import Navbar from "../../components/Navbar.vue";
 import Footer from "../../components/Footer";
@@ -83,7 +83,7 @@ export default {
     Multiselect,
     Footer,
     Spinner,
-    FilesDownload,
+    //FilesDownload,
     Paginacion
   },
   setup(){

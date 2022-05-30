@@ -11,7 +11,7 @@ import BusquedaTransacciones from "@/views/Modules/BusquedaTransacciones.vue";
 import BitacoraAccesos from "@/views/Modules/BitacoraAccesos.vue";
 import EstatusTags from "@/views/Modules/EstatusTags.vue";
 import Configuracion from "@/views/Modules/Configuracion.vue";
-import AdminPerfiles from "@/views/Modules/AdminPerfiles.vue";
+import RolesDeUsuario from "@/views/Modules/RolesDeUsuario.vue";
 import ListaUsuarios from "@/views/Modules/ListaUsuarios.vue";
 import Bitacoras from "@/views/Modules/Bitacoras.vue";
 import BitacoraAntifraude from "@/views/Modules/BitacoraAntifraude.vue";
@@ -195,7 +195,7 @@ const routes = [{
   {
     path: "/configuracion/administracion-perfiles",
     name: "AdministracionPerfilUsuario",
-    component: AdminPerfiles,
+    component: RolesDeUsuario,
     meta: {
       requiresCookie: true
     }
