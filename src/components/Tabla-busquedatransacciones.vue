@@ -3,16 +3,16 @@
     <table class="tftable">
       <tr class="h-10">
         <th class="">
-          <label class="rounded-full px-28 bg-gray-200 ring-2 ring-gray-500 p-2 font-bold text-black">Tag</label>
+          <label class="rounded-full px-20 bg-gray-200 ring-2 ring-gray-500 p-2 font-bold text-black 2xl:px-28">Tag</label>
         </th>
         <th class="">
-          <label class="rounded-full px-28 bg-gray-200 ring-2 ring-gray-500 p-2 text-black">Estatus</label>
+          <label class="rounded-full px-20 bg-gray-200 ring-2 ring-gray-500 p-2 text-black 2xl:px-28">Estatus</label>
         </th>
         <th class="">
-          <label class="rounded-full px-28 bg-gray-200 ring-2 ring-gray-500 p-2 text-black">Fecha de Registro</label>
+          <label class="rounded-full px-20 bg-gray-200 ring-2 ring-gray-500 p-2 text-black 2xl:px-28">Fecha de Registro</label>
           </th>
         <th class="">
-          <label class="rounded-full px-28 bg-gray-200 ring-2 ring-gray-500 p-2 text-black">Acciones</label>
+          <label class="rounded-full px-20 bg-gray-200 ring-2 ring-gray-500 p-2 text-black 2xl:px-28">Acciones</label>
           </th>
       </tr>
       <tr v-for="(cruces, index) in dataCruces" :key="index">
@@ -58,9 +58,11 @@ export default {
   border-top-width: 2px;
   padding: 8px;
   border-style: solid;
+  border-color: white;
   border-bottom-color: #a1a1a1;
   border-left-color: white;
   border-right-color: white;
+  background: white;
   
   text-align: center;
 }

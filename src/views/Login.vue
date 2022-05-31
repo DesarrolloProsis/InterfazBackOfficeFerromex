@@ -1,12 +1,12 @@
 <template>
 <div class="login ">
   <!-- <Header/> -->
-  <div class="flex h-screen  min-700">
-    <div id="" class="flex absolute justify-center items-center mx-auto h-12 w-screen min-700-imp">
-      <div class="absolute justify-end ">
+  <div class="flex ">
+    <div id="" class="flex absolute justify-center items-center mx-auto h-12 w-screen min-700-imp -my-32 2xl:-my-0">
+      <div class="absolute justify-end">
         <!-- <p id="login-title" class="font-titulo font-bold">Monitoreo de Pagos Electrónicos</p> -->
         <img class="img-centered rounded-full " src="~@/assets/Login/logoferromex.png" />
-        <div class="bg-login-module" style="max-width: 800px; margin: auto">
+        <div class="bg-login-module h-96 " >
           <div class="error" v-if="mensaje != ''">{{mensaje}}</div>
           <div class="input-container">
             <fa icon="circle-user" class="w-10 h-8 mt-1 mr-2 text-red-700"/>
@@ -74,19 +74,19 @@ export default {
       }
     },
     pruebas: function(){
-      var params = new URLSearchParams ()
-      params.append('grant_type','password')
-      params.append('username',this.user)//429401@capufe.com
-      params.append('password',this.pass)
-      params.append('client_id','')
-      params.append('client_secret','')
-      axios.post(`${API}/identity/token`, params)
-      .then((result) => {
-        serviceToken.guardarToken(result.data.access_token)
+      // var params = new URLSearchParams ()
+      // params.append('grant_type','password')
+      // params.append('username',this.user)//429401@capufe.com
+      // params.append('password',this.pass)
+      // params.append('client_id','')
+      // params.append('client_secret','')
+      // axios.post(`${API}/identity/token`, params)
+      // .then((result) => {
+      //   serviceToken.guardarToken(result.data.access_token)
         this.$router.push('/inicio')
-      }).catch((error) => {
-        console.log(error);
-      })
+      // }).catch((error) => {
+      //   console.log(error);
+      // })
     }
   }
 };
@@ -136,11 +136,10 @@ export default {
 }
 #login-form {
   background-color: #ddd8d8;
-  min-height: 100vh;
 }
 
 .bg-login-module {
-  background-color: #f5fafd;
+  background-color: white;
   padding: 100px 50px;
   border-radius: 10px;
   

@@ -1,6 +1,7 @@
 <template>
   <Navbar></Navbar>
-  <div class="bg-gray-100 grid grid-cols-2 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 items-center full-height">
+  <div class="">
+    <div class="mt-6 grid grid-cols-2 gap-4 place-items-center 2xl:mt-24 2xl:gap-10">
     <ModulosComp
       v-for="(modulo, index) in modulos"
       :key="index"
@@ -11,6 +12,8 @@
       :isInactive="modulo.isInactive"
     ></ModulosComp>
   </div>
+  </div>
+  
   <Footer></Footer>
 </template>
 

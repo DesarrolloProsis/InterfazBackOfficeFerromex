@@ -3,14 +3,14 @@
     <table class="tftable">
       <tr class="h-10">
         <th>
-          <label class="rounded-full px-28 bg-gray-200 ring-2 ring-gray-500 p-2 text-black">Perfil</label>
+          <label class="rounded-full px-20 bg-gray-200 ring-2 ring-gray-500 p-2 text-black 2xl:px-28">Perfil</label>
         </th>             
         <th>
-          <label class="rounded-full px-28 bg-gray-200 ring-2 ring-gray-500 p-2 text-black">Estatus</label>
+          <label class="rounded-full px-20 bg-gray-200 ring-2 ring-gray-500 p-2 text-black 2xl:px-28">Estatus</label>
         </th>
         <!--<th>Modulos</th>  -->  
         <th>
-          <label class="rounded-full px-28 bg-gray-200 ring-2 ring-gray-500 p-2 text-black">Acciones</label>
+          <label class="rounded-full px-20 bg-gray-200 ring-2 ring-gray-500 p-2 text-black 2xl:px-28">Acciones</label>
         </th>
       </tr>
       <tr v-for="(perfiles, index) in dataPerfiles" :key="index">
@@ -226,21 +226,6 @@ export default {
   color: #333333;
   width: 100%;
 }
-.tftable th {
-  font-size: 14px;
-  background-color: #ffffff;
-  border-width: 5px;
-  padding: 8px;
-  border-style: solid;
-  border-color: white;
-  text-align: left;
-  color: white;
-  font-weight: 500;
-  text-align: center;
-  margin: 3px;
-  border-radius: 15px;
-}
-
 .tftable td {
   font-size: 14px;
   border-bottom-width: 2px;

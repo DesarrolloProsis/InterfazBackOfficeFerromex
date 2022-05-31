@@ -3,23 +3,23 @@
   <!-- <table class="tftable"> -->
   <table class="tftable">
     <tr class="h-10">
-      <th class="md:w-10">
-        <label class="rounded-full text-lg px-28 bg-gray-200 ring-2 ring-gray-500 p-2">Fecha</label>
+      <th class="">
+        <label class="rounded-full px-20 bg-gray-200 ring-2 ring-gray-500 p-2 font-bold text-black">Fecha</label>
       </th>
-      <th class="md:w-10">
-        <label class="rounded-full text-lg px-28 bg-gray-200 ring-2 ring-gray-500 p-2">Hora</label>
+      <th class="">
+        <label class="rounded-full px-20 bg-gray-200 ring-2 ring-gray-500 p-2 font-bold text-black">Hora</label>
       </th>
-      <th class="md:w-10">
-        <label class="rounded-full text-lg px-28 bg-gray-200 ring-2 ring-gray-500 p-2">Tag</label>
+      <th class="">
+        <label class="rounded-full px-20 bg-gray-200 ring-2 ring-gray-500 p-2 font-bold text-black">Tag</label>
       </th>
-      <th class="md:w-10">
-        <label class="rounded-full text-lg px-28 bg-gray-200 ring-2 ring-gray-500 p-2">Carril</label>
+      <th class="">
+        <label class="rounded-full px-20 bg-gray-200 ring-2 ring-gray-500 p-2 font-bold text-black">Carril</label>
       </th>
-      <th class="md:w-10">
-        <label class="rounded-full text-lg px-28 bg-gray-200 ring-2 ring-gray-500 p-2">Tarifa</label>
+      <th class="">
+        <label class="rounded-full px-20 bg-gray-200 ring-2 ring-gray-500 p-2 font-bold text-black">Tarifa</label>
       </th>
     </tr>
-    <tr v-for="(cruce, index) in dataCruces" :key="index">
+    <tr v-for="(cruce, index) in dataCruces" :key="index" class="bg-white">
       <td>{{ moment(cruce.fecha).format("YYYY-MM-DD  HH:mm:ss a") }}</td>
       <td>{{ cruce.carril }}</td>
       <td>{{ cruce.carril }}</td>
@@ -55,21 +55,6 @@ export default {
   color: #333333;
   width: 100%;
 }
-
-.tftable th {
-  font-size: 14px;
-  background-color: #ffffff;
-  border-width: 5px;
-  padding: 8px;
-  border-style: solid;
-  border-color: white;
-  color: black;
-  font-weight: 400;
-  text-align: center;
-  border-radius: 35px;
-  margin: 3px;
-}
-
 .tftable td {
   font-size: 14px;
   border-bottom-width: 2px;
@@ -81,6 +66,7 @@ export default {
   border-bottom-color: #a1a1a1;
   border-left-color: white;
   border-right-color: white;
+  background: white;
 
   text-align: center;
 }

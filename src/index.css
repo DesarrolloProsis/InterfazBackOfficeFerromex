@@ -55,5 +55,8 @@
 .input{
     @apply border border-gray-500 rounded w-44
 }
+body{
+    @apply bg-gray-100
+}
 @tailwind components;
 @tailwind utilities;

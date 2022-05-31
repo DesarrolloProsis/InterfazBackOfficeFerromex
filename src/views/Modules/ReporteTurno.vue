@@ -1,9 +1,10 @@
 <template>
 <Navbar/>
-<div class="min-h-full p-20 2xl:my-32">
-    <h1 class="text-4xl font-bold font-titulo text-center">Reporte Turno</h1>
-  <div class="flex w-full justify-center gap-20 mt-10">
-    <div class="flex flex-col gap-10">
+<div class="grid justify-items-center p-16 2xl:p-40">
+<div class="bg-white w-96 h-96 rounded-lg shadow-md 2xl:w-80 2xl:h-74">
+    <h1 class="text-4xl font-bold font-titulo text-center p-2 2xl:text-6xl 2xl:p-4">Reporte Turno</h1>
+  <div class="flex w-full justify-center mt-4 gap-8 2xl:gap-20 2xl:mt-10">
+    <div class="flex flex-col gap-14 2xl:gap-20">
         <div>
             <label for="">Plaza de Cobro</label>
         </div>
@@ -15,7 +16,7 @@
         </div>
         
     </div>
-    <div class="flex flex-col gap-10">
+    <div class="flex flex-col gap-14 2xl:gap-20">
          <div>
             <label for="">Mazanillo</label>
         </div>
@@ -29,9 +30,10 @@
         </div>
     </div>
   </div>
-  <div class="flex w-full justify-center mt-20">
+  <div class="flex w-full justify-center p-14 2xl:p-20">
       <button class="border w-40 bg-ferromex text-white">Generar Reporte</button>
   </div>
+</div>
 </div>
   
 <Footer/>

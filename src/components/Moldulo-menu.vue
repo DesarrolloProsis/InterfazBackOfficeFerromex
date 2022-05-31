@@ -1,6 +1,6 @@
 <template>
-  <div v-if="mostrar(nombre)" :class="{inactive:isInactive}"  class="w-69 mx-auto p-1">
-    <div class="ferromex-color border border-black m-2 rounded-3xl animacion">
+  <div v-if="mostrar(nombre)" :class="{inactive:isInactive}"  class="w-69 mx-auto">
+    <div class="ferromex-color border border-black  rounded-3xl animacion">
       <router-link :to="ruta" tag="div" class="">
       <img class="imagen-modulo" :src="require('@/assets/' + imagen)" />
     </router-link>
@@ -55,7 +55,7 @@ export default {
 .imagen-modulo {
   display: block;
   margin: auto;
-  width: 200px;
+  width: 150px;
   background-color:transparent;
 }
 @media (min-width: 1720px) {

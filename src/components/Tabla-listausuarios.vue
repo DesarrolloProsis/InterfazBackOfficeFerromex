@@ -3,16 +3,16 @@
     <table class="tftable">
       <tr class="h-10">
         <th>
-          <label class="rounded-full px-28 bg-gray-200 ring-2 ring-gray-500 p-2 text-black">Nombre de Usuario</label>
+          <label class="rounded-full px-20 bg-gray-200 ring-2 ring-gray-500 p-2 text-black 2xl:px-28">Nombre de Usuario</label>
         </th>
         <th>
-          <label class="rounded-full px-28 bg-gray-200 ring-2 ring-gray-500 p-2 text-black">Nombre</label>
+          <label class="rounded-full px-20 bg-gray-200 ring-2 ring-gray-500 p-2 text-black 2xl:px-28">Nombre</label>
         </th>
         <th>
-          <label class="rounded-full px-28 bg-gray-200 ring-2 ring-gray-500 p-2 text-black">Estatus</label>
+          <label class="rounded-full px-20 bg-gray-200 ring-2 ring-gray-500 p-2 text-black 2xl:px-28">Estatus</label>
         </th>
-        <th class="w-56">
-          <label class="rounded-full px-28 bg-gray-200 ring-2 ring-gray-500 p-2 text-black">Acciones</label>
+        <th>
+          <label class="rounded-full px-20 bg-gray-200 ring-2 ring-gray-500 p-2 text-black 2xl:px-28">Acciones</label>
         </th>
       </tr>
       <tr v-for="(usuario, index) in dataUsuarios" :key="index">
@@ -598,20 +598,6 @@ export default {
   font-size: 12px;
   color: #333333;
   width: 100%;
-}
-.tftable th {
-  font-size: 14px;
-  background-color: #ffffff;
-  border-width: 5px;
-  padding: 8px;
-  border-style: solid;
-  border-color: white;
-  text-align: left;
-  color: white;
-  font-weight: 500;
-  text-align: center;
-  margin: 3px;
-  border-radius: 15px;
 }
 
 .tftable td {

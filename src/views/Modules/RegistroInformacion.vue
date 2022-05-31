@@ -43,7 +43,7 @@
     <TablaInformacionTelepeaje :dataCruces="cruces"/>
     <p class="mt-10">Próxima actualización en {{ contador.slice(3)  }}</p>
   </div>
-  <div class="mt-20 -mb-14">
+  <div class="">
     <Paginacion :total-pages="totalPaginas" :total="100" :current-page="currentPage" :has-more-pages="hasMorePages" @pagechanged="showMore"/>
   </div>
   <Footer/>
@@ -66,7 +66,29 @@ export default {
     const tramo = ref('')
     const plaza = ref(null)
     const carril = ref(null)
-    const cruces = ref([])
+    const cruces = ref([
+      { 
+      fecha: '2022/05/22',
+      hora: '12pm',
+      carril: 'A02',
+      tag:  'XXXXX',
+      clase: '$70'
+      },
+      { 
+      fecha: '2022/05/22',
+      hora: '12pm',
+      carril: 'A02',
+      tag:  'XXXXX',
+      clase: '$70'
+      },
+      { 
+      fecha: '2022/05/22',
+      hora: '12pm',
+      carril: 'A02',
+      tag:  'XXXXX',
+      clase: '$70'
+      },
+    ])
     const tiempo = ref('')
     const contador = ref(0)
     const seconds = ref(180)

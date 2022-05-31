@@ -1,7 +1,7 @@
 <template>
     <Navbar/>
-    <h1 class="title font-bold font-titulo 2xl:my-20">Generación de Reportes</h1>
-    <div class="container mx-auto px-auto px-48 pt-10">
+    <h1 class="title font-bold font-titulo 2xl:my-36">Generación de Reportes</h1>
+    <div class="container mx-auto px-auto px-48 pt-10 2xl:-my-20">
         <div class="flex flex-wrap ">
             <ModuloBitacoras
                 v-for="(modulo, index) in modulos"
