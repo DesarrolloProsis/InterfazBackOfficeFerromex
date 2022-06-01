@@ -26,7 +26,6 @@
   <Footer titulocentro = "BOSQUE DE CIRUELOS NO 99,COL. BOSQUES DE LAS LOMAS, MÉXICO, D.F.,C.P. 11700" tituloderecha = "V 2.0.5" tituloizquierda = "" color = "red"/>  
 </div>
 </template>
-
 <script>
 const API = process.env.VUE_APP_URL_API_PRODUCCION
 import Footer from "../components/Footer-login.vue";
@@ -52,18 +51,18 @@ export default {
     login: function(){
       const data = {
         "grant_type": 'password',
-        "username": this.user,
-        "password": this.pass,
-        "client_id": '',
-        "cliente_secret":''
+        "username": this.user, //parametro que almacena el usuario insertado en el input
+        "password": this.pass, //parametro que almacena el password insertado en el input
+        "client_id": '', //identificador de publico de la aplicación
+        "cliente_secret":''//es una contraseña que generamos con el servidor OAuth
       }
-      if(data.username != '' && data.password != ''){
-        axios.post(`${API}/identity/login`, data)
-        .then((result) => {
-          console.log(result);
+      if(data.username != '' && data.password != ''){ //validación para que el username y el password no esté vacio
+        axios.post(`${API}/identity/login`, data) //Se consume el endpoint, se le madna un JSON con los datos necesarios
+        .then((result) => { 
           this.mensaje =""
-          serviceToken.guardarToken(result.data.access_token)
-          this.$router.push('/inicio')
+          serviceToken.guardarToken(result.data.access_token) //Guardamos el token utiizando un servicio
+          axios.defaults.headers.common['Authorization'] = 'Bearer ' + result.data.access_token //Enviamos el token en la cabecera llamada Authorization porque todos los endpoints lo piden
+          this.$router.push('/inicio') //Enviamos la página al incio
         }).catch((error) => {
           console.log(error);
           this.mensaje="Error, verifica tus datos o intentalo más tarde."
