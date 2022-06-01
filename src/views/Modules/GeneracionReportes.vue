@@ -3,7 +3,7 @@
     <h1 class="title font-bold font-titulo 2xl:my-36">Generación de Reportes</h1>
     <div class="container mx-auto px-auto px-48 pt-10 2xl:-my-20">
         <div class="flex flex-wrap ">
-            <ModuloBitacoras
+            <ModuloGeneracionReportes
                 v-for="(modulo, index) in modulos"
                 :key="index"
                 :nombre="modulo.nombre"
@@ -11,7 +11,7 @@
                 :ruta="modulo.ruta"
                 :mostrar="carriles"
                 :color="modulo.color"
-            ></ModuloBitacoras>
+            ></ModuloGeneracionReportes>
             <button class="p-7 -mt-12 w-1/3" @click="showModal = !showModal">
                     <div class="rounded-lg  animacion flex flex-col bg-ferromex border-2 border-gray-900" >
                        <div>
@@ -65,12 +65,12 @@ import Navbar from "../../components/Navbar.vue";
 import Footer from "../../components/Footer";
 import Modal from "../../components/Modal.vue"
 
-import ModuloBitacoras from "../../components/Modulo-bitacoras";
+import ModuloGeneracionReportes from "../../components/Modulo-generacionreportes";
 export default {
     components: {
         Navbar,
         Footer,
-        ModuloBitacoras,
+        ModuloGeneracionReportes,
         Modal
     },
     setup() {
