@@ -30,68 +30,29 @@ export default {
   data() {
     return {
       modulos: [
-        /* {
-          titulo: "Monitoreo de Servicios en Tiempo Real",
-          imagen: "Menu/monitoreo-servicios.png",
-          ruta: "/inicio/monitoreo-servicios",
-          nombre:"Monitoreo Servicios",
-          isInactive:false
-        },
-        {
-          titulo: "Monitoreo de Carriles",
-          imagen: "Menu/monitoreo-carriles.png",
-          ruta: "/inicio/monitoreo-carriles",
-          nombre:"Monitoreo Carriles",
-          isInactive:false
-        }, */
         {
           titulo: "Registro de información de Telepeaje",
-          imagen: "Menu/monitoreo-cruces.png",
+          imagen: "Menu/registro-informacion.png",
           ruta: "/inicio/registro-informacion-telepeaje",
           nombre:"Registro De Informacion De Telepeaje",
-          isInactive:false
         },
-        /* {
-          titulo: "Envío de Transacciones al Operador de Telepeaje",
-          imagen: "Menu/envio-transacciones.png",
-          ruta: "/inicio/envio-transacciones",
-          nombre:"Envio Transacciones",
-          isInactive:false
-        }, */
         {
-          titulo: "Mantenimiento de Tags`s",
-          imagen: "Menu/busqueda-transacciones.png",
-          ruta: "/inicio/busqueda-transacciones",
-          nombre:"Busqueda Cruces",
-          isInactive:false
+          titulo: "Mantenimiento de Tag`s",
+          imagen: "Menu/mantenimiento-tag.png",
+          ruta: "/inicio/mantenimiento-tag",
+          nombre:"Mantenimiento de Tag`s",
         },
-        /* {
-          titulo: "Bitácora de Accesos",
-          imagen: "Menu/bitacora-accesos.png",
-          ruta: "/inicio/bitacora-accesos",
-          nombre:"Bitacora Accesos",
-          isInactive:false
-        }, */
-        /* {
-          titulo: "Estatus de TAGs",
-          imagen: "Menu/estatus-tags.png",
-          ruta: "/inicio/estatus-tags",
-          nombre:"Estatus Tag",
-          isInactive:false
-        }, */
         {
           titulo: "Gestión de usuarios",
-          imagen: "Menu/configuracion.png",
-          ruta: "/configuracion",
-          nombre:"Configuracion",
-          isInactive:false
+          imagen: "Menu/gestion-usuarios.png",
+          ruta: "/gestion-usuarios",
+          nombre:"Gestión de usuarios",
         },
         {
           titulo: "Generación de Reportes",
-          imagen: "Menu/bitacoras.png",
-          ruta: "/bitacoras",
-          nombre:"Bitacoras",
-          isInactive:false
+          imagen: "Menu/generacion-reportes.png",
+          ruta: "/generacion-reportes",
+          nombre:"Generación de Reportes",
         },
       ],
     };

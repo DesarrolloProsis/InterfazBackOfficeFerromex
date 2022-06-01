@@ -18,7 +18,7 @@
             <fa icon="key" class="w-10 h-6 mt-3 mr-2 text-red-700"/>
             <input id="password" v-model="pass" class="input-field" type="password" placeholder="Contraseña" />
           </div>
-          <button class="btn mt-12" @click="pruebas()">Iniciar Sesión</button>
+          <button class="btn mt-12" @click="login()">Iniciar Sesión</button>
         </div>
       </div>
     </div>
@@ -49,37 +49,7 @@ export default {
     }
   },
   methods: {
-    login: function() {
-      //document.cookie = "TipoUser=; expires=Thu, 01 Jan 1970 00:00:00 UTC;" + "SameSite=None; Secure;";
-      //document.cookie = "Token=; expires=Thu, 01 Jan 1970 00:00:00 UTC;" + "SameSite=None; Secure;";
-      //this.user = document.getElementById("username").value;
-      //this.pass = document.getElementById("password").value;
-      this.mensaje = ""
-      const data = {
-        "Usuario": this.user,
-        "Password": this.pass
-      }
-      if(data.Usuario != "" &&  data.Password != ""){
-        axios.post(`${API}/Login`, data)
-        .then((result) => {
-          this.mensaje =""
-          serviceToken.guardarToken(result.data.body)
-          this.$router.push('/inicio')
-        })
-        .catch(()=>{
-          this.mensaje="Error, verifica tus datos o intentalo más tarde."
-        })
-      }else{
-        this.mensaje = "Escribe tu Usuario y Contraseña."
-      }
-    },
-    pruebas: function(){
-      /* var params = new URLSearchParams ()
-      params.append('grant_type','password')
-      params.append('username',this.user)//429401@capufe.com
-      params.append('password',this.pass)
-      params.append('client_id','')
-      params.append('client_secret','') */
+    login: function(){
       const data = {
         "grant_type": 'password',
         "username": this.user,
@@ -87,15 +57,20 @@ export default {
         "client_id": '',
         "cliente_secret":''
       }
-      axios.post(`${API}/identity/login`, data)
-      .then((result) => {
-        console.log(result);
-        serviceToken.guardarToken(result.data.access_token)
-        this.$router.push('/inicio')
-      }).catch((error) => {
-        console.log(error);
-        this.mensaje="Error, verifica tus datos o intentalo más tarde."
-      })
+      if(data.username != '' && data.password != ''){
+        axios.post(`${API}/identity/login`, data)
+        .then((result) => {
+          console.log(result);
+          this.mensaje =""
+          serviceToken.guardarToken(result.data.access_token)
+          this.$router.push('/inicio')
+        }).catch((error) => {
+          console.log(error);
+          this.mensaje="Error, verifica tus datos o intentalo más tarde."
+        })
+      }else{
+        this.mensaje = "Escribe tu Usuario y Contraseña."
+      }
     }
   }
 };
