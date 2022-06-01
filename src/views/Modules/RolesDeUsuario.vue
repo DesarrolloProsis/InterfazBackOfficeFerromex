@@ -53,7 +53,7 @@
         <FilesDownload @download-api="downloadApi" class=""/>
       </div> -->
     </div>
-    <TablaListaPerfiles :dataPerfiles="roles"/>
+    <TablaRoles :dataPerfiles="roles"/>
     <div class="mt-20 -mb-14">
       <Paginacion :total-pages="totalPaginas" :total="100" :current-page="currentPage" :has-more-pages="hasMorePages" @pagechanged="showMore"/>
     </div>
@@ -64,7 +64,7 @@
 </template>
 
 <script>
-import TablaListaPerfiles from "../../components/Tabla-listaperfiles";
+import TablaRoles from "../../components/Tabla-listaroles.vue";
 import Paginacion from "../../components/Paginacion.vue"
 //import FilesDownload from '../../components/Files-descargar.vue'
 import Spinner from '../../components/Spn.vue'
@@ -78,7 +78,7 @@ import { reactive, ref } from 'vue'
 const API = process.env.VUE_APP_URL_API_PRODUCCION
 export default {
   components: {
-    TablaListaPerfiles,
+    TablaRoles,
     Navbar,
     Multiselect,
     Footer,
