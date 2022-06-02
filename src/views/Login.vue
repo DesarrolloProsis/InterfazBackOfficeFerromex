@@ -80,6 +80,7 @@ export default {
       params.append('password',this.pass)
       params.append('client_id','')
       params.append('client_secret','') */
+      this.$router.push('/inicio')
       const data = {
         "grant_type": 'password',
         "username": this.user,
@@ -91,7 +92,6 @@ export default {
       .then((result) => {
         console.log(result);
         serviceToken.guardarToken(result.data.access_token)
-        this.$router.push('/inicio')
       }).catch((error) => {
         console.log(error);
         this.mensaje="Error, verifica tus datos o intentalo más tarde."

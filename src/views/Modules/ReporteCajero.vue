@@ -37,21 +37,68 @@
     </div>
   </div>
   <div class="flex w-full justify-center p-6 2xl:p-20">
-      <button class="border w-40 bg-ferromex text-white">Generar Reporte</button>
+      <button class="border w-40 bg-ferromex text-white" @click="generareporte()">Generar Reporte</button>
   </div>
 </div>
 </div>
+   <Modal :show="showModal">
+        <h1 class="text-4xl font-bold font-titulo text-center mt-4">Seleccione las bolsas</h1>
+            <div class="w-full justify-center p-10 ">
+                <table class="tftable w-full">
+      <tr class="h-10 w-full bg-gray-200 text-center">
+        <th>
+          <label class="text-black 2xl:px-28">#</label>
+        </th>
+        <th>
+          <label class="text-black 2xl:px-28">Inicio</label>
+        </th>
+        <th>
+          <label class="text-black 2xl:px-28">Fin</label>
+        </th>
+        <th>
+          <label class="text-black 2xl:px-28">Carril</label>
+        </th>
+        <th>
+          <label class="text-black 2xl:px-28">Bolsa</label>
+        </th>
+        <th>
+          <label class="text-black 2xl:px-28">Acciones</label>
+        </th>
+      </tr>
+      <tr class="text-center w-full">
+        <td >1</td>
+        <td >04/13/2022 16:59:16</td>
+        <td >04/13/2022 16:59:16</td>
+        <td >B04</td>
+        <td >B0430098</td>
+        <td>
+          <button class="rounded-lg w-18 bg-ferromex text-white p-10">Generar</button>
+        </td>
+      </tr>
+    </table>
+            </div>
+    </Modal> 
 <Footer/>
 </template>
 
 <script>
 import Navbar from "../../components/Navbar.vue";
 import Footer from "../../components/Footer";
+import Modal from "../../components/Modal.vue"
+import { ref } from 'vue'
 export default {
 components: {
         Navbar,
         Footer,
+         Modal,
     },
+setup(){
+    const showModal = ref(false)
+    function generareporte(){
+        showModal.value = !showModal.value
+}
+return {showModal,generareporte}
+}
 }
 </script>
 
