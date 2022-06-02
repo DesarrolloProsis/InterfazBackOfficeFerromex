@@ -18,7 +18,7 @@
             <fa icon="key" class="w-10 h-6 mt-3 mr-2 text-red-700"/>
             <input id="password" v-model="pass" class="input-field" type="password" placeholder="Contraseña" />
           </div>
-          <button class="btn mt-12" @click="pruebas()">Iniciar Sesión</button>
+          <button class="btn mt-12" @click="login()">Iniciar Sesión</button>
         </div>
       </div>
     </div>
@@ -26,7 +26,6 @@
   <Footer titulocentro = "BOSQUE DE CIRUELOS NO 99,COL. BOSQUES DE LAS LOMAS, MÉXICO, D.F.,C.P. 11700" tituloderecha = "V 2.0.5" tituloizquierda = "" color = "red"/>  
 </div>
 </template>
-
 <script>
 const API = process.env.VUE_APP_URL_API_PRODUCCION
 import Footer from "../components/Footer-login.vue";
@@ -49,29 +48,29 @@ export default {
     }
   },
   methods: {
-    login: function() {
-      //document.cookie = "TipoUser=; expires=Thu, 01 Jan 1970 00:00:00 UTC;" + "SameSite=None; Secure;";
-      //document.cookie = "Token=; expires=Thu, 01 Jan 1970 00:00:00 UTC;" + "SameSite=None; Secure;";
-      //this.user = document.getElementById("username").value;
-      //this.pass = document.getElementById("password").value;
-      this.mensaje = ""
+    login: function(){
       const data = {
-        "Usuario": this.user,
-        "Password": this.pass
+        "grant_type": 'password',
+        "username": this.user, //parametro que almacena el usuario insertado en el input
+        "password": this.pass, //parametro que almacena el password insertado en el input
+        "client_id": '', //identificador de publico de la aplicación
+        "cliente_secret":''//es una contraseña que generamos con el servidor OAuth
       }
-      if(data.Usuario != "" &&  data.Password != ""){
-        axios.post(`${API}/Login`, data)
-        .then((result) => {
+      if(data.username != '' && data.password != ''){ //validación para que el username y el password no esté vacio
+        axios.post(`${API}/identity/login`, data) //Se consume el endpoint, se le madna un JSON con los datos necesarios
+        .then((result) => { 
           this.mensaje =""
-          serviceToken.guardarToken(result.data.body)
-          this.$router.push('/inicio')
-        })
-        .catch(()=>{
+          serviceToken.guardarToken(result.data.access_token) //Guardamos el token utiizando un servicio
+          axios.defaults.headers.common['Authorization'] = 'Bearer ' + result.data.access_token //Enviamos el token en la cabecera llamada Authorization porque todos los endpoints lo piden
+          this.$router.push('/inicio') //Enviamos la página al incio
+        }).catch((error) => {
+          console.log(error);
           this.mensaje="Error, verifica tus datos o intentalo más tarde."
         })
       }else{
         this.mensaje = "Escribe tu Usuario y Contraseña."
       }
+<<<<<<< HEAD
     },
     pruebas: function(){
       /* var params = new URLSearchParams ()
@@ -96,6 +95,8 @@ export default {
         console.log(error);
         this.mensaje="Error, verifica tus datos o intentalo más tarde."
       })
+=======
+>>>>>>> dd9bb19f80747202d1fbffbc405593fe76bdf07d
     }
   }
 };

@@ -48,7 +48,7 @@
         </div>
     </div>
   </div>
-  <TablaBusquedaTransacciones :dataCruces="cruces"/>
+  <TablaMantenimientoTag :dataCruces="cruces"/>
   </div>
   <Paginacion :total-pages="totalPaginas" :total="100" :current-page="currentPage" :has-more-pages="hasMorePages" @pagechanged="showMore"/>  
   <Spinner :modalLoading="modalLoading"/>
@@ -74,8 +74,7 @@
 </template>
 <script>
 const API = process.env.VUE_APP_URL_API_PRODUCCION
-import TablaBusquedaTransacciones from "../../components/Tabla-busquedatransacciones.vue";
-
+import TablaMantenimientoTag from "../../components/Tabla-ManteniminetoTags.vue";
 import Navbar from "../../components/Navbar.vue";
 import Footer from "../../components/Footer";
 import axios from "axios";
@@ -88,7 +87,7 @@ import Modal from "../../components/Modal.vue"
 export default {
   name: "BusquedaCruces",
   components: {
-    TablaBusquedaTransacciones,
+    TablaMantenimientoTag,
     Navbar,
     Footer,   
     Paginacion,

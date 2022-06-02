@@ -1,10 +1,10 @@
 <template>
-  <div v-if="mostrar(nombre)" :class="{inactive:isInactive}"  class="w-69 mx-auto">
+  <div class="w-69 mx-auto">
     <div class="ferromex-color border border-black  rounded-3xl animacion">
       <router-link :to="ruta" tag="div" class="">
       <img class="imagen-modulo" :src="require('@/assets/' + imagen)" />
     </router-link>
-    <h1 class="text-center text-white text-xl py-5 font-titulo">{{ titulo }}</h1>
+    <h1 class="text-center text-white text-xl py-5 font-titulo">{{ nombre }}</h1>
     </div>
   </div>
 </template>
@@ -13,11 +13,12 @@
 import Servicio from '../Servicios/Token-Services';
 export default {
   name: "ModulosComp",
-  props: ["titulo", "imagen", "ruta", "nombre", "isInactive"],
+  props: ["imagen", "ruta", "nombre",],
   methods: {
     mostrar: function (nombre) {
       var decoded = Servicio.obtenerInfoUser()
       console.log(decoded);
+      
       if(decoded[nombre] !== "false"){
         return true;
       }else{

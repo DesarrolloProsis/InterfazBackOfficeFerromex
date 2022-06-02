@@ -30,12 +30,12 @@ export default {
         {
           img_src: "Configuracion/lista-roles.png",
           nombre: "Roles de Usuario",
-          ruta: "/configuracion/administracion-perfiles",
+          ruta: "/gestion-usuarios/administracion-perfiles",
         },
         {
           img_src: "Configuracion/lista-usuarios.png",
           nombre: "Lista de Usuarios",
-          ruta: "/configuracion/lista-usuarios",
+          ruta: "/gestion-usuarios/lista-usuarios",
         },
       ])
     
