@@ -69,7 +69,7 @@ import Footer from "../../components/Footer";//Importamos el componente Footer
 import axios from 'axios';//Importamos axios, para poder hacer llamadas a endpoint 
 import Multiselect from '@vueform/multiselect'//Importamos el componente multiselect para la selección de modulos a asignar
 import { notify } from "@kyvg/vue3-notification";//Importamos el componente notify para mostrar las notifiaciones al usuario
-import { reactive, ref } from 'vue'
+import { onMounted,reactive, ref } from 'vue'
 const API = process.env.VUE_APP_URL_API_PRODUCCION
 export default {
   components: {
@@ -141,21 +141,21 @@ export default {
         abrir_modal_new_rol()//Llamamos a la función que cierra el modal
       })
     }
-    function buscar (nombre,estatus){
-      roles.value = []
+    function buscar (nombre,estatus){//Función que realiza la busqueda de los roles existentes
+      roles.value = [] //Constante que contiene los roles se muestra en vacio para hacer una busqueda limpia, y no se queden datos en cache
+      console.log(nombre, estatus);
       modalLoading.value = true
-      axios.get(`${API}/CatalogoRoles/${nombre}/${estatus}/`)
-        .then((response) => {
-            if((response.data.status == 'Ok') && (response.data.body.length > 0)){
-              habilitar.value = true
-              modalLoading.value = false
-              roles.value = response.data.body 
-            }else{
-              notify({ type: 'warn', title:'Rol no creado', text: `No se encontró el Rol`});
-            }
-          }
-        )
-        .catch((error) => console.log(error))
+      axios.get(`${API}/Identity/roles`)//Llamada al endpoint que trae los roles existentes
+      .then((result) => {
+        console.log(result);
+        if(result.status == 200){//valida que el estatus de la respuesta sea 200 para saber que es una respuesta correcta y con contenido
+          modalLoading.value = false//Cerramos el spinner de carga
+          roles.value = result.data //asignamos los resultados que nos trajo el endpoint a la constante roles
+        }
+      }).catch((error)=>{
+        console.log(error);//Mostramos en consola el error  que nos da el endpoint
+        modalLoading.value = false //cerramos el spinner de carga
+      })
     }
     function todos (){
       modalLoading.value = true
@@ -192,6 +192,9 @@ export default {
           });
         });
     }
+
+    onMounted(buscar)
+
     return { roles, userModal, buscar_roles, abrir_modal_new_rol, newRol, optionRoles, craer_nuevo_rol, nombre, estatus, buscar, todos, habilitar, modalLoading, totalPaginas, currentPage, hasMorePages, numRespuesta, showMore }
 
   }, 
