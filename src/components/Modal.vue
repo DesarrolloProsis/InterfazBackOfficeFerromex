@@ -35,14 +35,16 @@ export default {
   setup(props){
     const showModal = ref(false);
     watch(
-      () => props.show,
-      show => {
-        showModal.value = true;
-        console.log(show)
-        },
-    );
+        () => props.show,
+        (show) => {
+          if(show == false){
+            show = true
+          }
+          showModal.value = show;
+        }
+      );
     function closeModal() {
-        showModal.value = false;
+        showModal.value = !showModal.value;
     }
     return {
       showModal,

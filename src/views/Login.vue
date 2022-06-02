@@ -70,33 +70,6 @@ export default {
       }else{
         this.mensaje = "Escribe tu Usuario y Contraseña."
       }
-<<<<<<< HEAD
-    },
-    pruebas: function(){
-      /* var params = new URLSearchParams ()
-      params.append('grant_type','password')
-      params.append('username',this.user)//429401@capufe.com
-      params.append('password',this.pass)
-      params.append('client_id','')
-      params.append('client_secret','') */
-      this.$router.push('/inicio')
-      const data = {
-        "grant_type": 'password',
-        "username": this.user,
-        "password": this.pass,
-        "client_id": '',
-        "cliente_secret":''
-      }
-      axios.post(`${API}/identity/login`, data)
-      .then((result) => {
-        console.log(result);
-        serviceToken.guardarToken(result.data.access_token)
-      }).catch((error) => {
-        console.log(error);
-        this.mensaje="Error, verifica tus datos o intentalo más tarde."
-      })
-=======
->>>>>>> dd9bb19f80747202d1fbffbc405593fe76bdf07d
     }
   }
 };
