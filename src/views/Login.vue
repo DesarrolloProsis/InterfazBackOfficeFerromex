@@ -4,17 +4,14 @@
   <div class="flex ">
     <div id="" class="flex absolute justify-center items-center mx-auto h-12 w-screen min-700-imp -my-32 2xl:-my-0">
       <div class="absolute justify-end">
-        <!-- <p id="login-title" class="font-titulo font-bold">Monitoreo de Pagos Electrónicos</p> -->
         <img class="img-centered rounded-full " src="~@/assets/Login/logoferromex.png" />
         <div class="bg-login-module h-96 " >
-          <div class="error" v-if="mensaje != ''">{{mensaje}}</div>
+          <div class="error" v-if="message != ''">{{message}}</div>
           <div class="input-container">
             <fa icon="circle-user" class="w-10 h-8 mt-1 mr-2 text-red-700"/>
-            <!-- <img class="w-10 h-10 mt-1 mr-2 transform -rotate-180" src="~@/assets/Login/iniciar-sesion.png" /> -->
             <input id="username" v-model="user" class="input-field" type="text" placeholder="Usuario" />
           </div>
           <div class="input-container">
-            <!-- <img class="w-10 h-10 mt-1 mr-2" src="~@/assets/Login/password.png" />             -->
             <fa icon="key" class="w-10 h-6 mt-3 mr-2 text-red-700"/>
             <input id="password" v-model="pass" class="input-field" type="password" placeholder="Contraseña" />
           </div>
@@ -31,7 +28,8 @@ const API = process.env.VUE_APP_URL_API_PRODUCCION
 import Footer from "../components/Footer-login.vue";
 import axios from "axios";
 import serviceToken from '../Servicios/Token-Services'
-//import jwt_decode from "jwt-decode";
+import { ref } from 'vue'
+import router from '../router';
 export default {
 
   components: {
@@ -40,64 +38,35 @@ export default {
   props: {
     msg: String,
   },
-  data(){
-    return{
-      user:"",
-      pass:"",
-      mensaje:""
-    }
-  },
-  methods: {
-    login: function(){
-      const data = {
+  setup(){
+    const user = ref('')//Constante que almacena el valor del usuario insertado en el input
+    const pass = ref('')//Constante que almacena el valor del password insetado en el input
+    const message = ref('')//Constante que almacena el posible mensaje de error
+
+    function login() {//Función que genera el inicio de sesión
+      let data = {//Literal que almacena el json que se enviará para iniciar sesión
         "grant_type": 'password',
         "username": this.user, //parametro que almacena el usuario insertado en el input
         "password": this.pass, //parametro que almacena el password insertado en el input
         "client_id": '', //identificador de publico de la aplicación
         "cliente_secret":''//es una contraseña que generamos con el servidor OAuth
       }
-      if(data.username != '' && data.password != ''){ //validación para que el username y el password no esté vacio
+      if(data.username != '' && data.password != ''){//validación para que el username y el password no esté vacio
         axios.post(`${API}/identity/login`, data) //Se consume el endpoint, se le madna un JSON con los datos necesarios
         .then((result) => { 
-          this.mensaje =""
+          message.value = ''
           serviceToken.guardarToken(result.data.access_token) //Guardamos el token utiizando un servicio
           axios.defaults.headers.common['Authorization'] = 'Bearer ' + result.data.access_token //Enviamos el token en la cabecera llamada Authorization porque todos los endpoints lo piden
-          this.$router.push('/inicio') //Enviamos la página al incio
+          router.push('/inicio') //Enviamos la página al incio
         }).catch((error) => {
           console.log(error);
-          this.mensaje="Error, verifica tus datos o intentalo más tarde."
+          message.value ="Error, verifica tus datos o intentalo más tarde."
         })
-      }else{
-        this.mensaje = "Escribe tu Usuario y Contraseña."
+      }else{//Validación si es que el usuario no inserto algún campo
+        message.value ="Los campos Usuario y COntraseña son obligatorios."
       }
-<<<<<<< HEAD
-    },
-    pruebas: function(){
-      /* var params = new URLSearchParams ()
-      params.append('grant_type','password')
-      params.append('username',this.user)//429401@capufe.com
-      params.append('password',this.pass)
-      params.append('client_id','')
-      params.append('client_secret','') */
-      this.$router.push('/inicio')
-      const data = {
-        "grant_type": 'password',
-        "username": this.user,
-        "password": this.pass,
-        "client_id": '',
-        "cliente_secret":''
-      }
-      axios.post(`${API}/identity/login`, data)
-      .then((result) => {
-        console.log(result);
-        serviceToken.guardarToken(result.data.access_token)
-      }).catch((error) => {
-        console.log(error);
-        this.mensaje="Error, verifica tus datos o intentalo más tarde."
-      })
-=======
->>>>>>> dd9bb19f80747202d1fbffbc405593fe76bdf07d
     }
+    return { user, pass, message, login}
   }
 };
 </script>

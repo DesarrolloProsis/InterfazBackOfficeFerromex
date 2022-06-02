@@ -17,48 +17,24 @@
   </div>
 </template>
 <script>
-const API = process.env.VUE_APP_URL_API_PRODUCCION
-import Servicio from '../Servicios/Token-Services';
-//import jwt_decode from "jwt-decode"; <font-awesome-icon icon="fa-solid fa-arrow-right-from-bracket" />
+import Servicio from '../Servicios/Token-Services';//Se importa el servicio que nos permite tener la información del token
+import { onMounted,ref } from 'vue'//se importa onMounted para que haga una devolución de una llamada que se hará al montar el componente
 import axios from "axios";
+import router from '../router';
 export default{
-  data(){
-    return {
-      nombre:''
+  setup(){
+    const nombre = ref('')//Constante que alamacena el nombre de usuario
+    function logout (){//Función que cierra la sesión y elimina el token generadp
+      axios.defaults.headers.common['Authorization'] = '' //Enviamos el token en la cabecera llamada Authorization porque todos los endpoints lo piden
+      router.push('/')//Redirigimos al Login
     }
-  },
-  beforeMount() {
-    //Servicio.getCookie("Token")
-    //let info = jwt_decode(Servicio.getCookie("Token"))
-    let info = Servicio.obtenerInfoUser()
-    this.nombre = info.nameid
-  },
-  methods:{
-    logout: function(){      
-      //if(Servicio.getCookie("Token")){
-      if(Servicio.obtenerToken()){
-        let info = Servicio.obtenerInfoUser() //jwt_decode(Servicio.getCookie("Token"))        
-        try
-        {
-        document.cookie = "TipoUser=; expires=Thu, 01 Jan 1970 00:00:00 UTC;" + "SameSite=None; Secure;";
-        document.cookie = "Token=; expires=Thu, 01 Jan 1970 00:00:00 UTC;" + "SameSite=None; Secure;";
-        this.$router.push('/')
-        axios.post(`${API}/Login/LogOut/${info.UsuarioId}`)
-        .then(() => {
-            this.$router.push('/')
-        })
-        .catch((error) => console.log(error))
-        }
-        catch(error){
-          console.log(error)
-        }
-      }
-      else {        
-        document.cookie = "TipoUser=; expires=Thu, 01 Jan 1970 00:00:00 UTC;" + "SameSite=None; Secure;";
-        document.cookie = "Token=; expires=Thu, 01 Jan 1970 00:00:00 UTC;" + "SameSite=None; Secure;";
-        this.$router.push('/')
-      }
-    },
+    function obtenerInfo() {//Función que obtine los datos del usuario
+      let info = Servicio.obtenerInfoUser()//Literal que almacena la información del token
+      nombre.value = info.name  //asignamos el nombre del usuario en la constante para mostarlo
+    }
+    onMounted(obtenerInfo) //Montamos la función obtenerInfo para poder tener la respuesta cuando se monta el componente
+
+    return { nombre, logout, obtenerInfo }
   }
 }
 </script>

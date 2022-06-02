@@ -81,7 +81,7 @@ import axios from "axios";
 import ServiceFiles from '../../Servicios/Files-Service'
 import Paginacion from "../../components/Paginacion.vue"
 import { notify } from "@kyvg/vue3-notification";
-import Spinner from '../../components/Spn.vue'
+import Spinner from '../../components/Spinner.vue'
 import { ref } from 'vue'
 import Modal from "../../components/Modal.vue"
 export default {
