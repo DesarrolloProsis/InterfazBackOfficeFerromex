@@ -103,7 +103,7 @@ import Servicio from '../../Servicios/Token-Services';
 //import FilesDownload from '../../components/Files-descargar.vue'
 import { notify } from "@kyvg/vue3-notification";
 import ServiceFiles from '../../Servicios/Files-Service'
-import Spinner from '../../components/Spn.vue'
+import Spinner from '../../components/Spinner.vue'
 import Paginacion from "../../components/Paginacion.vue"
 import axios from "axios";
 import { reactive, ref } from 'vue'

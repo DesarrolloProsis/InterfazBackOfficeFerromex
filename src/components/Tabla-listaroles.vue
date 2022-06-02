@@ -14,7 +14,8 @@
         </th>
       </tr>
       <tr v-for="(perfiles, index) in dataPerfiles" :key="index">
-        <td :class="{'text-gray-300': perfiles.activo == false}">{{ perfiles.nombreRol }}</td>
+        <td :class="{'text-gray-300': perfiles.activo == false}">{{ perfiles.name }}</td>
+        <td :class="{'text-gray-300': perfiles.activo == false}">{{ perfiles.id }}</td>
         <td class="w-66">
           <div class="w-66 mx-auto">
             <Multiselect v-model="value" placeholder="Sleccione una Acción" @close="acciones_mapper(perfiles)" label="name" trackBy="name" :options="opticones_select_acciones(perfiles,index)" :searchable="true">
@@ -53,7 +54,7 @@
 </template>
 
 <script>
-import Servicio from '../Servicios/Token-Services';
+//import Servicio from '../Servicios/Token-Services';
 import Multiselect from '@vueform/multiselect'
 //import jwt_decode from "jwt-decode";
 import axios from 'axios';
@@ -153,19 +154,13 @@ export default {
           {  value: 'Deshabilitar', name: 'Deshabilitar'},//1
           {  value: 'Editar Modulos', name: 'Editar Modulos'},//2
       ]
-      //Servicio.getCookie("Token")
-      //let info = jwt_decode(Servicio.getCookie("Token"))
-      let info = Servicio.obtenerInfoUser()
+      console.log(perfil);
       let filtroOpciones = []
-          if(perfil.activo == false){
-            filtroOpciones.push(options[0])    
-          }if(perfil.activo == true){
-            if(perfil.nombreRol != info.role){
-              filtroOpciones.push(options[1])
-            }
-            filtroOpciones.push(options[2])
-          }
-      return filtroOpciones  
+        filtroOpciones.push(options[0])    
+        filtroOpciones.push(options[1])
+        filtroOpciones.push(options[2])
+      
+      return filtroOpciones
     },
   },
 };
