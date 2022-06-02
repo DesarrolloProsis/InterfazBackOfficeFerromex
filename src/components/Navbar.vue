@@ -1,4 +1,4 @@
-<template>
+<template> 
   <div class="flex justify-between bg-nav">
     <div class="flex-none">
       <router-link to="/inicio" class="inline-block pl-5 pt-1 text-white text-xl" tag="div">

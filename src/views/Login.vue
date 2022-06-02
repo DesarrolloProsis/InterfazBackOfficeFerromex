@@ -24,7 +24,7 @@
 </div>
 </template>
 <script>
-const API = process.env.VUE_APP_URL_API_PRODUCCION
+const API = process.env.VUE_APP_URL_API_PRODUCCION//constante global que 
 import Footer from "../components/Footer-login.vue";
 import axios from "axios";
 import serviceToken from '../Servicios/Token-Services'
@@ -66,7 +66,7 @@ export default {
         message.value ="Los campos Usuario y COntraseña son obligatorios."
       }
     }
-    return { user, pass, message, login}
+    return { user, pass, message, login} //Regreasamos las const y las funciones que utilizamos en la vista
   }
 };
 </script>
