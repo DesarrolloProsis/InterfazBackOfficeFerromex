@@ -18,12 +18,12 @@
 
 <script>
 const API = process.env.VUE_APP_URL_API_PRODUCCION //constante que hace referencia a la ip donde está montada el API, se utiliza para hacer peticiones
-import Navbar from "../components/Navbar";
-import Spinner from '../components/Spinner.vue'
-import ModulosComp from "../components/Moldulo-menu";
-import Servicio from '../Servicios/Token-Services';
-import Footer from "../components/Footer";
-import { onMounted,ref } from 'vue'
+import Navbar from "../components/Navbar"; //Importamos el componnete Navbar para mostrar en la vista
+import Spinner from '../components/Spinner.vue' //Importamos el componente spinner 
+import ModulosComp from "../components/Moldulo-menu"; //Importamos el componente de Menú para poder poner cada uno de los modulos que tiene el rol
+import Servicio from '../Servicios/Token-Services'; //Importamos el Servicio de Toke, para obtener información del usuario con base en el token
+import Footer from "../components/Footer";//Importamos el footer para mostrar en la vista
+import { onMounted,ref } from 'vue' //Importamos onMounted para recibir una respuesta de una llamada cuando se monta el modulo, y ref para hacer referencia al tipo de dato que estamos utilizando y volvemos reactiva la constante
 import axios from "axios";
 export default {
   components: {

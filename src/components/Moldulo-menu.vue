@@ -9,23 +9,9 @@
   </div>
 </template>
 <script>
-//import jwt_decode from "jwt-decode";
-import Servicio from '../Servicios/Token-Services';
 export default {
   name: "ModulosComp",
-  props: ["imagen", "ruta", "nombre",],
-  methods: {
-    mostrar: function (nombre) {
-      var decoded = Servicio.obtenerInfoUser()
-      console.log(decoded);
-      
-      if(decoded[nombre] !== "false"){
-        return true;
-      }else{
-        return false;
-      }
-    },
-  },
+  props: ["imagen", "ruta", "nombre",],//Propiedades que corresponderan a los datos de cada modelo, vienen desde el Modulo de Menu
 };
 </script>
 <style scoped>
