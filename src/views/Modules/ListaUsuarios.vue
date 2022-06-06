@@ -61,17 +61,14 @@
   <Footer/>
 </template>
 <script>
-const API = process.env.VUE_APP_URL_API_PRODUCCION
-import TablaListaUsuarios from "../../components/Tabla-listausuarios";
-import Navbar from "../../components/Navbar.vue";
-import Footer from "../../components/Footer.vue";
-import Multiselect from '@vueform/multiselect';
-//import Servicio from '../../Servicios/Token-Services';
-//import FilesDownload from '../../components/Files-descargar.vue'
-import { notify } from "@kyvg/vue3-notification";
-//import ServiceFiles from '../../Servicios/Files-Service'
-import Spinner from '../../components/Spinner.vue'
-import Paginacion from "../../components/Paginacion.vue"
+const API = process.env.VUE_APP_URL_API_PRODUCCION//Constante que alamcena la cadena de conexión para la API
+import TablaListaUsuarios from "../../components/Tabla-listausuarios";//Componente que contiene la tabla con la información de los usuarios
+import Navbar from "../../components/Navbar.vue";//Importamos el componente Navbar para mostrar en la vista
+import Footer from "../../components/Footer.vue";//Importamos el componente Footer para mostrar en la vista
+import Multiselect from '@vueform/multiselect';//Importamos el componente Multiselect que se va a utilizarte en el modal para crear usuario
+import { notify } from "@kyvg/vue3-notification";//Componente que realiuza las notificaciones
+import Spinner from '../../components/Spinner.vue'//Componente que contiene el spinner para las pantallas de cargas
+import Paginacion from "../../components/Paginacion.vue"//Componente que contiene la paginación
 import axios from "axios";
 import { reactive, ref } from 'vue'
 export default {
@@ -80,7 +77,6 @@ export default {
     Navbar,
     Footer,
     Multiselect,
-    //FilesDownload,
     Spinner,
     Paginacion,
     
