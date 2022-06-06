@@ -82,7 +82,65 @@ export default {
     
   },
   setup() {
-    const usuarios = ref([])//Cconstante que almacena el array de todos los usuarios que se han registrado con toda la información
+    const usuarios = ref([
+      {
+        nombreUsuario: 'CarPulido',
+        nombre: 'Carlos',
+        apellidos:'Pulido',
+        rol: 'Admin',
+        nombreCompleto: 'Carlos Pulido',
+        estatus: true
+      },
+      {
+        nombreUsuario: 'KevPulido',
+        nombre: 'Kevin',
+        apellidos:'Pulido',
+        rol: 'Admin',
+        nombreCompleto: 'Kevin Pulido',
+        estatus: true
+      },
+      {
+        nombreUsuario: 'CarPulido',
+        nombre: 'Kevin',
+        apellidos:'Pulido',
+        rol: 'Admin',
+        nombreCompleto: 'Carlos Pulido',
+        estatus: true
+      },
+      {
+        nombreUsuario: 'CarPulido',
+        nombre: 'Carlos',
+        apellidos:'Pulido',
+        rol: 'Admin',
+        nombreCompleto: 'Carlos Pulido',
+        estatus: true
+      },
+      {
+        nombreUsuario: 'CarPulido',
+        nombre: 'Carlos',
+        apellidos:'Pulido',
+        rol: 'Admin',
+        nombreCompleto: 'Carlos Pulido',
+        estatus: false
+      },
+      {
+        nombreUsuario: 'CarPulido',
+        nombre: 'Carlos',
+        apellidos:'Pulido',
+        rol: 'Admin',
+        nombreCompleto: 'Carlos Pulido',
+        estatus: false
+      },
+      {
+        nombreUsuario: 'CarPulido',
+        nombre: 'Carlos',
+        apellidos:'Pulido',
+        rol: 'Admin',
+        nombreCompleto: 'Carlos Pulido',
+        estatus: false
+      }
+
+    ])//Constante que almacena el array de todos los usuarios que se han registrado con toda la información
     const nombre = ref('')//Constante que almacena el string del nombre asignado en el filtro de nombre
     const estatus = ref('')//Constante que almacena el string del estatus asignado en el filtro de estatus
     const modalAgregar = ref(false)//Constante que abre el modal para agregar el usuario
