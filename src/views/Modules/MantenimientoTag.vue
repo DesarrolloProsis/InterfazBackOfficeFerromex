@@ -52,7 +52,7 @@
   </div>
   <Paginacion :total-pages="totalPaginas" :total="100" :current-page="currentPage" :has-more-pages="hasMorePages" @pagechanged="showMore"/>  
   <Spinner :modalLoading="modalLoading"/>
-  <Modal :show="showModal">
+  <Modal :show="showModal" @cerrarmodal="cerralmodalpadre">
         <h1 class="text-4xl font-bold font-titulo text-center mt-4">Cruces Totales</h1>
             <div class="flex w-full justify-center gap-20 mt-10">
                 <div class="flex flex-col gap-10">
@@ -62,7 +62,7 @@
                 </div>
                 <div class="flex flex-col gap-10">
                     <div>
-                        <input type="text" class="border border-gray-500 rounded">
+                        <input type="text" class="border border-gray-500 rounded" v-model="numerotagagregar">
                     </div>
                 </div>
             </div>
@@ -142,6 +142,14 @@ export default {
     const modalLoading = ref(false)
     const numRespuesta = ref(10)
     const showModal = ref(false)
+    const numerotagagregar = ref('')
+    //Emit para saber si se cierra el modal
+    const cerralmodalpadre = (modal) => {
+      console.log(modal)
+      showModal.value = modal
+      numerotagagregar.value = ''
+      console.log(showModal.value)
+    }
     //Función que busca las transacciones en la plaza, con o sin filtros
     function serch(plaza,tag, fecha){
       modalLoading.value = true
@@ -327,7 +335,7 @@ export default {
       }
     }
 
-    return{ serch, limpiar, showMore, recibir_tramo_plaza, downloadApi, cruces, token, tag, fecha, formato, tramo, plaza, page, totalPaginas, currentPage, hasMorePages, modalLoading,showModal}
+    return{ cerralmodalpadre,numerotagagregar,serch, limpiar, showMore, recibir_tramo_plaza, downloadApi, cruces, token, tag, fecha, formato, tramo, plaza, page, totalPaginas, currentPage, hasMorePages, modalLoading,showModal}
   }
 }
 </script>

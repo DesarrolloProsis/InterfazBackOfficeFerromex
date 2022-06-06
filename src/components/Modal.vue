@@ -31,20 +31,19 @@ const props = {
 };
 export default {
   name: 'Modal',
+  emits:["cerrarmodal"],
   props,
-  setup(props){
+  setup(props ,{ emit }){
     const showModal = ref(false);
     watch(
         () => props.show,
         (show) => {
-          if(show == false){
-            show = true
-          }
           showModal.value = show;
         }
       );
     function closeModal() {
         showModal.value = !showModal.value;
+        emit("cerrarmodal",showModal.value)
     }
     return {
       showModal,

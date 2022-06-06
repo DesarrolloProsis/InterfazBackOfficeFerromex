@@ -19,21 +19,20 @@
         <td>{{cruces.tag}}</td>
         <td>{{cruces.estatus}}</td>
         <td>{{moment(cruces.fecha).format("YYYY-MM-DD  HH:mm:ss a")}}</td>
-        <td><select class="input" v-model="accionestags" @change="accionesTags(accionestags,cruces)">
-          <option value="1">Activar</option>
-          <option value="2">Deshabilitar</option>
-          <option value="3">Eliminar</option>
+        <td><select class="input" v-model="select" @change="accionesTags(select,cruces)">
+          <option :value="undefined">Seleccione una opción</option>
+          <option v-for="(option ,index) in options" :key="index" :value="option">{{option}}</option>
         </select></td>
       </tr>
     </table>
   </div>
-  <Modal :show="showModalAdvertencia">
+  <Modal :show="showModalAdvertencia" @cerrarmodal="cerralmodalpadre">
         <h1 class="text-5xl font-bold font-titulo text-center ">Advertencia</h1>
           <div class="w-full flex justify-center mt-4">
                 <fa icon="triangle-exclamation" class="h-20 text-yellow-400"/>
           </div>
           <div class="w-full flex justify-center mt-4 text-xl font-medium text-center">
-                <p class="">Estas a punto de <label :class="{'text-green-400':accionestags === '1','text-yellow-400' :accionestags === '2','text-red-600' :accionestags === '3',  }">{{texto}}</label> este tag estas seguro?</p>
+                <p class="">Estas a punto de <label :class="{'text-green-400':texto == 'habilitar','text-yellow-400' :texto === 'deshabilitar','text-red-600' :texto === 'eliminar',  }">{{texto}}</label> este tag estas seguro?</p>
           </div>
           <div class="w-full flex justify-center space-x-28 mt-6 mb-6">
             <button class="botonIconOk animacion">Aceptar</button>
@@ -60,26 +59,38 @@ export default {
       const showModalAdvertencia = ref(false)
       const texto = ref('')
       const accionestags = ref('')
+      const options = ref(['Activo','Inactivo','Deshabilitar'])
+      const select = ref(undefined)
+      const selectestatus = ref(undefined)
+
+    const cerralmodalpadre = (modal) => {
+      console.log(modal)
+      showModalAdvertencia.value = modal
+      texto.value = ""
+      console.log(showModalAdvertencia.value)
+    }
     //Funcion para identificar la accion del usuario en el tag
     function accionesTags(accionestags,cruces) {
+        const guardaroption = accionestags
+        const infotag = cruces
         showModalAdvertencia.value = !showModalAdvertencia.value
-        console.log(accionestags)
-        console.log(cruces);
-        if(accionestags == '1'){
+        console.log(guardaroption)
+        console.log(infotag);
+        if(guardaroption == 'Activo'){
           texto.value = "habilitar"
-          accionestags.value = ""
+          select.value = undefined
         }
-        else if(accionestags == '2'){
+        else if(guardaroption == 'Inactivo'){
           texto.value = "deshabilitar"
-          accionestags.value = ""
+          select.value = undefined
         }
-        else if(accionestags == '3'){
+        else if(guardaroption == 'Deshabilitar'){
           texto.value = "eliminar"
-          accionestags.value = ""
+          select.value = undefined
         }
         
       }
-      return{showModalAdvertencia,texto,accionesTags,accionestags}
+      return{showModalAdvertencia,texto,accionesTags,accionestags,options,select,selectestatus,cerralmodalpadre}
     
   },
 };
