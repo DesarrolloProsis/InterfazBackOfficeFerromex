@@ -84,6 +84,7 @@ export default {
   setup() {
     const usuarios = ref([
       {
+        usuarioId:'1',
         nombreUsuario: 'CarPulido',
         nombre: 'Carlos',
         apellidos:'Pulido',
@@ -92,6 +93,7 @@ export default {
         estatus: true
       },
       {
+        usuarioId:'2',
         nombreUsuario: 'KevPulido',
         nombre: 'Kevin',
         apellidos:'Pulido',
@@ -100,6 +102,7 @@ export default {
         estatus: true
       },
       {
+        usuarioId:'3',
         nombreUsuario: 'CarPulido',
         nombre: 'Kevin',
         apellidos:'Pulido',
@@ -108,6 +111,7 @@ export default {
         estatus: true
       },
       {
+        usuarioId:'4',
         nombreUsuario: 'CarPulido',
         nombre: 'Carlos',
         apellidos:'Pulido',
@@ -116,6 +120,7 @@ export default {
         estatus: true
       },
       {
+        usuarioId:'5',
         nombreUsuario: 'CarPulido',
         nombre: 'Carlos',
         apellidos:'Pulido',
@@ -124,6 +129,7 @@ export default {
         estatus: false
       },
       {
+        usuarioId:'6',
         nombreUsuario: 'CarPulido',
         nombre: 'Carlos',
         apellidos:'Pulido',
@@ -132,6 +138,7 @@ export default {
         estatus: false
       },
       {
+        usuarioId:'7',
         nombreUsuario: 'CarPulido',
         nombre: 'Carlos',
         apellidos:'Pulido',
