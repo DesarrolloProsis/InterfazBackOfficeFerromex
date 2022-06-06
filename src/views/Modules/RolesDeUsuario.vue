@@ -158,16 +158,20 @@ export default {
       })
     }
     function todos (){
+      roles.value = [] //Constante que contiene los roles se muestra en vacio para hacer una busqueda limpia, y no se queden datos en cache
+      console.log(nombre, estatus);
       modalLoading.value = true
-      nombre.value = null
-      estatus.value = null
-      axios.get(`${API}/CatalogoRoles/null/null/`)
-        .then((response) => {
-            roles.value = response.data.body 
-            modalLoading.value = false
-          }
-        )
-        .catch((error) => console.log(error))
+      axios.get(`${API}/Identity/roles`)//Llamada al endpoint que trae los roles existentes
+      .then((result) => {
+        console.log(result);
+        if(result.status == 200){//valida que el estatus de la respuesta sea 200 para saber que es una respuesta correcta y con contenido
+          modalLoading.value = false//Cerramos el spinner de carga
+          roles.value = result.data //asignamos los resultados que nos trajo el endpoint a la constante roles
+        }
+      }).catch((error)=>{
+        console.log(error);//Mostramos en consola el error  que nos da el endpoint
+        modalLoading.value = false //cerramos el spinner de carga
+      })
     }
     function showMore(page){
         axios.get(`${API}/UsuarioMonitoreo/${page}/${numRespuesta.value}/${nombre.value}/${estatus.value}`)
