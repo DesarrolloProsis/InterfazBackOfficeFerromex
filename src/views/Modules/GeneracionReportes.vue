@@ -12,7 +12,7 @@
                 :mostrar="carriles"
                 :color="modulo.color"
             ></ModuloGeneracionReportes>
-            <button class="p-7 -mt-12 w-1/3" @click="showModal = !showModal">
+            <button class="p-7 -mt-12 w-1/3" @click="abrirmodalconcentradoferromex">
                     <div class="rounded-lg  animacion flex flex-col bg-ferromex border-2 border-gray-900" >
                        <div>
                             <img class="img" src="@/assets/Menu/almacenamiento-de-base-de-datos.png" />
@@ -25,7 +25,7 @@
         </div>
     </div>
     <Footer/>
-    <Modal :show="showModal">
+    <Modal :show="showModal" @cerrarmodal="cerramodalconcentradoferromex">
         <h1 class="text-4xl font-bold font-titulo text-center mt-4">Concentrado Ferromex</h1>
             <div class="flex w-full justify-center gap-20 mt-10">
                 <div class="flex flex-col gap-10">
@@ -41,13 +41,13 @@
                 </div>
                 <div class="flex flex-col gap-10">
                     <div>
-                        <input type="date" class="input">
+                        <input type="date" class="input" v-model="concentradoferromex.diascfe" @change="bloquearinputs()">
                     </div>
                     <div>
-                        <input type="month" class="input">
+                        <input type="month" class="input" v-model="concentradoferromex.mesescfe" :disabled="bloquear" :class="{'cursor-not-allowed' : bloquear}">
                     </div>
                     <div>
-                        <input type="week" class="input">
+                        <input type="week" class="input" v-model="concentradoferromex.semanacfe" :disabled="bloquear" :class="{'cursor-not-allowed' : bloquear}">
                     </div>
                     
                 </div>
@@ -60,7 +60,7 @@
 <script>
 import Servicio from '../../Servicios/Token-Services';
 //import jwt_decode from "jwt-decode";
-import { ref } from 'vue'
+import { ref,reactive } from 'vue'
 import Navbar from "../../components/Navbar.vue";
 import Footer from "../../components/Footer";
 import Modal from "../../components/Modal.vue"
@@ -77,6 +77,33 @@ export default {
         const modulos = ref([])
         const carriles = ref(true)
         const showModal = ref(false)
+        const bloquear = ref(false)
+        const concentradoferromex = reactive({
+            diascfe: '',
+            mesescfe: '',
+            semanacfe: ''
+        })
+        function abrirmodalconcentradoferromex(){
+            showModal.value = !showModal.value //Cambia el valor de la variable que muestra el modal 
+            bloquear.value = false //Cambiamos la variable a falso para desbloquear los inputs que esten bloqueados
+            limpiarconcentradoferromex() //Llamamos la funcion para limpiar los campos correspondientes
+        }
+        //Declaracion de cierre de modales 
+        const cerramodalconcentradoferromex = (modal) => {
+            console.log(modal)
+            showModal.value = modal
+            limpiarconcentradoferromex()
+        }
+        //Funcion para limpiar los campos del modal cruces totales
+        function limpiarconcentradoferromex(){
+            concentradoferromex.diascfe = ''
+            concentradoferromex.mesescfe = ''
+            concentradoferromex.semanacfe = ''
+        }
+        //Funcion para bloquear los inputs de mes y semana en caso de ser seleccionado el de dia
+        function bloquearinputs(){
+            bloquear.value = true // bloqueamos los campos
+        }
         //if(Servicio.getCookie("Token")){
         if(Servicio.obtenerToken()){
             //let info = jwt_decode(Servicio.getCookie("Token"))
@@ -127,7 +154,17 @@ export default {
             ]    
         }
 
-        return {modulos, carriles, showModal}
+        return {
+            modulos,
+            carriles, 
+            showModal,
+            bloquear,
+            cerramodalconcentradoferromex,
+            limpiarconcentradoferromex,
+            bloquearinputs,
+            abrirmodalconcentradoferromex,
+            concentradoferromex
+            }
     }
 }
 </script>

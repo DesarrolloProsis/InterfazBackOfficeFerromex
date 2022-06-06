@@ -26,7 +26,7 @@
         </div>
     </div>
     <Footer/>
-    <Modal :show="showModal">
+    <Modal :show="showModal" @cerrarmodal="cerralmodalcrucestotales">
         <h1 class="text-4xl font-bold font-titulo text-center mt-4">Cruces Totales</h1>
             <div class="flex w-full justify-center gap-20 mt-10">
                 <div class="flex flex-col gap-10">
@@ -57,7 +57,7 @@
                 <button class="border w-40 bg-ferromex text-white ferromex-color" @click="generarreportetotal()">Generar Reporte</button>
             </div>
     </Modal>
-    <Modal :show="showModalTurno">
+    <Modal :show="showModalTurno" @cerrarmodal="cerramodalcruceferromex">
         <h1 class="text-4xl font-bold font-titulo text-center mt-4">Cruces Ferromex</h1>
             <div class="flex w-full justify-center gap-20 mt-10">
                 <div class="flex flex-col gap-10">
@@ -139,6 +139,17 @@ export default {
             bloquear.value = false //Cambiamos la variable a falso para desbloquear los inputs que esten bloqueados
             limpiarcrucestotales() //Llamamos la funcion para limpiar los campos correspondientes
         }
+        //Declaracion de cierre de modales 
+        const cerralmodalcrucestotales = (modal) => {
+            console.log(modal)
+            showModal.value = modal
+            limpiarcrucestotales()
+        }
+        const cerramodalcruceferromex = (modal) => {
+            console.log(modal)
+            showModalTurno.value = modal
+            limpiarcrucesferromex()
+        }
         //Funcion para bloquear los inputs de mes y semana en caso de ser seleccionado el de dia
         function bloquearinputs(){
             bloquear.value = true // bloqueamos los campos
@@ -188,6 +199,8 @@ export default {
         limpiarcrucestotales,
         limpiarcrucesferromex,
         generarreportetotal,
+        cerralmodalcrucestotales,
+        cerramodalcruceferromex,
         ...toRefs(crucestotales),
         ...toRefs(crucesferromex)
         }
