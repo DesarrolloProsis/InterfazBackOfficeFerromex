@@ -37,7 +37,7 @@
     </table>
   </div>
   <!--MODAL DE ACTUALIZAR CONTRASEÑA -->
-  <Modal :show="modalPass">
+  <Modal :show="modalPass" @cerrarmodal="modalPass = false">
     <div>
       <p class="text-gray-900 font-bold text-xl -mt-8 mb-8 text-center">Cambiar Contraseña a {{ seleccionado.nombre + ' ' + seleccionado.apellidos }}</p>
       <div class="grid grid-cols-2 mt-2">
@@ -47,14 +47,13 @@
         <span v-if="validacion" class="text-xs text-red-600 text-center">Campo Obligatorio</span>
       </div>
       <div class="mt-10 text-center mx-auto mb-4">
-        <button @click="cambiarPass(seleccionado)" class="botonIconBuscar">Agregar</button>
-        <button @click="modalPass = false, validacion=false" class="botonIconCancelar">Cancelar</button>
+        <button @click="cambiarPass(seleccionado)" class="rounded-lg w-18 bg-ferromex text-white p-10">Cambiar Contraseña</button>
       </div>
     </div>
   </Modal>
   <!-- FIN MODAL-->
   <!-- MODAL EDITAR USUARIO -->
-  <Modal :show="modalEditar">
+  <Modal :show="modalEditar" @cerrarmodal="modalEditar = false">
     <div>
       <p class="text-gray-900 font-bold text-2xl -mt-8 mb-8 text-center">Editar Usuario</p>
       <div class="grid grid-cols-2 mt-2">
@@ -64,20 +63,20 @@
         <input v-model="usuario.apellidos" class="border rounded-lg w-56" type="text">
       </div>
       <div class="mt-10 text-center mx-auto mb-4">
-        <button class="rounded-lg w-18 bg-ferromex text-white p-10" @click="editarUsuario(usuario)">Generar</button>
+        <button class="rounded-lg w-18 bg-ferromex text-white p-10" @click="editarUsuario(usuario)">Editar Usuario</button>
       </div>
     </div>
   </Modal>
   <!-- FIN MODAL-->
   <!-- MODAL CAMBIAR ROL -->
-  <Modal :show="modalRol">
+  <Modal :show="modalRol"  @cerrarmodal="modalRol = false">
     <div>
       <p class="text-gray-900 font-bold text-2xl -mt-8 mb-8 text-center -mx-6">Cambiar Rol a {{ usuario.nombre +' '+ usuario.apellidos }}</p>
       <p class="text-gray-900 font-bold text-2xl -mt-8 mb-8 text-center">con Rol {{ usuario.rol }}</p>
       <div class="grid grid-cols-2 mt-2">      
         <p class="text-sm mb-1 font-semibold text-gray-700  text-center sm:-ml-6">Rol</p>
         <Multiselect
-          v-model="seleccionado.rolId"
+          v-model="seleccionado.rol"
           placeholder="Seleccione un Rol"
           :searchable="true"
           :options="roles"
@@ -86,8 +85,7 @@
         />
       </div>
       <div class="mt-10 text-center mx-auto mb-4">
-        <button @click="cambiarRol(usuario)" class="botonIconBuscar">Cambiar</button>
-        <button @click="modalRol = false,usuario.rol = ' '" class="botonIconCancelar">Cancelar</button>
+        <button @click="cambiarRol(usuario)" class="rounded-lg w-18 bg-ferromex text-white p-10">Cambiar Rol</button>
       </div>
     </div>
   </Modal>
@@ -112,7 +110,7 @@ export default {
   },
   components:{ Multiselect, Spinner, Modal },
   emits: ["refrescarTabla"],
-  setup( props, context) {
+    setup() {
     
     const modalEditar = ref(false)//Constante que va a abrir el modal que permite editar el usuario
     const modalPass = ref(false)//Modal que va a abrir el modal que permite cambiar la contraseña del usuario
@@ -121,7 +119,7 @@ export default {
     const seleccionado = ref({})//Constante que alamcena la información del usuario seleccionado para las distintas acciones
     const accion = ref(null)//Constante que hace referencia a la acción seleccionada 
     const validacion = ref(false)//Constane que habilita el mensaje de datos obligatorios en los diferentes modales.
-    const usuario = ref({ idUsuario:'', nombre: '', apellidoP:'', apellidoM:'', rol:'', rolId: '',  estatus: '' })
+    const usuario = ref({ usuarioId:'', nombre: '', apellidos:'', rol:'',  estatus: '' })
     const roles = ref([])//Constante que almacena los roles existentes
     const pass = ref('')//Constatnte que alamcena el password para la edición de la contraseña del usuario
     const status = ref('')//Constante que almacena el estatus del usuario para habilitarlo o deshabilitarlo
@@ -129,169 +127,125 @@ export default {
 
     const modal_Rol = async () => {
       modalRol.value = true
+      axios.get(`${API}/Identity/roles`)//Llamada al endpoint que trae los roles existentes
+      .then((result) => {//Si el endpoint tiene una respuesta correcta
+        console.log(result);
+        for(let i=0; i<result.data.length; i++){ //recorremos la respuesta, y cada que recorremos sumamos un 1 para el siguiente rol
+          roles.value.push({'value':result.data[i].name, 'label':result.data[i].name})//asignamos los roles existentes a la variable roles, para mostrarlos en el multiselect
+        }
+      }).catch((error)=>{//si el endpoint tiene un error
+        console.log(error);//Mostramos en consola el error  que nos da el endpoint
+        modalLoading.value = false //cerramos el spinner de carga
+      })
     }
-    function cambiarPass(usuario) {
-      if(pass.value != ''){
-        //if(Servicio.getCookie("Token")){
-        if(Servicio.obtenerToken()){
-        let config = {
-          headers: {
-            'Authorization': 'Bearer ' + Servicio.obtenerToken()//Servicio.getCookie("Token")
-          }
-        }
-        const data = {
-          "nombre": usuario.nombre,
-          "apellidoPaterno": usuario.apellidoP,
-          "apellidoMaterno": usuario.apellidoM,
-          "rolId": usuario.idrol,
-          "pass": pass.value,
-          "usuarioId": usuario.id,
-          "estatusUsuario": usuario.estatus
-        } 
-        axios.post(`${API}/UsuarioMonitoreo/update/${props.plazaBusqueda}`,data,config)
-          .then((result)=>{
-              if(result.statusText == 'OK'){
-                modalPass.value = false
-                notify({
-                  title:'Cambio de Contraseña',
-                  text:`Se Cambio la Contraseña al Usuario ${usuario.nombre + ' ' + usuario.apellidoP}`,
-                  type: 'success'
-                });
-              }else{
-                notify({
-                  title:'Cambio de Contraseña',
-                  text:`No Se Pudo Cambio la Contraseña al Usuario ${usuario.nombre + ' ' + usuario.apellidoP}`,
-                  type: 'warn'
-                });
-              }
-          })
-          .catch(() =>{
-            errorMessage.value = "Hubo un error al crear el usuario, intentalo nuevamente."
-          })
-        }
-      }else{
-        notify({
-          title:'Falta llenar campos obligatorios',
-          text:'Todos los campos son obligatorios',
+    function cambiarPass(usuario) {//Función que hace el cambio de contraseña del usuario seleccionado
+      console.log(usuario);
+      let data = { //literal que almacena el id del usuario y la nueva contraseña ingresada en el formulario
+        "usuarioId": usuario.usuarioId, //id del usuario, viene desde el option mapper
+        "password": pass.value //nueva password que se ingresó en el formulario
+      }
+      console.log(data);
+      axios.put(`${API}/ferromex/changePass`, data)
+      .then((result) => {//Si el endpoint tiene una respuesta correcta
+        console.log(result);
+        notify({//Notificación que se les muestra al usuario cuando se cambia de manera correcta
+          title:'Cambio Exitoso',
+          text:`Se cambió el estatus al usuario ${usuario.nombre + ' ' + usuario.apellidos}`,
+          type: 'success'
+        });
+      }).catch((error) => {//Su el endpoint tiene un error en la respuesta
+        console.log(error);
+        notify({//Notificación que se les muestra a los usuarios cuando no se realiza el cambio
+          title:'Cambio Exitoso',
+          text:`No se pudo cambiar el estatus al usuario ${usuario.nombre + ' ' + usuario.apellidos}`,
           type: 'error'
         });
-        validacion.value = true
-      }
+      })
     }
-    function editarUsuario(usuario){
-      if(Servicio.obtenerToken()){
-      let config = {
-          headers: {
-            'Authorization': 'Bearer ' + Servicio.obtenerToken()//Servicio.getCookie("Token")
-          }
-        }
-        const data = {
-          "nombre": usuario.nombre,
-          "apellidoPaterno": usuario.apellidoP,
-          "apellidoMaterno": usuario.apellidoM,
-          "rolId": usuario.rolId,
-          "pass": null,
-          "usuarioId": usuario.idUsuario,
-          "estatusUsuario": usuario.estatus
-        } 
-        modalLoading.value = true
-        modalEditar.value = true
-        axios.post(`${API}/UsuarioMonitoreo/update/${props.plazaBusqueda}`,data,config)
-          .then(()=>{
-            modalEditar.value = false
-                setTimeout(() => {
-                context.emit('refrescarTabla', props.plazaBusqueda)
-                notify({
-                  title:'Cambio Exitoso',
-                  text:`Se editó al usuario ${usuario.nombre + ' ' + usuario.apellidoP}`,
-                  type: 'success'
-                });
-                modalLoading.value = false
-              }, 1000);
-              errorMessage.value = ""
-          })
-          .catch(() =>{
-            errorMessage.value = "Hubo un error al crear el usuario, intentalo nuevamente."
-          })
+    function editarUsuario(usuario){//Función que hace la edioción del usuario, en cuanto a nombre y apellido
+      console.log(usuario);
+      let data = { //literal que almacena los datos para enviar al endpoint de la edición
+        "usuarioId": usuario.usuarioId,
+        "nombre": usuario.nombre,
+        "apellido": usuario.apellidos,
+        "rol": usuario.rol,
+        "estatus": usuario.estatus
       }
+      console.log(data);
+      axios.put(`${API}/ferromex/editUser`, data)//endpoint que recibe un JSON con la información del usuario para editar
+      .then((result) => {//Si el endpoint tiene una respuesta correcta
+        console.log(result);
+        notify({//Notifiación que se le muestra al usuario si se hizo el cmabio correcto
+          title:'Cambio Exitoso',
+          text:`Se cambió el estatus al usuario ${usuario.nombre + ' ' + usuario.apellidos}`,
+          type: 'success'
+        });
+      }).catch((error) => {//Si el endpoint tiene un error en la respuesta
+        console.log(error);//Mostramos el error en la consola
+        notify({//Notifiación que se le muestra al usuario si no se hace el cambio
+          title:'Cambio Exitoso',
+          text:`No se pudo cambiar el estatus al usuario ${usuario.nombre + ' ' + usuario.apellidos}`,
+          type: 'error'
+        });
+      })
     }
-    function changeStatus(usuario) {
-      seleccionado.value = usuario;
-      if(Servicio.obtenerToken()){
-        let config = {
-          headers: {
-            'Authorization': 'Bearer ' + Servicio.obtenerToken()//Servicio.getCookie("Token")
-          }
-        }
-        const data = {
-          "nombre": usuario.nombre,
-          "apellidoPaterno": usuario.apellidoP,
-          "apellidoMaterno": usuario.apellidoM,
-          "rolId": usuario.idrol,
-          "pass": null,
-          "usuarioId": usuario.id,
-          "estatusUsuario": seleccionado.value.estatus = !seleccionado.value.estatus
-        } 
-        axios.post(`${API}/UsuarioMonitoreo/update/${props.plazaBusqueda}`,data,config)
-        .then(()=>{
-            errorMessage.value = ""
-            notify({
-              title:'Cambio Exitoso',
-              text:`Se cambió el estatus al usuario ${usuario.nombre + ' ' + usuario.apellidoP}`,
-              type: 'success'
-            });
-        })
-        .catch(() =>{
-          errorMessage.value = "Hubo un error al crear el usuario, intentalo nuevamente."
-        })
+    function CambiarEstatus(usuario) {//Función que cambia el estatus del usuario
+      let data = {
+        "usuarioId": usuario.usuarioId,
+        "nombre": usuario.nombre,
+        "apellido": usuario.apellidos,
+        "rol": usuario.rol,
+        "estatus": usuario.estatus = !usuario.estatus //Cambia el valor de la variable estatus, solo cambia al valor opuesto al que est{a en ese momento}
       }
+      axios.put(`${API}/ferromex/editUser`, data)//endpoint que hace la edición del usuario
+      .then((result) => {
+        console.log(result);
+        notify({
+          title:'Cambio Exitoso',
+          text:`Se cambió el estatus al usuario ${usuario.nombre + ' ' + usuario.apellidos}`,
+          type: 'success'
+        });
+      }).catch((error) => {
+        console.log(error);
+        notify({
+          title:'Cambio Exitoso',
+          text:`No se pudo cambiar el estatus al usuario ${usuario.nombre + ' ' + usuario.apellidos}`,
+          type: 'error'
+        });
+      })
     }
-    function cambiarRol(usuario){
-      if(Servicio.obtenerToken()){
-        let config = {
-          headers: {
-            'Authorization': 'Bearer ' + Servicio.obtenerToken()
-          }
-        }
-        const data = {
-          "nombre": usuario.nombre,
-          "apellidoPaterno": usuario.apellidoP,
-          "apellidoMaterno": usuario.apellidoM,
-          "rolId": seleccionado.value.rolId,
-          "pass": null,
-          "usuarioId": usuario.idUsuario,
-          "estatusUsuario": usuario.estatus
-        } 
-        if(seleccionado.value.rol != ''){
-          modalRol.value = false
-          modalLoading.value = true
-          axios.post(`${API}/UsuarioMonitoreo/update/${props.plazaBusqueda}`,data,config)
-          .then(()=>{
-              setTimeout(() => {
-                notify({
-                  title:'Nuevo Usuario',
-                  text:`Se creo correctamente el Rol de ${usuario.nombre}`,
-                  duration: 2000,
-                  type: 'success'
-                });
-                //this.$router.push("/configuracion/lista-usuarios");
-                modalLoading.value = false
-                context.emit('refrescarTabla', props.plazaBusqueda)
-              }, 1000);
-              errorMessage.value = ""
-          })
-          .catch(() =>{
-            errorMessage.value = "Hubo un error al crear el usuario, intentalo nuevamente."
-          })
-        }
+    function cambiarRol(usuario){//Función que cambia de rol al usuario
+      console.log(usuario);
+      let data = {
+        "usuarioId": usuario.usuarioId,
+        "nombre": usuario.nombre,
+        "apellido": usuario.apellidos,
+        "rol": seleccionado.value.rol,
+        "estatus": usuario.estatus
       }
+      console.log(data);
+      axios.put(`${API}/ferromex/editUser`, data)
+      .then((result) => {
+        console.log(result);
+        notify({
+          title:'Cambio Exitoso',
+          text:`Se cambió el estatus al usuario ${usuario.nombre + ' ' + usuario.apellidos}`,
+          type: 'success'
+        });
+      }).catch((error) => {
+        console.log(error);
+        notify({
+          title:'Cambio Exitoso',
+          text:`No se pudo cambiar el estatus al usuario ${usuario.nombre + ' ' + usuario.apellidos}`,
+          type: 'error'
+        });
+      })
     }
-    
     function acciones_mapper(item){
       if(accion.value == 'Habilitar'){
-        changeStatus(item)
+        CambiarEstatus(item)
       }if(accion.value == 'Deshabilitar'){
-        changeStatus(item)
+        CambiarEstatus(item)
       }if(accion.value == 'Cambiar Contraseña'){
         seleccionado.value = item;
         modalPass.value = true;
@@ -299,15 +253,16 @@ export default {
         modalEditar.value = true
         usuario.value.nombre = item.nombre
         usuario.value.apellidos = item.apellidos
+        usuario.value.rol = item.rol
+        usuario.value.estatus = item.estatus
+        usuario.value.usuarioId = item.usuarioId
       }if(accion.value == 'Cambiar Rol'){
         modal_Rol()
-        usuario.value.idUsuario = item.id
         usuario.value.nombre = item.nombre
-        usuario.value.apellidoP = item.apellidoP
-        usuario.value.apellidoM = item.apellidoM
+        usuario.value.apellidos = item.apellidos
         usuario.value.rol = item.rol
-        usuario.value.rolId = item.rolId
         usuario.value.estatus = item.estatus
+        usuario.value.usuarioId = item.usuarioId
       }
       accion.value = ""
     }
@@ -334,7 +289,7 @@ export default {
           }
       return filtroOpciones  
     }
-    return{ cambiarRol, changeStatus, editarUsuario, cambiarPass, modal_Rol, acciones_mapper, opticones_select_acciones, modalEditar, modalPass, modalRol, modalLoading, seleccionado, accion, validacion, usuario, roles, pass, status, errorMessage }
+    return{ cambiarRol, CambiarEstatus, editarUsuario, cambiarPass, modal_Rol, acciones_mapper, opticones_select_acciones, modalEditar, modalPass, modalRol, modalLoading, seleccionado, accion, validacion, usuario, roles, pass, status, errorMessage }
   }
 }
 </script>
