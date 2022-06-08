@@ -13,12 +13,12 @@
           <label class="rounded-full px-20 bg-gray-200 ring-2 ring-gray-500 p-2 text-black 2xl:px-28">Acciones</label>
         </th>
       </tr>
-      <tr v-for="(perfiles, index) in dataPerfiles" :key="index">
-        <td :class="{'text-gray-300': perfiles.activo == false}">{{ perfiles.name }}</td>
-        <td :class="{'text-gray-300': perfiles.activo == false}">{{ perfiles.id }}</td>
+      <tr v-for="(rol, index) in infoRoles" :key="index">
+        <td :class="{'text-gray-300': rol.activo == false}">{{ rol.name }}</td>
+        <td :class="{'text-gray-300': rol.activo == false}">{{ rol.id }}</td>
         <td class="w-66">
           <div class="w-66 mx-auto">
-            <Multiselect v-model="value" placeholder="Sleccione una Acción" @close="acciones_mapper(perfiles)" label="name" trackBy="name" :options="opticones_select_acciones(perfiles,index)" :searchable="true">
+            <Multiselect v-model="value" placeholder="Sleccione una Acción" @close="acciones_mapper(rol)" label="name" trackBy="name" :options="opticones_select_acciones(rol,index)" :searchable="true">
               <template v-slot:singleLabel="{ value }">
                 <div class="multiselect-single-label">
                   <img height="26" style="margin: 0 6px 0 0;" :src="value.icon"> {{ value.name }}
@@ -35,132 +35,167 @@
   </div>
   <br />
   <!-- Editar Rol -->
-  <div class="sticky inset-0 " :class="{'modal-container': isModulosActive}">
-    <div v-if="isModulosActive" class="rounded-lg  justify-center border absolute inset-x-0 bg-white border-gray-400 w-69  mx-auto px-12 py-10 shadow-2xl mt-60">
-      <p class="text-gray-900 font-bold text-2xl -mt-8 mb-8 text-center">Actualizar Módulos {{ perfilSelected.perfil }}</p>
-      <div class="grid grid-cols-2 mt-2" v-for="(modulos, index) in perfilSelected.modulos" :key="index">
-        <p>{{ modulos.nombre }}</p>
+  <div class="sticky inset-0 " :class="{'modal-container': modalModulos}">
+    <div v-if="modalModulos" class="rounded-lg  justify-center border absolute inset-x-0 bg-white border-gray-400 w-69  mx-auto px-12 py-10 shadow-2xl mt-60">
+      <p class="text-gray-900 font-bold text-2xl -mt-8 mb-8 text-center">Actualizar Módulos {{ perfilSelected.name }}</p>
+      <div class="grid grid-cols-2 mt-2" v-for="(modulos, index) in modulos" :key="index">
+        <p>{{ modulos.label }}</p>
         <p class="text-center">
-          <button v-if="modulos.seleccionado == true" @click="cambiarModulos(index, modulos.seleccionado)" class="btn btn-active">Activo</button>
-          <button v-if="modulos.seleccionado == false" @click="cambiarModulos(index, modulos.seleccionado)" class="btn btn-inactive">Inactivo</button>
+          <button class="btn btn-active cursor-auto">Activo</button>
         </p>
       </div>
+      <div class="grid grid-cols-2 mt-6">      
+        <p class="text-sm mb-1 font-semibold text-gray-700 ">Modulos a Asignar</p>
+        <Multiselect
+          v-model="asignarModulos"
+          placeholder="Seleccione los modulos par este rol"
+          mode="multiple"
+          :searchable="true"
+          :options="modulosExistentes"
+          :close-on-select="false"
+          class="w-52"
+        />
+      </div>
       <div class="mt-5 text-center ml-6">
-        <button @click="hideModulos()" class="botonIconBuscar">Guardar</button>
-        <button @click="isModulosActive = false" class="botonIconCancelar">Cancelar</button>
+        <button @click="editarModulos(perfilSelected.name, asignarModulos)" class="botonIconBuscar">Guardar</button>
+        <button @click="modalModulos = false" class="botonIconCancelar">Cancelar</button>
       </div>
     </div>
   </div>  
 </template>
 
 <script>
-//import Servicio from '../Servicios/Token-Services';
-import Multiselect from '@vueform/multiselect'
-//import jwt_decode from "jwt-decode";
+//import Servicio from '../Servicios/Token-Services'; //Importamos el Servicio de Toke, para obtener información del usuario con base en el token
+import Multiselect from '@vueform/multiselect' //Importamos el componente Multiselect para utilizarlo en la columna Acciones o en el modal de asignar módulos
 import axios from 'axios';
-import { notify } from "@kyvg/vue3-notification";
-const API = process.env.VUE_APP_URL_API_PRODUCCION
+import { notify } from "@kyvg/vue3-notification"; //Componente para generar notificaciones
+const API = process.env.VUE_APP_URL_API_PRODUCCION //Constante que nos almacena la cadena de conexión a la API
 export default {
-  name: "TablaListaPerfiles",
-  props: ["dataPerfiles"],
+  name: "TablaListaPerfiles",//Nombre del componente que se mostrar en el vuex
+  props: ["infoRoles"],//propiedad que almacena los valores de cada uno de los roles
   components:{
-    Multiselect,
+    Multiselect, //Utilizamos el componente para su implementación
   },
   data() {
     return {
-      // todos los perfiles
-      perfilesData: this.dataPerfiles,
-      isModulosActive: false,        
-      //perfil individual
-      perfilSelected: {},
-      value:'',
-
+      modalModulos: false,//Constante que permite abrir o cerrar el modal de módulos asignados     
+      perfilSelected: {},//Cnstante que almacena los valores del rol seleccionado
+      value:'',//Constante almacena el valor de la opción seleccionada en el multiselect de Acciones
+      modulos:[],//Constante que almacena todos los módulos que tiene asignados a un rol en especifico
+      asignarModulos:[],//Constante que almacena el array de módulos que se van a asignar a un rol en especifico
+      modulosExistentes: []//Constante que almacena todos los módulos existentes
     };
   },
 
   methods: {
-    // !MODULOS
-    showModulos: function (perfil) {
-      this.isModulosActive = true; let modulos = [];
-      //Array auxiliar para modal de modulos
-      const novalidProp = ['rolId', 'dateStamp', 'nombreRol', 'activo']    
-      Object.entries(perfil).map(item => {                                
-          if(!novalidProp.includes(item[0])){
-            modulos.push({ nombre: item[0], seleccionado: item[1] }) 
-          }
-      })             
-      this.perfilSelected = { ...perfil, modulos };      
+    cambiarEstatus: function (rol) {//Funciòn praa cambiar el estatus del rol
+      let data = {//Literal que va a almacenar la informacion del rol para poder enviarlo al endpoint
+        "id": rol.id,
+        "rol": rol.name,
+        "estatus" : rol.activo = !rol.activo//Cambia el valor de la variable estatus, solo cambia al valor opuesto al que est{a en ese momento}
+      }  
+      axios.put(`${API}/ferromex/editRole`, data)//endpoint que hace la edición del rol
+      .then((result) => {//Si el endpoint tiene una respuesta correcta
+        console.log(result);
+        notify({//Notifiación que se muestra cuando se realiza el cambio de una manera correcta
+          title:'Cambio Exitoso',
+          text:`Se cambió el estatus al Rol ${rol.name}`,
+          type: 'success'
+        });
+      }).catch((error) => {
+        console.log(error);
+        notify({//Notificación que se muestra cuando no se puede hacer el cambio de manera correcta
+          title:'Cambio Fallido',
+          text:`No se pudo cambiar el estatus al Rol ${rol.name}`,
+          type: 'error'
+        });
+      })
     },
-    hideModulos: function () {
-      this.isModulosActive = false;
-      //Eliminar array auxiliar modulos para update
-      this.perfilSelected.modulos.forEach(item => {
-        this.perfilSelected[item.nombre] = item.seleccionado
-      });
-      delete this.perfilSelected.modulos
-      axios.post(`${API}/CatalogoRoles/Editar`, this.perfilSelected)
-        .then((response) => {
-          if(response.data.status == 'Ok'){
-            notify({ type: 'success', title:'Rol actualizado', text: `Se actualizo correctamente el rol ${this.perfilSelected.nombreRol}`});
-            this.perfilSelected = {}
-            this.$emit('buscar-roles')
-          }          
-        })
-        .catch(() => {
-          notify({ type: 'warning', title:'Rol no actualizado', text: `No se pudo actualizar el rol ${this.perfilSelected.nombreRol}`});
-          this.perfilSelected = {}
-        })
-      //AGREGAR CONSULTA API PARA ENVIAR DATOS ACTUALIZADOS YA SEA ENVIANDO TODOS LOS DATOS O SOLO PERFILSELECTED
+    modulosExistente: function () {//Función para obtener todos los modulos registrados
+    axios.get(`${API}/Ferromex/modules`)//Endpoint que trae todos los modulos que existen
+      .then((result)=>{//Si el endpoint tiene una respuesta correcta
+        for(let i=0; i<result.data.content.length; i++){ //recorremos la respuesta, y cada que recorremos sumamos un 1 para el siguiente rol
+          this.modulosExistentes.push({'value':result.data.content[i].id, 'label':result.data.content[i].nameModule})//asignamos los roles existentes a la variable roles, para mostrarlos en el multiselect
+        }
+      })
     },
-    cambiarModulos: function (index, estatus) {
-      this.perfilSelected.modulos[index].seleccionado = !estatus;      
-      this.perfilSelected[this.perfilSelected.modulos[index].nombre] = !estatus      
+    traerModulos: function (rol){//Función que trae los modulos asignados a un rol en especifico
+      this.modulosExistente()//mandamos a llamar ala función que trae todos los roles, para llenar el multiselect
+      axios.get(`${API}/Ferromex/modules?role=${rol.name}`)//Endpoint que trae los módulos asignados a un rol en especificio, si no le mandamos ningún rol, trae todos los módulos
+      .then((result)=>{//Si el endpoint tiene una respuesta correcta
+        for(let i=0; i<result.data.content.length; i++){ //recorremos la respuesta, y cada que recorremos sumamos un 1 para el siguiente rol
+          this.modulos.push({'value':result.data.content[i].id, 'label':result.data.content[i].nameModule})//asignamos los roles existentes a la variable roles, para mostrarlos en el multiselect
+        }
+      })
     },
-    //! Activar o desactivar
-    changeStatus: function (perfil) {
-      //Esto es por referencia
-      //this.perfilSelected = Object.assign(perfil)
-      //Esto es por valor
-      this.perfilSelected = { ...perfil }
-      this.perfilSelected.activo = !perfil.activo
-      axios.post(`${API}/CatalogoRoles/Editar`, this.perfilSelected)
-        .then((response) =>{            
-          if(response.data.status == 'Ok'){
-            notify({ type: 'success', title:'Rol actualizado', text: `Se actualizo correctamente el rol ${this.perfilSelected.nombreRol}`});
-            this.perfilSelected = {}
-            this.$emit('buscar-roles')
-          }  
-        })
-        .catch(() => {
-          notify({ type: 'warning', title:'Rol no actualizado', text: `No se pudo actualizar el rol ${this.perfilSelected.nombreRol}`});
-          this.perfilSelected = {}
-        })
-    },
-    acciones_mapper(perfil){
-      if(this.value == 'Habilitar'){
-        this.changeStatus(perfil)
+    editarModulos: function(rol, modulos){//Función que permite agregar o quitar módulos a un rol en especifico, recibe el nombre del rol y un array con los módulos a asignar
+      if(modulos.length === 0){// Si no se ha seleccionado ningún módulo, no nos va a permitir actualizarlos
+        notify({//Notificación que se muestra cuando no se puede hacer el cambio de manera correcta
+          title:'Sin Módulos Seleccionados',
+          text:`Se debe de seleccionar mínimo un módulo para el rol`,
+          type: 'warn',
+          duration:5000,
+        });
+      }else{//Si se seleccionó mínimo un módulo, se puede hacer la actualización
+        let data = {//literal que alamacena el nombre del rol y los módulos, para enviarlo en le body del endpoint
+          'roleName': rol,
+          'modules': modulos
+        }
+        axios.post(`${API}/Ferromex/addRoleModules`, data)//Enpoint que asigna los módulos a un rol en especifico
+        .then((result)=> {//Si el endpoint tiene una respuesta correcta
+          console.log(result);
+          this.modalModulos = false //cerramos el modal de asignación de módulos
+          notify({//Notifiación que se muestra cuando se realiza el cambio de una manera correcta
+            title:'Cambio Exitoso',
+            text:`Se cambiaron los módulos al Rol ${rol}`,
+            type: 'success'
+          });
+        }).catch((error) => {//Si el endpoint tiene un error en la respuesta
+          console.log(error);
+          this.modalModulos = false //cerramos el modal de asignación de módulos
+          notify({//Notificación que se muestra cuando no se puede hacer el cambio de manera correcta
+            title:'Cambio Fallido',
+            text:`No se pudo cambiar los módulos al Rol ${rol.name}`,
+            type: 'error'
+          });
+        }) 
       }
-      if(this.value == 'Deshabilitar'){
-        this.changeStatus(perfil)
+    },
+    acciones_mapper(rol){//Opciones que se presentan en la columna de Acciones
+      if(this.value == 'Habilitar'){//Cuando seleccionamos la opción Habilitar
+        this.cambiarEstatus(rol)//Mandamos a llamar a la función para cambiar el estatus del Rol
       }
-      if(this.value == 'Editar Modulos'){
-        this.showModulos(perfil)
+      if(this.value == 'Deshabilitar'){//Cuando seleccionamos la opción Deshabilitar
+        this.cambiarEstatus(rol)//Mandamos a llamar a la función para cambiar el estatus del Rol
+      }
+      if(this.value == 'Editar Modulos'){//Cuando seleccionamos la opción Editar Módulos
+        this.traerModulos(rol)//Llamamos a la función que trae los módulos asignados al rol seleccionado
+        this.perfilSelected = rol//asignamos los valores del rol seleccionado a la variable perfilSelected, para poder mostralos en el modal
+        this.modalModulos = true//Abrimos el modal de los módulos asignados
       }
       this.value = ""
     },
-    opticones_select_acciones(perfil){
-      let options= [
-          {  value: 'Habilitar', name: 'Habilitar'},//0
+    opticones_select_acciones(){
+      //let infoUser = Servicio.obtenerInfoUser() //variable que obtiene la información del usuario
+      //console.log(infoUser.role);
+      let options= [//literal que almacena un array de opciones que se presentan en la columna de Acciones, value corresponde al valor de la opción y name es el texto que se presentará en la columna de Acciones
+          {  value: 'Habilitar', name: 'Habilitar'},//0 
           {  value: 'Deshabilitar', name: 'Deshabilitar'},//1
           {  value: 'Editar Modulos', name: 'Editar Modulos'},//2
       ]
-      console.log(perfil);
-      let filtroOpciones = []
-        filtroOpciones.push(options[0])    
-        filtroOpciones.push(options[1])
-        filtroOpciones.push(options[2])
+      //console.log(rol);
+      let filtroOpciones = [] //Literal que nos da las opciones filtradas que se presentan en la columna de acciones
+      filtroOpciones.push(options[0])
+      filtroOpciones.push(options[1])
+      filtroOpciones.push(options[2])    
+        /* if(rol.estatus == 'Inactivo')
+          filtroOpciones.push(options[0])
+        if(rol.name != infoUser.role && rol.estatus == 'Activo'){
+          filtroOpciones.push(options[1])
+          filtroOpciones.push(options[2])    
+        } */
       
-      return filtroOpciones
+      return filtroOpciones //Regresamos el array con las opciones ya filtradas
     },
   },
 };
