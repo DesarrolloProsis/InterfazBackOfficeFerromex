@@ -1,32 +1,6 @@
 <template>
   <Navbar/>
   <h1 class="title font-titulo font-bold">Roles de Usuario</h1>
-    <!-- Modal Agregar Rol -->
-  <div class="sticky inset-0 " :class="{'modal-container': userModal}">
-    <div v-if="userModal" class="rounded-lg  justify-center border absolute inset-x-0 bg-white border-gray-400 w-69  mx-auto px-12 py-10 shadow-2xl mt-66">
-      <p class="text-gray-900 font-bold text-2xl -mt-8 mb-8 text-center">Agregar Nuevo Rol</p>     
-      <div class="grid grid-cols-2 mt-2">
-        <p class="text-sm mb-1 font-semibold text-gray-700 sm:-ml-6">Nombre Rol</p>
-        <input v-model="newRol.nombre" type="text" class="border rounded-lg">
-      </div>
-      <div class="grid grid-cols-2 mt-2">
-        <p class="text-sm mb-1 font-semibold text-gray-700 mt-2 sm:-ml-6">Vistas</p>
-        <Multiselect
-          v-model="newRol.vistas" 
-          label="text"
-          mode="multiple"
-          valueProp="value"
-          placeholder="Seleccione las Plazas"                    
-          :options="modulosExistentes"
-          :close-on-select="false"
-        /> 
-      </div>      
-      <div class="mt-5 text-center ml-6">
-        <button @click="craer_nuevo_rol" class="botonIconBuscar">Guardar</button>
-        <button @click="abrir_modal_new_rol" class="botonIconCancelar">Cancelar</button>
-      </div>
-    </div>
-  </div>
   <!-- Header Rol  -->
   <div class="container mx-auto px-0 pb-24 pt-4">    
     <div class="flex flex-wrap ferromex-color p-1 rounded-lg">
@@ -56,6 +30,32 @@
       <Paginacion :total-pages="totalPaginas" :total="100" :current-page="currentPage" :has-more-pages="hasMorePages" @pagechanged="showMore"/>
     </div>
   </div>
+  <!-- Modal Agregar Rol -->
+  <Modal :show="userModal">
+    <div>
+      <p class="text-gray-900 font-bold text-2xl -mt-8 mb-8 text-center">Agregar Nuevo Rol</p>     
+      <div class="grid grid-cols-2 mt-2">
+        <p class="text-sm mb-1 font-semibold text-gray-700 text-center sm:-ml-6">Nombre Rol</p>
+        <input v-model="newRol.nombre" type="text" class="border mx-auto w-52 rounded-lg">
+      </div>
+      <div class="grid grid-cols-2 mt-2">
+        <p class="text-sm mb-1 text-center font-semibold text-gray-700 mt-2 sm:-ml-6">Módulos</p>
+        <Multiselect
+          v-model="newRol.vistas" 
+          label="text"
+          mode="multiple"
+          valueProp="value"
+          placeholder="Seleccione las Plazas"                    
+          :options="modulosExistentes"
+          :close-on-select="false"
+          class="w-52"
+        /> 
+      </div>      
+      <div class="mt-10 text-center mx-auto mb-4">
+        <button @click="craer_nuevo_rol" class="rounded-lg w-18 bg-ferromex text-white p-10">Guardar</button>
+      </div>
+    </div>
+  </Modal>
   <!-- MODAL CARGANDO -->
   <Spinner :modalLoading="modalLoading"/>
   <Footer/>
@@ -70,7 +70,8 @@ import Footer from "../../components/Footer";//Importamos el componente Footer
 import axios from 'axios';//Importamos axios, para poder hacer llamadas a endpoint 
 import Multiselect from '@vueform/multiselect'//Importamos el componente multiselect para la selección de modulos a asignar
 import { notify } from "@kyvg/vue3-notification";//Importamos el componente notify para mostrar las notifiaciones al usuario
-import { onMounted,reactive, ref } from 'vue'
+import { onMounted,reactive, ref } from 'vue';
+import Modal from "../../components/Modal.vue"
 const API = process.env.VUE_APP_URL_API_PRODUCCION
 export default {
   components: {
@@ -79,7 +80,8 @@ export default {
     Multiselect,
     Footer,
     Spinner,
-    Paginacion
+    Paginacion,
+    Modal
   },
   setup(){
     
@@ -205,21 +207,14 @@ export default {
 };
 </script>
 <style scoped>
-.modal-container{
-    position: fixed;
-    width: 100%;
-    height: 100vh;
-    z-index: 1000;
-    background: rgba(0, 0, 0, 0.5);
+.bg-ferromex {
+  background-color: #BB2028;
+  padding: 10px 5px;
 }
 .title {
   text-align: center;
   font-size: 25px;
   padding-top: 20px;
-}
-.bg-blue {
-  background-color: #2c5282;
-  padding: 10px 5px;
 }
 .filter-style {
   color: white;
@@ -232,26 +227,6 @@ export default {
   border: 1px solid black;
   padding: 0px 5px;
 }
-.ml-right {
-  display: block;
-  margin-left: auto;
-  margin-right: 10px;
-}
-.btn-carriles {
-  background-color: #017296;
-  color: white;
-  font-size: 15px;
-  height: 100%;
-  padding: 0px 5px;
-  border: 1px solid black;
-  border-radius: 5px;
-}
-.btn-carriles:focus {
-  outline: 0;
-}
-.color-black {
-  color: black !important;
-}
 .color-black:focus {
   outline: 0;
 }
@@ -263,14 +238,6 @@ export default {
   .filter-style {
     padding-top: 5px;
     padding-bottom: 15px;
-  }
-  .btn-carriles {
-    background-color: #017296;
-    color: white;
-    font-size: 15px;
-    padding: 10px 5px;
-    border: 1px solid black;
-    border-radius: 5px;
   }
 }
 </style>
