@@ -17,7 +17,8 @@
           mode="multiple"
           valueProp="value"
           placeholder="Seleccione las Plazas"                    
-          :options="optionRoles"
+          :options="modulosExistentes"
+          :close-on-select="false"
         /> 
       </div>      
       <div class="mt-5 text-center ml-6">
@@ -30,7 +31,7 @@
   <div class="container mx-auto px-0 pb-24 pt-4">    
     <div class="flex flex-wrap ferromex-color p-1 rounded-lg">
       <div class="flex-none my-auto text-white font-md p-2 ml-10">
-        Nombre:<input v-model="nombre" type="text" class="rounded ml-2 md:w-20 2xl:w-44"/>
+        Nombre:<input v-model="nombre" type="text" class="rounded text-black ml-2 md:w-20 2xl:w-44"/>
       </div>
       <div class="flex-none my-auto text-white font-md p-2">
         Estatus:  
@@ -41,7 +42,7 @@
         </select>
       </div>
       <div class="flex-none my-auto text-white font-md p-2 ml-10">
-        <button @click="buscar()" class="btn-buscar animacion">Buscar</button>
+        <button @click="buscar(nombre,estatus)" class="btn-buscar animacion">Buscar</button>
       </div>
       <div class="flex-none my-auto text-white font-md p-2 ml-10">
         <button @click="buscar()" class="btn-buscar animacion">Todos</button>
@@ -50,7 +51,7 @@
         <button @click="abrir_modal_new_rol" class="btn-buscar animacion">Agregar Rol</button>
       </div>
     </div>
-    <TablaRoles :dataPerfiles="roles"/>
+    <TablaRoles :infoRoles="roles"/>
     <div class="mt-20 -mb-14">
       <Paginacion :total-pages="totalPaginas" :total="100" :current-page="currentPage" :has-more-pages="hasMorePages" @pagechanged="showMore"/>
     </div>
@@ -84,26 +85,27 @@ export default {
     
     const nombre = ref('')//constamte qie almacena el nombre del rol que queremos buscar
     const estatus = ref('')//constante que almacena el estatus que queremos buscar
-    const roles = ref([])
+    const roles = ref([])//Constante que almacena el listado de roles que existen
     const userModal = ref(false) //Constante que permite abrir el modal para agregar un nuevo Rol
-    const habilitar = ref(false)
-    const modalLoading = ref(false)
-    //Paginacion
+    //const habilitar = ref(false)
+    const modalLoading = ref(false)//Constante que permite abrir el spinner para las pantallas de carga
+    const modulosExistentes = ref([])//constante que contiene los modulos, para la asignación en los roles
     const totalPaginas = ref(0) //variable que indica el número total de páginas por resultado
     const currentPage = ref(1) //variable que indica la página en la que estás dentro de la paginación, en la primer carga siempre es la página 1
     const hasMorePages = ref(true) //variable para poder cambiar de páginas con los botones
     const numRespuesta = ref(10)//Variable que indica el número de respuestas por página
     const newRol = reactive({ nombre: "", vistas: [] }) //constante reactiva que nos va a permitir generar un arreglo con los datos de los modulos a agregar al rol
-    const optionRoles = [{text: 'Registro de Información de Telepeaje', value: 3}, //constante qie contiene los modulos, para la asignación en los roles
-                          {text: 'Mantenimiento Tags', value: 4},
-                          {text: 'Gestión de Usuarios', value: 5},
-                          {text: 'Generación de Reportes', value: 6},
-                        ]
-    const buscar_roles = async () => { 
-      
-    }    
-    //Nuevo Rol
-    const abrir_modal_new_rol = () => userModal.value = !userModal.value    
+                        
+    const abrir_modal_new_rol = () => { //Constante que permite abrir el modal de creación de roles
+      userModal.value = !userModal.value
+      axios.get(`${API}/Ferromex/modules`)//Endpoint que trae todos los modulos que existen
+      .then((result)=>{//Si el endpoint tiene una respuesta correcta
+      console.log(result.data.content);
+        for(let i=0; i<result.data.content.length; i++){ //recorremos la respuesta, y cada que recorremos sumamos un 1 para el siguiente rol
+          modulosExistentes.value.push({'text':result.data.content[i].nameModule, 'value':result.data.content[i].id,})//asignamos los roles existentes a la variable roles, para mostrarlos en el multiselect
+        }
+      })
+    }
     const craer_nuevo_rol = async () => { //Funcion que inserta el nuevo rol
     let data = { //literal que guarda el nombre del rol, para mandarselo al endpoint en el body
       "roleName": newRol.nombre
@@ -141,7 +143,7 @@ export default {
         abrir_modal_new_rol()//Llamamos a la función que cierra el modal
       })
     }
-    function buscar (nombre,estatus){//Función que realiza la busqueda de los roles existentes
+    function buscar (nombre,estatus){//Función que realiza la busqueda de los roles existentes, o uno en especificos
       roles.value = [] //Constante que contiene los roles se muestra en vacio para hacer una busqueda limpia, y no se queden datos en cache
       console.log(nombre, estatus);
       modalLoading.value = true
@@ -157,18 +159,16 @@ export default {
         modalLoading.value = false //cerramos el spinner de carga
       })
     }
-    function todos (){
+    function todos (){//Función que trae todos los roles existentes
       roles.value = [] //Constante que contiene los roles se muestra en vacio para hacer una busqueda limpia, y no se queden datos en cache
-      console.log(nombre, estatus);
       modalLoading.value = true
       axios.get(`${API}/Identity/roles`)//Llamada al endpoint que trae los roles existentes
-      .then((result) => {
-        console.log(result);
+      .then((result) => {//Si el endpoint tiene una respuesta correcta
         if(result.status == 200){//valida que el estatus de la respuesta sea 200 para saber que es una respuesta correcta y con contenido
           modalLoading.value = false//Cerramos el spinner de carga
           roles.value = result.data //asignamos los resultados que nos trajo el endpoint a la constante roles
         }
-      }).catch((error)=>{
+      }).catch((error)=>{//Si el endpoint tiene un error en la respuesta
         console.log(error);//Mostramos en consola el error  que nos da el endpoint
         modalLoading.value = false //cerramos el spinner de carga
       })
@@ -177,7 +177,7 @@ export default {
         axios.get(`${API}/UsuarioMonitoreo/${page}/${numRespuesta.value}/${nombre.value}/${estatus.value}`)
         .then((res) => {
           //perfiles.value = []
-          habilitar.value = true
+          //habilitar.value = true
           totalPaginas.value = res.data.numberPages
           currentPage.value = res.data.now
           res.data.body.forEach(() => {
@@ -199,7 +199,7 @@ export default {
 
     onMounted(buscar)
 
-    return { roles, userModal, buscar_roles, abrir_modal_new_rol, newRol, optionRoles, craer_nuevo_rol, nombre, estatus, buscar, todos, habilitar, modalLoading, totalPaginas, currentPage, hasMorePages, numRespuesta, showMore }
+    return { roles, modulosExistentes, userModal, abrir_modal_new_rol, newRol, craer_nuevo_rol, nombre, estatus, buscar, todos, modalLoading, totalPaginas, currentPage, hasMorePages, numRespuesta, showMore }
 
   }, 
 };
