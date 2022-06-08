@@ -8,7 +8,6 @@
         <th>
           <label class="rounded-full px-20 bg-gray-200 ring-2 ring-gray-500 p-2 text-black 2xl:px-28">Estatus</label>
         </th>
-        <!--<th>Modulos</th>  -->  
         <th>
           <label class="rounded-full px-20 bg-gray-200 ring-2 ring-gray-500 p-2 text-black 2xl:px-28">Acciones</label>
         </th>
@@ -35,8 +34,8 @@
   </div>
   <br />
   <!-- Editar Rol -->
-  <div class="sticky inset-0 " :class="{'modal-container': modalModulos}">
-    <div v-if="modalModulos" class="rounded-lg  justify-center border absolute inset-x-0 bg-white border-gray-400 w-69  mx-auto px-12 py-10 shadow-2xl mt-60">
+  <Modal :show="modalModulos">
+    <div>
       <p class="text-gray-900 font-bold text-2xl -mt-8 mb-8 text-center">Actualizar Módulos {{ perfilSelected.name }}</p>
       <div class="grid grid-cols-2 mt-2" v-for="(modulos, index) in modulos" :key="index">
         <p>{{ modulos.label }}</p>
@@ -45,7 +44,7 @@
         </p>
       </div>
       <div class="grid grid-cols-2 mt-6">      
-        <p class="text-sm mb-1 font-semibold text-gray-700 ">Modulos a Asignar</p>
+        <p class="text-sm mb-1 font-semibold text-gray-700 text-center ">Modulos a Asignar</p>
         <Multiselect
           v-model="asignarModulos"
           placeholder="Seleccione los modulos par este rol"
@@ -56,18 +55,17 @@
           class="w-52"
         />
       </div>
-      <div class="mt-5 text-center ml-6">
-        <button @click="editarModulos(perfilSelected.name, asignarModulos)" class="botonIconBuscar">Guardar</button>
-        <button @click="modalModulos = false" class="botonIconCancelar">Cancelar</button>
+      <div class="mt-10 text-center mx-auto mb-4">
+        <button @click="editarModulos(perfilSelected.name, asignarModulos)" class="rounded-lg w-18 bg-ferromex text-white p-10">Guardar</button>
       </div>
     </div>
-  </div>  
+  </Modal>
 </template>
-
 <script>
 //import Servicio from '../Servicios/Token-Services'; //Importamos el Servicio de Toke, para obtener información del usuario con base en el token
 import Multiselect from '@vueform/multiselect' //Importamos el componente Multiselect para utilizarlo en la columna Acciones o en el modal de asignar módulos
 import axios from 'axios';
+import Modal from '../components/Modal.vue'
 import { notify } from "@kyvg/vue3-notification"; //Componente para generar notificaciones
 const API = process.env.VUE_APP_URL_API_PRODUCCION //Constante que nos almacena la cadena de conexión a la API
 export default {
@@ -75,6 +73,7 @@ export default {
   props: ["infoRoles"],//propiedad que almacena los valores de cada uno de los roles
   components:{
     Multiselect, //Utilizamos el componente para su implementación
+    Modal,
   },
   data() {
     return {
@@ -86,7 +85,7 @@ export default {
       modulosExistentes: []//Constante que almacena todos los módulos existentes
     };
   },
-
+  
   methods: {
     cambiarEstatus: function (rol) {//Funciòn praa cambiar el estatus del rol
       let data = {//Literal que va a almacenar la informacion del rol para poder enviarlo al endpoint
@@ -201,6 +200,10 @@ export default {
 };
 </script>
 <style scoped>
+.bg-ferromex {
+  background-color: #BB2028;
+  padding: 10px 5px;
+}
 .modal-container{
     position: fixed;
     width: 100%;
