@@ -27,18 +27,16 @@
     </table>
   </div>
   <Modal :show="showModalAdvertencia" @cerrarmodal="cerralmodalpadre">
-        <h1 class="text-5xl font-bold font-titulo text-center ">Advertencia</h1>
-          <div class="w-full flex justify-center mt-4">
-                <fa icon="triangle-exclamation" class="h-20 text-yellow-400"/>
-          </div>
-          <div class="w-full flex justify-center mt-4 text-xl font-medium text-center">
-                <p class="">Estas a punto de <label :class="{'text-green-400':texto == 'habilitar','text-yellow-400' :texto === 'deshabilitar','text-red-600' :texto === 'eliminar',  }">{{texto}}</label> este tag estas seguro?</p>
-          </div>
-          <div class="w-full flex justify-center space-x-28 mt-6 mb-6">
-            <button class="botonIconOk animacion">Aceptar</button>
-            <button class="btn-buscar animacion">Cancelar</button>
-          </div>
-            
+        <div class="w-full flex justify-center mt-4">
+          <fa icon="triangle-exclamation" class="h-20 text-yellow-400"/>
+        </div>
+        <h1 class="text-5xl font-bold font-titulo text-center ">Advertencia</h1>  
+        <div class="w-full flex justify-center mt-4 text-xl font-medium text-center">
+          <p class="">Estas a punto de <label :class="{'text-green-400':texto == 'habilitar','text-yellow-400' :texto === 'deshabilitar','text-red-600' :texto === 'eliminar',  }">{{texto}}</label> este tag estas seguro?</p>
+        </div>
+        <div class="w-full flex justify-center space-x-28 mt-6 mb-6">
+          <button class="botonIconOk animacion" @click="accion(texto)">Aceptar</button>
+        </div>    
   </Modal>
 </template>
 <script>
@@ -59,9 +57,10 @@ export default {
       const showModalAdvertencia = ref(false)
       const texto = ref('')
       const accionestags = ref('')
-      const options = ref(['Activo','Inactivo','Deshabilitar'])
+      const options = ref(['Activo','Inactivo','Eliminar'])
       const select = ref(undefined)
       const selectestatus = ref(undefined)
+      const infotag = ref({})
 
     const cerralmodalpadre = (modal) => {
       console.log(modal)
@@ -72,10 +71,10 @@ export default {
     //Funcion para identificar la accion del usuario en el tag
     function accionesTags(accionestags,cruces) {
         const guardaroption = accionestags
-        const infotag = cruces
+        infotag.value = cruces
         showModalAdvertencia.value = !showModalAdvertencia.value
         console.log(guardaroption)
-        console.log(infotag);
+        console.log(infotag.value);
         if(guardaroption == 'Activo'){
           texto.value = "habilitar"
           select.value = undefined
@@ -84,13 +83,17 @@ export default {
           texto.value = "deshabilitar"
           select.value = undefined
         }
-        else if(guardaroption == 'Deshabilitar'){
+        else if(guardaroption == 'Eliminar'){
           texto.value = "eliminar"
           select.value = undefined
         }
         
       }
-      return{showModalAdvertencia,texto,accionesTags,accionestags,options,select,selectestatus,cerralmodalpadre}
+      function accion(texto){
+        console.log(texto)
+        console.log(infotag.value);
+      }
+      return{infotag,accion,showModalAdvertencia,texto,accionesTags,accionestags,options,select,selectestatus,cerralmodalpadre}
     
   },
 };
