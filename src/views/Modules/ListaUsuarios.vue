@@ -10,16 +10,15 @@
       <div class="flex-none my-auto text-white font-md p-2">
         Estatus:  
         <select v-model="estatus" class="flex-none filter-style color-black rounded" name="select" placeholder="Selecciona">
-          <option hidden selected>Seleccione </option>
-          <option value="true">Activo</option>
-          <option value="false">Inactivo</option>
+          <option :value="undefined">Seleccione un estatus</option>
+          <option v-for="(option ,index) in options" :key="index" :value="option">{{option}}</option>
         </select>
       </div>
       <div class="flex-none my-auto text-white font-md p-2 ml-10">
-        <button @click="buscar()" class="btn-buscar animacion">Buscar</button>
+        <button @click="buscar(nombre,estatus)" class="btn-buscar animacion">Buscar</button>
       </div>
-      <div class="flex-none my-auto text-white font-md p-2 ml-10">
-        <button @click="buscar()" class="btn-buscar animacion">Todos</button>
+      <div class="flex-none my-auto text-white font-md p-2 ml-6">
+        <button @click="todos()" class="btn-buscar animacion">Todos</button>
       </div>
       <div class="flex-none my-auto text-white font-md p-2 md:ml-32 2xl:ml-69">
         <button @click="abrirModal" class="btn-buscar animacion">Agregar Usuario</button>
@@ -27,7 +26,7 @@
     </div>
     <TablaListaUsuarios @refrescarTabla="refrescar_tabla" :dataUsuarios="usuarios" />
     <div class="mt-20 -mb-14">
-      <Paginacion :total-pages="totalPaginas" :total="100" :current-page="currentPage" :has-more-pages="hasMorePages" @pagechanged="showMore"/>
+      <Paginacion :total-pages="totalPaginas" :total="100" :current-page="paginaActual" :has-more-pages="hasMorePages" @pagechanged="showMore"/>
     </div>
   </div>
   <!-- MODAL CREAR USUARIO -->
@@ -70,7 +69,7 @@ import { notify } from "@kyvg/vue3-notification";//Componente que realiuza las n
 import Spinner from '../../components/Spinner.vue'//Componente que contiene el spinner para las pantallas de cargas
 import Paginacion from "../../components/Paginacion.vue"//Componente que contiene la paginación
 import axios from "axios";
-import { reactive, ref } from 'vue'
+import { reactive, ref, toRefs } from 'vue'
 export default {
   components: {
     TablaListaUsuarios,
@@ -148,16 +147,16 @@ export default {
       }
 
     ])//Constante que almacena el array de todos los usuarios que se han registrado con toda la información
-    const nombre = ref('')//Constante que almacena el string del nombre asignado en el filtro de nombre
-    const estatus = ref('')//Constante que almacena el string del estatus asignado en el filtro de estatus
+    const options = ref(['Activo', 'Inactivo'])//Constante que almacena las opciones de estatus que pueden seleccionar en el header
     const modalAgregar = ref(false)//Constante que abre el modal para agregar el usuario
     const roles = ref ([])//Constante que almacena el array de roles existentes
     const modalLoading = ref(false)//Constante que abre el modal del spinner de la pantalla de carga
+    const header = reactive({ nombre: "", estatus: undefined })//Constante reactiva que almacena el nombre y estatus para realizar el filtro de busqueda
     //Paginacion
     const totalPaginas = ref(0)//Constante que almacena el total de páginas que hay en la busqueda
-    const currentPage = ref(1)//Constante que almacena la página actual de la busqueda realizada
+    const paginaActual = ref(1)//Constante que almacena la página actual de la busqueda realizada
     const hasMorePages = ref(true)//Constante que nos indica si puede haber más páginas y si puede hacer un cambio de página
-    const numRespuesta = ref(7)//Constante que indica el número de respuestas que va a mostrar por página
+    const numRespuesta = ref(10)//Constante que indica el número de respuestas que va a mostrar por página
     const usuario = reactive ({})//constante reactiva que va a almacenar la información de un usuario nuevo
     
     const abrirModal = async () => {//función asincorna que espera a que des click en el botón Agregar usuario, que abre el formulario para agreagar un usuario
@@ -180,85 +179,40 @@ export default {
       usuario.apellidoM = ''
     }
     function todos (){
-      /* 
-      nombre.value = null
-      estatus.value = nul
-      axios.get(`${API}/UsuarioMonitoreo/${plaza.value}/${currentPage.value}/${numRespuesta.value}/${nombre.value}/${estatus.value}`)
-      .then((res) => {
-        usuarios.value = []
-        habilitar.value = true
-        totalPaginas.value = res.data.numberPages
-        currentPage.value = res.data.now
-        res.data.body.forEach((e) => {
-          let obj = {
-            id: e.usuarioId,
-            usuario: e.nombreUsuario,
-            nombre: e.nombre,
-            apellidoP: e.apellidoPaterno,
-            apellidoM: e.apellidoMaterno,
-            rol: e.rol,
-            idrol: e.idRol,
-            plazas: e.plazas,
-            estatus: e.estatus,
-          };
-          usuarios.value.push(obj);
-        });
-      }); */
+      //usuarios.value = []
+      modalLoading.value = true//Abrimos el spinner de pantalla de carga
+      header.nombre = ''//Damos el valor de vacio a la constante que almacena el nombre que se escribió en le header
+      header.estatus = undefined//Damos el valor de undefined a la constante que almacena el estatus que seleccionamos en el header
+      let nombreRuta = ' '//Creamos dos literal con un espacio en blanco para mandarla en la ruta
+      let estatusRuta = ' '
+      const ruta = encodeURI(`${API}/Identity/roles/${paginaActual.value}/${numRespuesta.value}/${nombreRuta}/${estatusRuta}`)
+        console.log(ruta)
+      modalLoading.value = false
     }
-    function buscar (){
+    function buscar (nombre, estatus){
+      //usuarios.value = []
       modalLoading.value = true
-      /* let data = {
-        "nombre": nombre,
-        "id":'',
-        "email":''
-      } */
-      /* axios.post(`${API}/Identity/user`, data)
-      .then((result)=> {
-        console.log(result);
-      }).catch((error)=> {
-        console.log(error);
-      }) */
-      axios.post(`${API}/Identity/user?userName=PRODEV`)
-      .then((result) => {
-        console.log(result);
-      })
-    }
-    /*  function buscar (nombre,estatus, plaza){
-      modalLoading.value = true
-      if(plaza == '' || plaza == null || plaza == undefined){
-        modalLoading.value = false
-        notify({
-          title:'Sin información',
-          text:`Se debe de seleccionar la plaza para hacer una busqueda`,
-          duration: 2000,
+      if(nombre == '')
+        nombre = ' '
+      if(estatus == undefined)
+        estatus = ' '
+      if(nombre == ' ' && estatus == ' '){
+        notify({//Notificación en la que indicamos que no se ha insertado ningún dato para buscar
+          title:'Sin Información',
+          text:'No hay datos para realizar la busqueda',
           type: 'warn'
         });
+        modalLoading.value = false
+      }else{
+        const ruta = encodeURI(`${API}/Identity/roles/${paginaActual.value}/${numRespuesta.value}/${nombre}/${estatus}`)
+        console.log(ruta)
+        modalLoading.value = false
       }
-      else{
-        axios.get(`${API}/UsuarioMonitoreo/${plaza}/${currentPage.value}/${numRespuesta.value}/${nombre}/${estatus}`)
-          .then((res) => {
-            modalLoading.value = false
-            usuarios.value = []
-            habilitar.value = true
-            totalPaginas.value = res.data.numberPages
-            currentPage.value = res.data.now
-            res.data.body.forEach((e) => {
-              let obj = {
-                id: e.usuarioId,
-                usuario: e.nombreUsuario,
-                nombre: e.nombre,
-                apellidoP: e.apellidoPaterno,
-                apellidoM: e.apellidoMaterno,
-                rol: e.rol,
-                idrol: e.idRol,
-                plazas: e.plazas,
-                estatus: e.estatus,
-              };
-              usuarios.value.push(obj);
-            });
-          });
-      }
-    } */
+      /* axios.post(`${API}/Identity/user?userName=PRODEV`)
+      .then((result) => {
+        console.log(result);
+      }) */
+    }
     function refrescar_tabla(){
       buscar()
     } 
@@ -334,7 +288,7 @@ export default {
       
     }
 
-  return { abrirModal, cancelar, todos, guardar, refrescar_tabla, buscar, showMore, usuario, usuarios, nombre, estatus, modalAgregar, roles, modalLoading, currentPage, hasMorePages, numRespuesta, totalPaginas }
+  return { abrirModal, cancelar, todos, guardar, refrescar_tabla, buscar, showMore, usuario, usuarios, options, ...toRefs(header), modalAgregar, roles, modalLoading, paginaActual, hasMorePages, numRespuesta, totalPaginas }
   },
 }
 </script>
