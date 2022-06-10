@@ -194,10 +194,12 @@ export default {
       }
     }
     function showMore (){}
+    function stopInterval(){//Función que detiene le intervalo, para que no se esté llamanmdo aunque salgas de la vbista
+      clearInterval(interval.value)//ClearInterval, limpia el intervalo, lo vuelte 0 para que nunca se repita
+    }
+    onUnmounted(stopInterval)//Ejecuta la función cuando se desmonta el componente
 
-    onUnmounted(setInterval_)
-
-    return { header, carriles, modalLoading, showMore, buscar, setInterval_, tiempos, todos, ...toRefs(header), cruces, contador, tiempo, totalPaginas, paginaActual, hasMorePages, numRespuesta}
+    return { header, carriles, modalLoading, showMore, buscar, setInterval_, tiempos, todos, ...toRefs(header), stopInterval, cruces, contador, tiempo, totalPaginas, paginaActual, hasMorePages, numRespuesta}
 }
 }
 </script>

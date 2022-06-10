@@ -3,7 +3,7 @@
       <div v-if="showModal" ref="modal-backdrop" class="fixed z-10 inset-0 overflow-y-auto bg-black bg-opacity-50">
         <div class="flex items-center justify-center min-h-screen text-center">
           <div
-              class="w-1/2 bg-white rounded-lg text-left overflow-hidden shadow-xl"
+              class="w-1/2 bg-white rounded-lg text-left shadow-xl"
               role="dialog"
               ref="modal"
               aria-modal="true"
