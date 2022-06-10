@@ -13,8 +13,11 @@
         </th>
       </tr>
       <tr v-for="(rol, index) in infoRoles" :key="index">
-        <td :class="{'text-gray-300': rol.activo == false}">{{ rol.name }}</td>
-        <td :class="{'text-gray-300': rol.activo == false}">{{ rol.id }}</td>
+        <td :class="{'text-gray-300': rol.estatus == false}">{{ rol.nombreRol }}</td>
+        <td :class="{'text-gray-300': rol.estatus == false}">
+          <span v-if="rol.estatus == true">Activo</span>
+          <span v-if="rol.estatus == false">Inactivo</span>
+        </td>
         <td class="w-66">
           <div class="w-66 mx-auto">
             <Multiselect v-model="value" placeholder="Sleccione una Acción" @close="acciones_mapper(rol)" label="name" trackBy="name" :options="opticones_select_acciones(rol,index)" :searchable="true">
@@ -251,7 +254,7 @@ export default {
   padding-top: 20px;
   overflow-x: auto;
   overflow-y: auto;
-  max-height: 500px;
+  max-height: 640px;
 }
 .tftable {
   font-size: 12px;
@@ -270,5 +273,6 @@ export default {
   border-left-color: white;
   border-right-color: white;
   text-align: center;
+  
 }
 </style>

@@ -25,8 +25,8 @@
       </div>
     </div>
     <TablaRoles :infoRoles="roles"/>
-    <div class="mt-20 -mb-14">
-      <Paginacion :total-pages="totalPaginas" :total="100" :current-page="paginaActual" :has-more-pages="hasMorePages" @pagechanged="showMore"/>
+    <div class="mt-10 -mb-14">
+      <Paginacion :total-pages="totalPaginas" :total="100" :current-page="paginaActual" :has-more-pages="hasMorePages" @pagechanged="cambiarPagina"/>
     </div>
   </div>
   <!-- Modal Agregar Rol -->
@@ -101,7 +101,6 @@ export default {
       userModal.value = true
       axios.get(`${API}/Ferromex/modules`)//Endpoint que trae todos los modulos que existen
       .then((result)=>{//Si el endpoint tiene una respuesta correcta
-      console.log(result.data.content);
         for(let i=0; i<result.data.content.length; i++){ //recorremos la respuesta, y cada que recorremos sumamos un 1 para el siguiente rol
           modulosExistentes.value.push({'text':result.data.content[i].nameModule, 'value':result.data.content[i].id,})//asignamos los roles existentes a la variable roles, para mostrarlos en el multiselect
         }
@@ -131,14 +130,16 @@ export default {
               modalLoading.value = false//Desactivamos el spinner
               notify({ type: 'success', title:'Rol creado', text: `Se creo correctamente el rol ${newRol.nombre}`});//Mostramos notificación de que se creo correctamente el rol
               newRol.vistas = []; newRol.nombre = "";//limpiamos los input del modal para agregar roles
-              abrir_modal_new_rol()//Llamamos a la función que cierra el modal
+              cerralmodalpadre()//Llamamos a la función que cierra el modal
+              todos()
             }
           }).catch((error) => {//Si el enpoint tiene algun error
             console.log(error);//Imprimimos el error en consola
             modalLoading.value = false//Desactivamos el spinner
             notify({ type: 'warning', title:'Rol no creado', text: `No se pudo insertar los modulos al rol ${newRol.nombre}`});//Mostramos nositificación de que no se creo el rol
             newRol.vistas = []; newRol.nombre = "";//limpiamos los input del modal para agregar roles
-            abrir_modal_new_rol()//Llamamos a la función que cierra el modal
+            cerralmodalpadre()//Llamamos a la función que cierra el modal
+            todos()
           })
         }
       }).catch((error) => {
@@ -146,7 +147,8 @@ export default {
         modalLoading.value = false//Desactivamos el spinner
         notify({ type: 'warning', title:'Rol no creado', text: `No se pudo crear el rol ${newRol.nombre}`});//Mostramos nositificación de que no se creo el rol
         newRol.vistas = []; newRol.nombre = "";//limpiamos los input del modal para agregar roles
-        abrir_modal_new_rol()//Llamamos a la función que cierra el modal
+        cerralmodalpadre()//Llamamos a la función que cierra el modal
+        todos()
       })
     }
     function buscar (nombre, estatus){//Función que realiza la busqueda de los roles existentes, o uno en especificos
@@ -167,11 +169,13 @@ export default {
         roles.value = [] //Constante que contiene los roles se muestra en vacio para hacer una busqueda limpia, y no se queden datos en cache
         const ruta = encodeURI(`${API}/Identity/roles/${paginaActual.value}/${numRespuesta.value}/${nombre}/${estatus}`)
         console.log(ruta)
-        axios.get(`${API}/Identity/roles`)//Llamada al endpoint que trae los roles existentes
+        axios.get(ruta)//Llamada al endpoint que trae los roles existentes
         .then((result) => {//Si el endpoint tiene una respuesta correcta
           if(result.status == 200){//valida que el estatus de la respuesta sea 200 para saber que es una respuesta correcta y con contenido
+            totalPaginas.value = result.data.paginas_totales
+            paginaActual.value = result.data.pagina_actual
             modalLoading.value = false//Cerramos el spinner de carga
-            roles.value = result.data //asignamos los resultados que nos trajo el endpoint a la constante roles
+            roles.value = result.data.roles //asignamos los resultados que nos trajo el endpoint a la constante roles
           }
         }).catch((error)=>{//Si el endpoint tiene un erro en la respuesta
           console.log(error);//Mostramos en consola el error  que nos da el endpoint
@@ -186,47 +190,43 @@ export default {
       header.estatus = undefined//Damos el valor de undefined a la constante que almacena el estatus que seleccionamos en el header
       let nombreRuta = ' '//Creamos dos literal con un espacio en blanco para mandarla en la ruta
       let estatusRuta = ' '
-      const ruta = encodeURI(`${API}/Identity/roles/${paginaActual.value}/${numRespuesta.value}/${nombreRuta}/${estatusRuta}`)//constante con la ruta codificada
-      console.log(ruta)
-      axios.get(`${API}/Identity/roles`)//Llamada al endpoint que trae los roles existentes
+      const ruta = encodeURI(`${API}/Identity/roles/1/${numRespuesta.value}/${nombreRuta}/${estatusRuta}`)//constante con la ruta codificada
+      axios.get(ruta)//Llamada al endpoint que trae los roles existentes
       .then((result) => {//Si el endpoint tiene una respuesta correcta
         if(result.status == 200){//valida que el estatus de la respuesta sea 200 para saber que es una respuesta correcta y con contenido
+          totalPaginas.value = result.data.paginas_totales
+          paginaActual.value = result.data.pagina_actual
           modalLoading.value = false//Cerramos el spinner de carga
-          roles.value = result.data //asignamos los resultados que nos trajo el endpoint a la constante roles
+          roles.value = result.data.roles //asignamos los resultados que nos trajo el endpoint a la constante roles
         }
       }).catch((error)=>{//Si el endpoint tiene un error en la respuesta
         console.log(error);//Mostramos en consola el error  que nos da el endpoint
         modalLoading.value = false //cerramos el spinner de carga
       })
     }
-    function showMore(page){
-      console.log(page);
-        //axios.get(`${API}/UsuarioMonitoreo/${page}/${numRespuesta.value}/${nombre.value}/${estatus.value}`)
-        //.then((res) => {
-          //perfiles.value = []
-          //habilitar.value = true
-          //totalPaginas.value = res.data.numberPages
-          //currentPage.value = res.data.now
-          //res.data.body.forEach(() => {
-            /* let obj = {
-                id: e.usuarioId,
-                usuario: e.nombreUsuario,
-                nombre: e.nombre,
-                apellidoP: e.apellidoPaterno,
-                apellidoM: e.apellidoMaterno,
-                rol: e.rol,
-                idrol: e.idRol,
-                plazas: e.plazas,
-                estatus: e.estatus,
-            }; */
-            //perfiles.value.push(obj);
-          //});
-        //});
+    function cambiarPagina(page){//Función que cambia la página
+      if(header.nombre == "")//Si el filtro de nombre está vacío
+        header.nombre = ' '//Damos un espacio en blanco para enviarlo asi en la ruta
+      if(header.estatus)//Si el filtro de estatus está vacío
+        header.estatus = ' '//Damos un espacio en blanco para enviarlo asi en la ruta
+      const ruta = encodeURI(`${API}/Identity/roles/${page}/${numRespuesta.value}/${header.nombre}/${header.estatus}`)//constante con la ruta codificada
+      axios.get(ruta)//Llamada al endpoint que trae los roles existentes
+      .then((result) => {//SI el endpoint tiene una respuesta correcta
+        if(result.status == 200){//valida que el estatus de la respuesta sea 200 para saber que es una respuesta correcta y con contenido
+          totalPaginas.value = result.data.paginas_totales
+          paginaActual.value = result.data.pagina_actual
+          modalLoading.value = false//Cerramos el spinner de carga
+          roles.value = result.data.roles //asignamos los resultados que nos trajo el endpoint a la constante roles
+        }
+      }).catch((error) => {//Si el endpoint tiene un error 
+        console.log(error);//Mostramos en consola el error  que nos da el endpoint
+        modalLoading.value = false //cerramos el spinner de carga
+      })
     }
 
-    onMounted(todos)
+    onMounted(todos)//Montamos la función todos apra que traiga todos los roles existentes en la primer carga
 
-    return { roles, modulosExistentes, userModal, abrir_modal_new_rol, newRol, ...toRefs(header), options, craer_nuevo_rol, buscar, todos, modalLoading, totalPaginas, paginaActual, hasMorePages, numRespuesta, showMore, cerralmodalpadre }
+    return { roles, modulosExistentes, userModal, abrir_modal_new_rol, newRol, ...toRefs(header), options, craer_nuevo_rol, buscar, todos, modalLoading, totalPaginas, paginaActual, hasMorePages, numRespuesta, cambiarPagina, cerralmodalpadre }
 
   }, 
 };
