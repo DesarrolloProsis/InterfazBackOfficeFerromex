@@ -18,7 +18,10 @@
       <tr v-for="(usuario, index) in dataUsuarios" :key="index">
         <td :class="{'text-gray-300': !usuario.estatus}">{{ usuario.nombreUsuario }}</td>
         <td :class="{'text-gray-300': !usuario.estatus}">{{ usuario.nombreCompleto }}</td>
-        <td :class="{'text-gray-300': !usuario.estatus}">{{ usuario.rol }}</td>
+        <td :class="{'text-gray-300': !usuario.estatus}">
+          <span v-if="usuario.estatus == true">Activo</span>
+          <span v-else>Inactivo</span>
+        </td>
         <td>
           <div>
             <Multiselect v-model="accion" placeholder="Sleccione una Acción" @close="acciones_mapper(usuario)" label="name" trackBy="name" :options="opticones_select_acciones(usuario)" :searchable="true">
@@ -119,11 +122,12 @@ export default {
     const seleccionado = ref({})//Constante que alamcena la información del usuario seleccionado para las distintas acciones
     const accion = ref(null)//Constante que hace referencia a la acción seleccionada 
     const validacion = ref(false)//Constane que habilita el mensaje de datos obligatorios en los diferentes modales.
-    const usuario = ref({ usuarioId:'', nombre: '', apellidos:'', rol:'',  estatus: '' })
+    const usuario = ref({})
     const roles = ref([])//Constante que almacena los roles existentes
     const pass = ref('')//Constatnte que alamcena el password para la edición de la contraseña del usuario
     const status = ref('')//Constante que almacena el estatus del usuario para habilitarlo o deshabilitarlo
     const errorMessage = ref('')//Constante que almacena el mensaje de error que se da al hacer una petición
+    const infoUser = Servicio.obtenerInfoUser()
 
     const modal_Rol = async () => {
       modalRol.value = true
@@ -163,16 +167,16 @@ export default {
       })
     }
     function editarUsuario(usuario){//Función que hace la edioción del usuario, en cuanto a nombre y apellido
-      console.log(usuario);
       let data = { //literal que almacena los datos para enviar al endpoint de la edición
         "usuarioId": usuario.usuarioId,
+        "nombreUsuario": usuario.nombreUsuario,
         "nombre": usuario.nombre,
-        "apellido": usuario.apellidos,
+        "apellidos": usuario.apellidos,
         "rol": usuario.rol,
+        "nombreCompleto": usuario.nombreCompleto,
         "estatus": usuario.estatus
       }
-      console.log(data);
-      axios.put(`${API}/ferromex/editUser`, data)//endpoint que recibe un JSON con la información del usuario para editar
+      axios.put(`${API}/Identity/editUser`, data)//endpoint que recibe un JSON con la información del usuario para editar
       .then((result) => {//Si el endpoint tiene una respuesta correcta
         console.log(result);
         notify({//Notifiación que se le muestra al usuario si se hizo el cmabio correcto
@@ -180,16 +184,19 @@ export default {
           text:`Se cambió el estatus al usuario ${usuario.nombre + ' ' + usuario.apellidos}`,
           type: 'success'
         });
-      }).catch((error) => {//Si el endpoint tiene un error en la respuesta
+      })
+      .catch(error => {//Si el endpoint tiene un error en la respuesta
+        console.log('errir');
         console.log(error);//Mostramos el error en la consola
         notify({//Notifiación que se le muestra al usuario si no se hace el cambio
           title:'Cambio Exitoso',
           text:`No se pudo cambiar el estatus al usuario ${usuario.nombre + ' ' + usuario.apellidos}`,
           type: 'error'
         });
+        return error
       })
     }
-    function CambiarEstatus(usuario) {//Función que cambia el estatus del usuario
+    function cambiarEstatus(usuario) {//Función que cambia el estatus del usuario
       let data = {
         "usuarioId": usuario.usuarioId,
         "nombre": usuario.nombre,
@@ -241,24 +248,28 @@ export default {
         });
       })
     }
-    function acciones_mapper(item){
+    function acciones_mapper(item){//Asignación de funciones de la lista de opciones que hay en el menú de acciones
+      console.log(item);
       if(accion.value == 'Habilitar'){
-        CambiarEstatus(item)
+        cambiarEstatus(item)//Llamamos a la función cambiarEstatus y le enviamos el parámetro del usuario que seleccionamos
       }if(accion.value == 'Deshabilitar'){
-        CambiarEstatus(item)
+        cambiarEstatus(item)//Llamamos a la función cambiarEstatus y le enviamos el parámetro del usuario que seleccionamos
       }if(accion.value == 'Cambiar Contraseña'){
-        seleccionado.value = item;
-        modalPass.value = true;
+        seleccionado.value = item;//Asignamos los valores del usuario seleccionado a la constante seleccionado
+        modalPass.value = true;//abrimos el modal para cambiar el password
       }if(accion.value == 'Editar Usuario'){
-        modalEditar.value = true
-        usuario.value.nombre = item.nombre
-        usuario.value.apellidos = item.apellidos
-        usuario.value.rol = item.rol
-        usuario.value.estatus = item.estatus
-        usuario.value.usuarioId = item.usuarioId
+        modalEditar.value = true//Abrimos el modal para editar el usuario
+        //usuario.value.nombre = item.nombre//Asignamos los parametros utiles para la edición
+        //usuario.value.apellidos = item.apellidos
+        //usuario.value.rol = item.rol
+        //usuario.value.estatus = item.estatus
+        //usuario.value.usuarioId = item.usuarioId
+        //usuario.value.userName = item.nombreUsuario
+        usuario.value = item
+        console.log(usuario);
       }if(accion.value == 'Cambiar Rol'){
-        modal_Rol()
-        usuario.value.nombre = item.nombre
+        modal_Rol()//Llamamos a la función que abre el modal para cambiar el Rol
+        usuario.value.nombre = item.nombre//Asignamos los valores utiles a la constante usuario
         usuario.value.apellidos = item.apellidos
         usuario.value.rol = item.rol
         usuario.value.estatus = item.estatus
@@ -266,8 +277,7 @@ export default {
       }
       accion.value = ""
     }
-    function opticones_select_acciones(item){
-      let info = Servicio.obtenerInfoUser()
+    function opticones_select_acciones(item){//Lista de opciones que se muestran en el menú de acciones
       let options = [
           {  value: 'Habilitar', name: 'Habilitar'},//0
           {  value: 'Deshabilitar', name: 'Deshabilitar'},//1
@@ -280,16 +290,15 @@ export default {
             filtroOpciones.push(options[0])
           if(item.estatus ==  true){
             filtroOpciones.push(options[3])
-            filtroOpciones.push(options[4])
-            if(item.id != info.UsuarioId){
+            if(item.usuarioId != infoUser.sub){
               filtroOpciones.push(options[1])
+              filtroOpciones.push(options[4])
+              filtroOpciones.push(options[2])
             }
-            filtroOpciones.push(options[1])
-            filtroOpciones.push(options[2])
           }
-      return filtroOpciones  
+      return filtroOpciones  //Regresamos la lista de acciones filtrada
     }
-    return{ cambiarRol, CambiarEstatus, editarUsuario, cambiarPass, modal_Rol, acciones_mapper, opticones_select_acciones, modalEditar, modalPass, modalRol, modalLoading, seleccionado, accion, validacion, usuario, roles, pass, status, errorMessage }
+    return{ cambiarRol, cambiarEstatus, editarUsuario, cambiarPass, modal_Rol, acciones_mapper, opticones_select_acciones, infoUser, modalEditar, modalPass, modalRol, modalLoading, seleccionado, accion, validacion, usuario, roles, pass, status, errorMessage }
   }
 }
 </script>
@@ -331,9 +340,7 @@ export default {
 }
 .responsive-table {
   padding-top: 20px;
-  overflow-x: auto;
-  overflow-y: auto;
-  max-height: 500px;
+  max-height: 640px;
 }
 .tftable {
   font-size: 12px;

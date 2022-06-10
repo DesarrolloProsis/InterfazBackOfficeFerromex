@@ -1,6 +1,6 @@
 <template>
   <Navbar/>
-  <!--  -->
+  <!-- header -->
   <h1 class="title font-titulo font-bold">Lista de Usuarios</h1>
   <div class="container mx-auto px-0 pb-24 pt-4">
     <div class="flex flex-wrap ferromex-color p-1 rounded-lg">
@@ -10,37 +10,36 @@
       <div class="flex-none my-auto text-white font-md p-2">
         Estatus:  
         <select v-model="estatus" class="flex-none filter-style color-black rounded" name="select" placeholder="Selecciona">
-          <option hidden selected>Seleccione </option>
-          <option value="true">Activo</option>
-          <option value="false">Inactivo</option>
+          <option :value="undefined">Seleccione un estatus</option>
+          <option v-for="(option ,index) in options" :key="index" :value="option">{{option}}</option>
         </select>
       </div>
       <div class="flex-none my-auto text-white font-md p-2 ml-10">
-        <button @click="buscar()" class="btn-buscar animacion">Buscar</button>
+        <button @click="buscar(nombre,estatus)" class="btn-buscar animacion">Buscar</button>
       </div>
-      <div class="flex-none my-auto text-white font-md p-2 ml-10">
-        <button @click="buscar()" class="btn-buscar animacion">Todos</button>
+      <div class="flex-none my-auto text-white font-md p-2 ml-6">
+        <button @click="todos()" class="btn-buscar animacion">Todos</button>
       </div>
       <div class="flex-none my-auto text-white font-md p-2 md:ml-32 2xl:ml-69">
         <button @click="abrirModal" class="btn-buscar animacion">Agregar Usuario</button>
       </div>
     </div>
-    <TablaListaUsuarios @refrescarTabla="refrescar_tabla" :dataUsuarios="usuarios" />
-    <div class="mt-20 -mb-14">
-      <Paginacion :total-pages="totalPaginas" :total="100" :current-page="currentPage" :has-more-pages="hasMorePages" @pagechanged="showMore"/>
+    <TablaListaUsuarios :dataUsuarios="usuarios" />
+    <div class="-mt-2 -mb-14">
+      <Paginacion :total-pages="totalPaginas" :total="100" :current-page="paginaActual" :has-more-pages="hasMorePages" @pagechanged="cambiarPagina"/>
     </div>
   </div>
   <!-- MODAL CREAR USUARIO -->
-  <div class="sticky inset-0 " :class="{'modal-container': modalAgregar}">
-    <div v-if="modalAgregar" class="rounded-lg  justify-center border absolute inset-x-0 bg-white border-gray-400 w-69  mx-auto px-12 py-10 shadow-2xl mt-60">
+  <Modal :show="modalAgregar" @cerrarmodal="cerrarModal">
+    <div>
       <p class="text-gray-900 font-bold text-2xl -mt-8 mb-8 text-center">Agregar Nuevo Usuario</p>
-      <div class="grid grid-cols-2 mt-2">
-        <p class="text-sm mb-1 font-semibold text-gray-700 sm:-ml-6">Nombre(s) *</p>
-        <input v-model="usuario.nombre" type="text" class="border rounded-lg">
+      <div class="grid grid-cols-2 mt-2 text-center">
+        <p class="text-sm mb-1 font-semibold text-gray-700 sm:-ml-6">Nombre(s)*</p>
+        <input v-model="usuario.nombre" type="text" class="border mx-auto w-52 rounded-lg">
         <p class="text-sm mb-1 font-semibold text-gray-700 mt-2 sm:-ml-6">Apellidos*</p>
-        <input v-model="usuario.apellidos" type="text" class="border rounded-lg">
+        <input v-model="usuario.apellidos" type="text" class="border mx-auto w-52 rounded-lg">
         <p class="text-sm mb-1 font-semibold text-gray-700 mt-2 sm:-ml-6">Contraseña *</p>
-        <input v-model="usuario.pass" type="text" class="border rounded-lg">
+        <input v-model="usuario.pass" type="text" class="border mx-auto w-52 rounded-lg">
         <p class="text-sm mb-1 font-semibold text-gray-700 mt-2 sm:-ml-6">Rol *</p>
         <Multiselect
           v-model="usuario.rol"
@@ -48,14 +47,14 @@
           :searchable="true"
           :options="roles"
           :close-on-select="true"
+          class="w-52"
         /> 
       </div>
-      <div class="mt-5 text-center ml-6">
-        <button @click="guardar" class="botonIconBuscar">Guardar</button>
-        <button @click="cancelar(), modalAgregar= false" class="botonIconCancelar">Cancelar</button>
+      <div class="mt-10 text-center mx-auto mb-4">
+        <button @click="guardar()" class="rounded-lg w-18 bg-ferromex text-white p-10">Guardar</button>
       </div>
     </div>
-  </div>
+  </Modal>
   <!-- MODAL CARGANDO -->
   <Spinner :modalLoading="modalLoading"/>
   <Footer/>
@@ -69,8 +68,9 @@ import Multiselect from '@vueform/multiselect';//Importamos el componente Multis
 import { notify } from "@kyvg/vue3-notification";//Componente que realiuza las notificaciones
 import Spinner from '../../components/Spinner.vue'//Componente que contiene el spinner para las pantallas de cargas
 import Paginacion from "../../components/Paginacion.vue"//Componente que contiene la paginación
+import Modal from "../../components/Modal.vue"
 import axios from "axios";
-import { reactive, ref } from 'vue'
+import { onMounted, reactive, ref, toRefs } from 'vue'
 export default {
   components: {
     TablaListaUsuarios,
@@ -79,242 +79,111 @@ export default {
     Multiselect,
     Spinner,
     Paginacion,
-    
+    Modal
   },
   setup() {
-    const usuarios = ref([
-      {
-        usuarioId:'1',
-        nombreUsuario: 'CarPulido',
-        nombre: 'Carlos',
-        apellidos:'Pulido',
-        rol: 'Admin',
-        nombreCompleto: 'Carlos Pulido',
-        estatus: true
-      },
-      {
-        usuarioId:'2',
-        nombreUsuario: 'KevPulido',
-        nombre: 'Kevin',
-        apellidos:'Pulido',
-        rol: 'Admin',
-        nombreCompleto: 'Kevin Pulido',
-        estatus: true
-      },
-      {
-        usuarioId:'3',
-        nombreUsuario: 'CarPulido',
-        nombre: 'Kevin',
-        apellidos:'Pulido',
-        rol: 'Admin',
-        nombreCompleto: 'Carlos Pulido',
-        estatus: true
-      },
-      {
-        usuarioId:'4',
-        nombreUsuario: 'CarPulido',
-        nombre: 'Carlos',
-        apellidos:'Pulido',
-        rol: 'Admin',
-        nombreCompleto: 'Carlos Pulido',
-        estatus: true
-      },
-      {
-        usuarioId:'5',
-        nombreUsuario: 'CarPulido',
-        nombre: 'Carlos',
-        apellidos:'Pulido',
-        rol: 'Admin',
-        nombreCompleto: 'Carlos Pulido',
-        estatus: false
-      },
-      {
-        usuarioId:'6',
-        nombreUsuario: 'CarPulido',
-        nombre: 'Carlos',
-        apellidos:'Pulido',
-        rol: 'Admin',
-        nombreCompleto: 'Carlos Pulido',
-        estatus: false
-      },
-      {
-        usuarioId:'7',
-        nombreUsuario: 'CarPulido',
-        nombre: 'Carlos',
-        apellidos:'Pulido',
-        rol: 'Admin',
-        nombreCompleto: 'Carlos Pulido',
-        estatus: false
-      }
-
-    ])//Constante que almacena el array de todos los usuarios que se han registrado con toda la información
-    const nombre = ref('')//Constante que almacena el string del nombre asignado en el filtro de nombre
-    const estatus = ref('')//Constante que almacena el string del estatus asignado en el filtro de estatus
+    const usuarios = ref([])//Constante que almacena el array de todos los usuarios que se han registrado con toda la información
+    const options = ref(['Activo', 'Inactivo'])//Constante que almacena las opciones de estatus que pueden seleccionar en el header
     const modalAgregar = ref(false)//Constante que abre el modal para agregar el usuario
     const roles = ref ([])//Constante que almacena el array de roles existentes
     const modalLoading = ref(false)//Constante que abre el modal del spinner de la pantalla de carga
-    //Paginacion
+    const header = reactive({ nombre: "", estatus: undefined })//Constante reactiva que almacena el nombre y estatus para realizar el filtro de busqueda
     const totalPaginas = ref(0)//Constante que almacena el total de páginas que hay en la busqueda
-    const currentPage = ref(1)//Constante que almacena la página actual de la busqueda realizada
+    const paginaActual = ref(1)//Constante que almacena la página actual de la busqueda realizada
     const hasMorePages = ref(true)//Constante que nos indica si puede haber más páginas y si puede hacer un cambio de página
-    const numRespuesta = ref(7)//Constante que indica el número de respuestas que va a mostrar por página
+    const numRespuesta = ref(10)//Constante que indica el número de respuestas que va a mostrar por página
     const usuario = reactive ({})//constante reactiva que va a almacenar la información de un usuario nuevo
-    
     const abrirModal = async () => {//función asincorna que espera a que des click en el botón Agregar usuario, que abre el formulario para agreagar un usuario
       modalAgregar.value = true //Habilitamos el spinner de pantalla de carga
-      axios.get(`${API}/Identity/roles`)//Llamada al endpoint que trae los roles existentes
+      axios.get(`${API}/Identity/roles/%20/%20/%20/%20`)//Llamada al endpoint que trae los roles existentes
       .then((result) => {//Si el endpoint tiene una respuesta correcta
-        console.log(result);
-        for(let i=0; i<result.data.length; i++){ //recorremos la respuesta, y cada que recorremos sumamos un 1 para el siguiente rol
-          roles.value.push({'value':result.data[i].name, 'label':result.data[i].name})//asignamos los roles existentes a la variable roles, para mostrarlos en el multiselect
+        for(let i=0; i<result.data.roles.length; i++){ //recorremos la respuesta, y cada que recorremos sumamos un 1 para el siguiente rol
+          roles.value.push({'value':result.data.roles[i].nombreRol, 'label':result.data.roles[i].nombreRol})//asignamos los roles existentes a la variable roles, para mostrarlos en el multiselect
         }
       }).catch((error)=>{//si el endpoint tiene un error
         console.log(error);//Mostramos en consola el error  que nos da el endpoint
         modalLoading.value = false //cerramos el spinner de carga
       })
     }
-    function cancelar (){
-      usuario.pass = '',
-      usuario.nombre = '',
-      usuario.apellidos = '',
-      usuario.apellidoM = ''
-    }
-    function todos (){
-      /* 
-      nombre.value = null
-      estatus.value = nul
-      axios.get(`${API}/UsuarioMonitoreo/${plaza.value}/${currentPage.value}/${numRespuesta.value}/${nombre.value}/${estatus.value}`)
-      .then((res) => {
-        usuarios.value = []
-        habilitar.value = true
-        totalPaginas.value = res.data.numberPages
-        currentPage.value = res.data.now
-        res.data.body.forEach((e) => {
-          let obj = {
-            id: e.usuarioId,
-            usuario: e.nombreUsuario,
-            nombre: e.nombre,
-            apellidoP: e.apellidoPaterno,
-            apellidoM: e.apellidoMaterno,
-            rol: e.rol,
-            idrol: e.idRol,
-            plazas: e.plazas,
-            estatus: e.estatus,
-          };
-          usuarios.value.push(obj);
-        });
-      }); */
-    }
-    function buscar (){
-      modalLoading.value = true
-      /* let data = {
-        "nombre": nombre,
-        "id":'',
-        "email":''
-      } */
-      /* axios.post(`${API}/Identity/user`, data)
-      .then((result)=> {
-        console.log(result);
-      }).catch((error)=> {
-        console.log(error);
-      }) */
-      axios.post(`${API}/Identity/user?userName=PRODEV`)
-      .then((result) => {
-        console.log(result);
+    function todos (){//Función que obtiene todos los usuarios existentes, sin ningún filtro
+      modalLoading.value = true//Abrimos el spinner de pantalla de carga
+      header.nombre = ''//Damos el valor de vacio a la constante que almacena el nombre que se escribió en le header
+      header.estatus = undefined//Damos el valor de undefined a la constante que almacena el estatus que seleccionamos en el header
+      let nombreRuta = ' '//Creamos dos literal con un espacio en blanco para mandarla en la ruta
+      let estatusRuta = ' '//Creamos dos literal con un espacio en blanco para mandarla en la ruta
+      const ruta = encodeURI(`${API}/Identity/user/1/${numRespuesta.value}/${nombreRuta}/${estatusRuta}`)
+      axios.get(ruta)//Llamada al endpoint que trae los roles existentes
+      .then((result) => {//Si el endpoint tiene una respuesta correcta
+        console.log(result.data);
+        if(result.status == 200){//valida que el estatus de la respuesta sea 200 para saber que es una respuesta correcta y con contenido
+          totalPaginas.value = result.data.paginas_totales
+          paginaActual.value = result.data.pagina_actual
+          modalLoading.value = false//Cerramos el spinner de carga
+          usuarios.value = result.data.usuarios //asignamos los resultados que nos trajo el endpoint a la constante roles
+        }
+      }).catch((error)=>{//Si el endpoint tiene un error en la respuesta
+        console.log(error);//Mostramos en consola el error  que nos da el endpoint
+        modalLoading.value = false //cerramos el spinner de carga
       })
     }
-    /*  function buscar (nombre,estatus, plaza){
-      modalLoading.value = true
-      if(plaza == '' || plaza == null || plaza == undefined){
-        modalLoading.value = false
-        notify({
-          title:'Sin información',
-          text:`Se debe de seleccionar la plaza para hacer una busqueda`,
-          duration: 2000,
+    function buscar (nombre, estatus){//Función que realiza la busqueda de acuerdo a los parámetros ingresados en los header
+      modalLoading.value = true//Abrimos el spinner de la pantalla de carga
+      if(nombre == '')//Hacemos la validación si es que el nombre estaá vacios
+        nombre = ' '//Añadimos un espacio en blanco
+      if(estatus == undefined)//Hacemos la validación si es que el estatus está indefinido
+        estatus = ' '//Añadimos un espacio en blanco
+      if(nombre == ' ' && estatus == ' '){//Validamos si ambos campos estan vacios
+        notify({//Notificación en la que indicamos que no se ha insertado ningún dato para buscar
+          title:'Sin Información',
+          text:'No hay datos para realizar la busqueda',
           type: 'warn'
         });
+        modalLoading.value = false
+      }else{//Si se selecciona alguno de los campos
+        modalLoading.value = true//Abrimos el spinner de pantalla de carga
+        const ruta = encodeURI(`${API}/Identity/user/${paginaActual.value}/${numRespuesta.value}/${nombre}/${estatus}`)
+        axios.get(ruta)//Llamada al endpoint que trae los roles existentes
+        .then((result) => {//Si el endpoint tiene una respuesta correcta
+        console.log(result);
+          if(result.status == 200){//valida que el estatus de la respuesta sea 200 para saber que es una respuesta correcta y con contenido
+            totalPaginas.value = result.data.paginas_totales
+            paginaActual.value = result.data.pagina_actual
+            modalLoading.value = false//Cerramos el spinner de carga
+            usuarios.value = result.data.usuarios //asignamos los resultados que nos trajo el endpoint a la constante roles
+          }
+        }).catch((error)=>{//Si el endpoint tiene un error en la respuesta
+          console.log(error);//Mostramos en consola el error  que nos da el endpoint
+          modalLoading.value = false //cerramos el spinner de carga
+        })
       }
-      else{
-        axios.get(`${API}/UsuarioMonitoreo/${plaza}/${currentPage.value}/${numRespuesta.value}/${nombre}/${estatus}`)
-          .then((res) => {
-            modalLoading.value = false
-            usuarios.value = []
-            habilitar.value = true
-            totalPaginas.value = res.data.numberPages
-            currentPage.value = res.data.now
-            res.data.body.forEach((e) => {
-              let obj = {
-                id: e.usuarioId,
-                usuario: e.nombreUsuario,
-                nombre: e.nombre,
-                apellidoP: e.apellidoPaterno,
-                apellidoM: e.apellidoMaterno,
-                rol: e.rol,
-                idrol: e.idRol,
-                plazas: e.plazas,
-                estatus: e.estatus,
-              };
-              usuarios.value.push(obj);
-            });
-          });
-      }
-    } */
-    function refrescar_tabla(){
-      buscar()
-    } 
-    function showMore (){}
-    //function showMore(page){
-      //if((nombre.value == '' || nombre.value == undefined || nombre.value == null) && (nombre.value == '' || nombre.value == null || nombre.value == undefined)){
-        /* axios.get(`${API}/UsuarioMonitoreo/${plaza.value}/${page}/${numRespuesta.value}/${nombre.value}/${estatus.value}`)
-        .then((res) => {
-          usuarios.value = []
-          habilitar.value = true
-          totalPaginas.value = res.data.numberPages
-          currentPage.value = res.data.now
-          res.data.body.forEach((e) => {
-            let obj = {
-                id: e.usuarioId,
-                usuario: e.nombreUsuario,
-                nombre: e.nombre,
-                apellidoP: e.apellidoPaterno,
-                apellidoM: e.apellidoMaterno,
-                rol: e.rol,
-                idrol: e.idRol,
-                plazas: e.plazas,
-                estatus: e.estatus,
-            };
-            usuarios.value.push(obj);
-          });
-        }); */			
-      /*}else{
-        axios.get(`${API}/Usuario/${plaza.value}/${page}/${numRespuesta.value}/${nombre.value}/${estatus.value}`)
-        .then((res) => {
-          usuarios.value = []
-          habilitar.value = true
-          totalPaginas.value = res.data.numberPages
-          currentPage.value = res.data.now
-          res.data.body.forEach((e) => {
-            let obj = {
-              id: e.usuarioId,
-              usuario: e.nombreUsuario,
-              nombre: e.nombre,
-              apellido: e.apellidoPaterno,
-              rol: e.rol,
-              plazas: e.plazas,
-              estatus: e.estatus,
-            };
-            usuarios.value.push(obj);
-          });
-        });
-      }
-    }*/
-    function guardar (){
+    }
+    function cambiarPagina (page){//Función que permite hacer el cambio de páginas con las nuevas respuestas
+      if(header.nombre == '')//Si el nombre está vacio
+        header.nombre = ' '//Agregamos un espacio en blanco
+      if(header.estatus == undefined)//Si el estatus está indefinido
+        header.estatus = ' '//Agregamos un espacio en blanco
+      const ruta = encodeURI(`${API}/Identity/user/${page}/${numRespuesta.value}/${header.nombre}/${header.estatus}`)
+        axios.get(ruta)//Llamada al endpoint que trae los roles existentes
+        .then((result) => {//Si el endpoint tiene una respuesta correcta
+          if(result.status == 200){//valida que el estatus de la respuesta sea 200 para saber que es una respuesta correcta y con contenido
+            totalPaginas.value = result.data.paginas_totales
+            paginaActual.value = result.data.pagina_actual
+            modalLoading.value = false//Cerramos el spinner de carga
+            usuarios.value = result.data.usuarios //asignamos los resultados que nos trajo el endpoint a la constante roles
+          }
+        }).catch((error)=>{//Si el endpoint tiene un error en la respuesta
+          console.log(error);//Mostramos en consola el error  que nos da el endpoint
+          modalLoading.value = false //cerramos el spinner de carga
+        })
+    }
+    function guardar (){//Función que envía los parametros para guardar un nuevo usuario
       const data = { //constante que va a almacenar la información del formulario para agregar un usuario
         "password":usuario.pass,//password que se escribio en el formulario de agregar usuario
         "nombre":usuario.nombre,//usuario que se escribio en el formulario de agregar usuario
         "apellidos":usuario.apellidos,//apellido o apellidos que se escribieron en el formulario de agregar usuario
         "roleName":usuario.rol//rol que se seleccionó en el formulario de agregar usuario
       }
+      console.log(data);
       axios.post(`${API}/Identity/register`,data)//endpoitn que registra usuario en la base de datos
       .then((result) => {//si el usuario tiene una respuesta correcta
         if(result.status == 201){//si el status de la respuesta es 201, es decir respuesta correcta
@@ -331,15 +200,30 @@ export default {
           });
         }
       })
+      .catch(error => {
+        console.log(error.request.response[0]);
+      })
       
     }
+    const cerrarModal = (modal) => {//constante que emite el cierre del modal para agregar roles, y limpia los valores del modal
+      modalAgregar.value = modal
+      usuario.nombre = ''
+      usuario.apellidos = ''
+      usuario.pass = ''
+      usuario.rol = ''
+    }
+    onMounted(todos)//Montamos la función todos para que en la primer carga traiga todos los usuarios existentes
 
-  return { abrirModal, cancelar, todos, guardar, refrescar_tabla, buscar, showMore, usuario, usuarios, nombre, estatus, modalAgregar, roles, modalLoading, currentPage, hasMorePages, numRespuesta, totalPaginas }
+  return { abrirModal, todos, guardar, buscar, cambiarPagina, cerrarModal, usuario, usuarios, options, ...toRefs(header), modalAgregar, roles, modalLoading, paginaActual, hasMorePages, numRespuesta, totalPaginas }
   },
 }
 </script>
 <style src="@vueform/multiselect/themes/default.css"></style>
 <style scoped>
+.bg-ferromex {
+  background-color: #BB2028;
+  padding: 10px 5px;
+}
 .modal-container{
     position: fixed;
     width: 100%;
