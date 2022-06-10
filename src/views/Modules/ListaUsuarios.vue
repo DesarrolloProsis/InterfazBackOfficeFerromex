@@ -24,8 +24,9 @@
         <button @click="abrirModal" class="btn-buscar animacion">Agregar Usuario</button>
       </div>
     </div>
-    <TablaListaUsuarios @refrescarTabla="refrescar_tabla" :dataUsuarios="usuarios" />
-    <div class="mt-20 -mb-14">
+    <!-- <TablaListaUsuarios @refrescarTabla="refrescar_tabla" :dataUsuarios="usuarios" /> -->
+    <TablaListaUsuarios :dataUsuarios="usuarios" />
+    <div class="-mt-2 -mb-14">
       <Paginacion :total-pages="totalPaginas" :total="100" :current-page="paginaActual" :has-more-pages="hasMorePages" @pagechanged="showMore"/>
     </div>
   </div>
@@ -69,7 +70,7 @@ import { notify } from "@kyvg/vue3-notification";//Componente que realiuza las n
 import Spinner from '../../components/Spinner.vue'//Componente que contiene el spinner para las pantallas de cargas
 import Paginacion from "../../components/Paginacion.vue"//Componente que contiene la paginación
 import axios from "axios";
-import { reactive, ref, toRefs } from 'vue'
+import { onMounted, reactive, ref, toRefs } from 'vue'
 export default {
   components: {
     TablaListaUsuarios,
@@ -81,72 +82,7 @@ export default {
     
   },
   setup() {
-    const usuarios = ref([
-      {
-        usuarioId:'1',
-        nombreUsuario: 'CarPulido',
-        nombre: 'Carlos',
-        apellidos:'Pulido',
-        rol: 'Admin',
-        nombreCompleto: 'Carlos Pulido',
-        estatus: true
-      },
-      {
-        usuarioId:'2',
-        nombreUsuario: 'KevPulido',
-        nombre: 'Kevin',
-        apellidos:'Pulido',
-        rol: 'Admin',
-        nombreCompleto: 'Kevin Pulido',
-        estatus: true
-      },
-      {
-        usuarioId:'3',
-        nombreUsuario: 'CarPulido',
-        nombre: 'Kevin',
-        apellidos:'Pulido',
-        rol: 'Admin',
-        nombreCompleto: 'Carlos Pulido',
-        estatus: true
-      },
-      {
-        usuarioId:'4',
-        nombreUsuario: 'CarPulido',
-        nombre: 'Carlos',
-        apellidos:'Pulido',
-        rol: 'Admin',
-        nombreCompleto: 'Carlos Pulido',
-        estatus: true
-      },
-      {
-        usuarioId:'5',
-        nombreUsuario: 'CarPulido',
-        nombre: 'Carlos',
-        apellidos:'Pulido',
-        rol: 'Admin',
-        nombreCompleto: 'Carlos Pulido',
-        estatus: false
-      },
-      {
-        usuarioId:'6',
-        nombreUsuario: 'CarPulido',
-        nombre: 'Carlos',
-        apellidos:'Pulido',
-        rol: 'Admin',
-        nombreCompleto: 'Carlos Pulido',
-        estatus: false
-      },
-      {
-        usuarioId:'7',
-        nombreUsuario: 'CarPulido',
-        nombre: 'Carlos',
-        apellidos:'Pulido',
-        rol: 'Admin',
-        nombreCompleto: 'Carlos Pulido',
-        estatus: false
-      }
-
-    ])//Constante que almacena el array de todos los usuarios que se han registrado con toda la información
+    const usuarios = ref([])//Constante que almacena el array de todos los usuarios que se han registrado con toda la información
     const options = ref(['Activo', 'Inactivo'])//Constante que almacena las opciones de estatus que pueden seleccionar en el header
     const modalAgregar = ref(false)//Constante que abre el modal para agregar el usuario
     const roles = ref ([])//Constante que almacena el array de roles existentes
@@ -179,18 +115,27 @@ export default {
       usuario.apellidoM = ''
     }
     function todos (){
-      //usuarios.value = []
       modalLoading.value = true//Abrimos el spinner de pantalla de carga
       header.nombre = ''//Damos el valor de vacio a la constante que almacena el nombre que se escribió en le header
       header.estatus = undefined//Damos el valor de undefined a la constante que almacena el estatus que seleccionamos en el header
       let nombreRuta = ' '//Creamos dos literal con un espacio en blanco para mandarla en la ruta
       let estatusRuta = ' '
-      const ruta = encodeURI(`${API}/Identity/roles/${paginaActual.value}/${numRespuesta.value}/${nombreRuta}/${estatusRuta}`)
-        console.log(ruta)
-      modalLoading.value = false
+      const ruta = encodeURI(`${API}/Identity/user/1/${numRespuesta.value}/${nombreRuta}/${estatusRuta}`)
+      axios.get(ruta)//Llamada al endpoint que trae los roles existentes
+      .then((result) => {//Si el endpoint tiene una respuesta correcta
+      console.log(result);
+        if(result.status == 200){//valida que el estatus de la respuesta sea 200 para saber que es una respuesta correcta y con contenido
+          totalPaginas.value = result.data.paginas_totales
+          paginaActual.value = result.data.pagina_actual
+          modalLoading.value = false//Cerramos el spinner de carga
+          usuarios.value = result.data.usuarios //asignamos los resultados que nos trajo el endpoint a la constante roles
+        }
+      }).catch((error)=>{//Si el endpoint tiene un error en la respuesta
+        console.log(error);//Mostramos en consola el error  que nos da el endpoint
+        modalLoading.value = false //cerramos el spinner de carga
+      })
     }
     function buscar (nombre, estatus){
-      //usuarios.value = []
       modalLoading.value = true
       if(nombre == '')
         nombre = ' '
@@ -204,64 +149,43 @@ export default {
         });
         modalLoading.value = false
       }else{
-        const ruta = encodeURI(`${API}/Identity/roles/${paginaActual.value}/${numRespuesta.value}/${nombre}/${estatus}`)
-        console.log(ruta)
-        modalLoading.value = false
-      }
-      /* axios.post(`${API}/Identity/user?userName=PRODEV`)
-      .then((result) => {
+        modalLoading.value = true//Abrimos el spinner de pantalla de carga
+        const ruta = encodeURI(`${API}/Identity/user/${paginaActual.value}/${numRespuesta.value}/${nombre}/${estatus}`)
+        axios.get(ruta)//Llamada al endpoint que trae los roles existentes
+        .then((result) => {//Si el endpoint tiene una respuesta correcta
         console.log(result);
-      }) */
-    }
-    function refrescar_tabla(){
-      buscar()
-    } 
-    function showMore (){}
-    //function showMore(page){
-      //if((nombre.value == '' || nombre.value == undefined || nombre.value == null) && (nombre.value == '' || nombre.value == null || nombre.value == undefined)){
-        /* axios.get(`${API}/UsuarioMonitoreo/${plaza.value}/${page}/${numRespuesta.value}/${nombre.value}/${estatus.value}`)
-        .then((res) => {
-          usuarios.value = []
-          habilitar.value = true
-          totalPaginas.value = res.data.numberPages
-          currentPage.value = res.data.now
-          res.data.body.forEach((e) => {
-            let obj = {
-                id: e.usuarioId,
-                usuario: e.nombreUsuario,
-                nombre: e.nombre,
-                apellidoP: e.apellidoPaterno,
-                apellidoM: e.apellidoMaterno,
-                rol: e.rol,
-                idrol: e.idRol,
-                plazas: e.plazas,
-                estatus: e.estatus,
-            };
-            usuarios.value.push(obj);
-          });
-        }); */			
-      /*}else{
-        axios.get(`${API}/Usuario/${plaza.value}/${page}/${numRespuesta.value}/${nombre.value}/${estatus.value}`)
-        .then((res) => {
-          usuarios.value = []
-          habilitar.value = true
-          totalPaginas.value = res.data.numberPages
-          currentPage.value = res.data.now
-          res.data.body.forEach((e) => {
-            let obj = {
-              id: e.usuarioId,
-              usuario: e.nombreUsuario,
-              nombre: e.nombre,
-              apellido: e.apellidoPaterno,
-              rol: e.rol,
-              plazas: e.plazas,
-              estatus: e.estatus,
-            };
-            usuarios.value.push(obj);
-          });
-        });
+          if(result.status == 200){//valida que el estatus de la respuesta sea 200 para saber que es una respuesta correcta y con contenido
+            totalPaginas.value = result.data.paginas_totales
+            paginaActual.value = result.data.pagina_actual
+            modalLoading.value = false//Cerramos el spinner de carga
+            usuarios.value = result.data.usuarios //asignamos los resultados que nos trajo el endpoint a la constante roles
+          }
+        }).catch((error)=>{//Si el endpoint tiene un error en la respuesta
+          console.log(error);//Mostramos en consola el error  que nos da el endpoint
+          modalLoading.value = false //cerramos el spinner de carga
+        })
       }
-    }*/
+    }
+    function showMore (page){
+      if(header.nombre == '')
+        header.nombre = ' '
+      if(header.estatus == undefined)
+        header.estatus = ' '
+      const ruta = encodeURI(`${API}/Identity/user/${page}/${numRespuesta.value}/${header.nombre}/${header.estatus}`)
+        axios.get(ruta)//Llamada al endpoint que trae los roles existentes
+        .then((result) => {//Si el endpoint tiene una respuesta correcta
+        console.log(result);
+          if(result.status == 200){//valida que el estatus de la respuesta sea 200 para saber que es una respuesta correcta y con contenido
+            totalPaginas.value = result.data.paginas_totales
+            paginaActual.value = result.data.pagina_actual
+            modalLoading.value = false//Cerramos el spinner de carga
+            usuarios.value = result.data.usuarios //asignamos los resultados que nos trajo el endpoint a la constante roles
+          }
+        }).catch((error)=>{//Si el endpoint tiene un error en la respuesta
+          console.log(error);//Mostramos en consola el error  que nos da el endpoint
+          modalLoading.value = false //cerramos el spinner de carga
+        })
+    }
     function guardar (){
       const data = { //constante que va a almacenar la información del formulario para agregar un usuario
         "password":usuario.pass,//password que se escribio en el formulario de agregar usuario
@@ -288,7 +212,9 @@ export default {
       
     }
 
-  return { abrirModal, cancelar, todos, guardar, refrescar_tabla, buscar, showMore, usuario, usuarios, options, ...toRefs(header), modalAgregar, roles, modalLoading, paginaActual, hasMorePages, numRespuesta, totalPaginas }
+    onMounted(todos)
+
+  return { abrirModal, cancelar, todos, guardar, buscar, showMore, usuario, usuarios, options, ...toRefs(header), modalAgregar, roles, modalLoading, paginaActual, hasMorePages, numRespuesta, totalPaginas }
   },
 }
 </script>

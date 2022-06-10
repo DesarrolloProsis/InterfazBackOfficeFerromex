@@ -18,7 +18,10 @@
       <tr v-for="(usuario, index) in dataUsuarios" :key="index">
         <td :class="{'text-gray-300': !usuario.estatus}">{{ usuario.nombreUsuario }}</td>
         <td :class="{'text-gray-300': !usuario.estatus}">{{ usuario.nombreCompleto }}</td>
-        <td :class="{'text-gray-300': !usuario.estatus}">{{ usuario.rol }}</td>
+        <td :class="{'text-gray-300': !usuario.estatus}">
+          <span v-if="usuario.estatus == true">Activo</span>
+          <span v-else>Inactivo</span>
+        </td>
         <td>
           <div>
             <Multiselect v-model="accion" placeholder="Sleccione una Acción" @close="acciones_mapper(usuario)" label="name" trackBy="name" :options="opticones_select_acciones(usuario)" :searchable="true">
@@ -109,7 +112,7 @@ export default {
     dataUsuarios: Array,//propiedad que almacena un array de información de cada usuario existente
   },
   components:{ Multiselect, Spinner, Modal },
-  emits: ["refrescarTabla"],
+  //emits: ["refrescarTabla"],
     setup() {
     
     const modalEditar = ref(false)//Constante que va a abrir el modal que permite editar el usuario
@@ -189,7 +192,7 @@ export default {
         });
       })
     }
-    function CambiarEstatus(usuario) {//Función que cambia el estatus del usuario
+    function cambiarEstatus(usuario) {//Función que cambia el estatus del usuario
       let data = {
         "usuarioId": usuario.usuarioId,
         "nombre": usuario.nombre,
@@ -243,9 +246,9 @@ export default {
     }
     function acciones_mapper(item){
       if(accion.value == 'Habilitar'){
-        CambiarEstatus(item)
+        cambiarEstatus(item)
       }if(accion.value == 'Deshabilitar'){
-        CambiarEstatus(item)
+        cambiarEstatus(item)
       }if(accion.value == 'Cambiar Contraseña'){
         seleccionado.value = item;
         modalPass.value = true;
@@ -289,7 +292,7 @@ export default {
           }
       return filtroOpciones  
     }
-    return{ cambiarRol, CambiarEstatus, editarUsuario, cambiarPass, modal_Rol, acciones_mapper, opticones_select_acciones, modalEditar, modalPass, modalRol, modalLoading, seleccionado, accion, validacion, usuario, roles, pass, status, errorMessage }
+    return{ cambiarRol, cambiarEstatus, editarUsuario, cambiarPass, modal_Rol, acciones_mapper, opticones_select_acciones, modalEditar, modalPass, modalRol, modalLoading, seleccionado, accion, validacion, usuario, roles, pass, status, errorMessage }
   }
 }
 </script>
@@ -333,7 +336,7 @@ export default {
   padding-top: 20px;
   overflow-x: auto;
   overflow-y: auto;
-  max-height: 500px;
+  max-height: 640px;
 }
 .tftable {
   font-size: 12px;

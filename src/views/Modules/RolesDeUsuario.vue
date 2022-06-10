@@ -99,6 +99,7 @@ export default {
                         
     const abrir_modal_new_rol = () => { //Constante que permite abrir el modal de creación de roles
       userModal.value = true
+      modulosExistentes.value = []//Vaciamos la constante que obtine los módulos existentes
       axios.get(`${API}/Ferromex/modules`)//Endpoint que trae todos los modulos que existen
       .then((result)=>{//Si el endpoint tiene una respuesta correcta
         for(let i=0; i<result.data.content.length; i++){ //recorremos la respuesta, y cada que recorremos sumamos un 1 para el siguiente rol
