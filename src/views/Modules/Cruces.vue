@@ -42,13 +42,13 @@
                 </div>
                 <div class="flex flex-col gap-10">
                     <div>
-                        <input type="date" v-model="dias" class="input" @change="bloquearinputs()">
+                        <input type="date" v-model="dias" :max="hoy" class="input" :disabled="bloqueardia" :class="{'cursor-not-allowed' : bloqueardia}" @change="bloquearinputdias()">
                     </div>
                     <div>
-                        <input type="month" v-model="meses" class="input" :disabled="bloquear" :class="{'cursor-not-allowed' : bloquear}">
+                        <input type="month" v-model="meses" class="input" :disabled="bloquearmes" :class="{'cursor-not-allowed' : bloquearmes}" @change="bloquearinputmes()">
                     </div>
                     <div>
-                        <input type="week" v-model="semana" class="input" :disabled="bloquear" :class="{'cursor-not-allowed' : bloquear}">
+                        <input type="week" v-model="semana" class="input" :disabled="bloquearsemana" :class="{'cursor-not-allowed' : bloquearsemana}" @change="bloquearinputsemana()">
                     </div>
                     
                 </div>
@@ -73,13 +73,13 @@
                 </div>
                 <div class="flex flex-col gap-10">
                     <div>
-                        <input type="date" class="input" @change="bloquearinputs()" v-model="diascf">
+                        <input type="date" class="input" :max="hoy" :disabled="bloqueardia" :class="{'cursor-not-allowed' : bloqueardia}"  v-model="diascf" @change="bloquearinputdias()">
                     </div>
                     <div>
-                        <input type="month" class="input" :disabled="bloquear" :class="{'cursor-not-allowed' : bloquear}" v-model="mesescf">
+                        <input type="month" class="input" :disabled="bloquearmes" :class="{'cursor-not-allowed' : bloquearmes}" v-model="mesescf" @change="bloquearinputmes()">
                     </div>
                     <div>
-                        <input type="week" class="input" :disabled="bloquear" :class="{'cursor-not-allowed' : bloquear}" v-model="semanacf">
+                        <input type="week" class="input"  :disabled="bloquearsemana" :class="{'cursor-not-allowed' : bloquearsemana}" v-model="semanacf" @change="bloquearinputsemana()">
                     </div>
                     
                 </div>
@@ -92,7 +92,7 @@
 <script>
 //import Servicio from '../../Servicios/Token-Services';
 //import jwt_decode from "jwt-decode";
-import { ref,reactive,toRefs } from 'vue'
+import { ref,reactive,toRefs,onMounted } from 'vue'
 import Navbar from "../../components/Navbar.vue";
 import Footer from "../../components/Footer";
 import Modal from "../../components/Modal.vue"
@@ -107,7 +107,11 @@ export default {
         const showModal = ref(false)
         const showModalTurno = ref(false)
         const modulos = ref([])
-        const bloquear = ref(false)
+        const bloqueardia = ref(false)
+        const bloquearsemana = ref(false)
+        const bloquearmes = ref(false)
+        const hoy = ref('')
+        const semana = ref('')
         const crucestotales = reactive({
             dias: '',
             meses: '',
@@ -117,6 +121,17 @@ export default {
             diascf:'',
             mesescf: '',
             semanacf:''
+        })
+        
+        onMounted(()=>{
+            hoy.value = new Date().toISOString().split("T")[0];
+            console.log(hoy.value);
+            let now = new Date();
+            let año = now.getFullYear()
+            let onejan = new Date(now.getFullYear(), 0, 1);
+            let week = Math.ceil((((now.getTime() - onejan.getTime()) / 86400000) + onejan.getDay() + 1) / 7);
+            semana.value = año + "-" + "W" + (week - 1)
+            console.log(semana.value)
         })
         //Declaracion de los modulos que se van a mostrar en pantalla
         modulos.value = [
@@ -136,7 +151,9 @@ export default {
         //Funcion para abrir el modal de cruces totales
         function abrirmodalcrucestotales(){
             showModal.value = !showModal.value //Cambia el valor de la variable que muestra el modal 
-            bloquear.value = false //Cambiamos la variable a falso para desbloquear los inputs que esten bloqueados
+            bloqueardia.value = false //Cambiamos la variable a falso para desbloquear los inputs que esten bloqueados
+            bloquearsemana.value = false //Cambiamos la variable a falso para desbloquear los inputs que esten bloqueados
+            bloquearmes.value = false //Cambiamos la variable a falso para desbloquear los inputs que esten bloqueados
             limpiarcrucestotales() //Llamamos la funcion para limpiar los campos correspondientes
         }
         //Declaracion de cierre de modales 
@@ -151,8 +168,19 @@ export default {
             limpiarcrucesferromex()
         }
         //Funcion para bloquear los inputs de mes y semana en caso de ser seleccionado el de dia
-        function bloquearinputs(){
-            bloquear.value = true // bloqueamos los campos
+        function bloquearinputdias(){
+            bloquearsemana.value = true // bloqueamos los campos
+            bloquearmes.value = true
+        }
+        //Funcion para bloquear los inputs de mes y semana en caso de ser seleccionado el de dia
+        function bloquearinputsemana(){
+            bloqueardia.value = true // bloqueamos los campos
+            bloquearmes.value = true
+        }
+        //Funcion para bloquear los inputs de mes y semana en caso de ser seleccionado el de dia
+        function bloquearinputmes(){
+            bloquearsemana.value = true // bloqueamos los campos
+            bloqueardia.value = true
         }
         //Funcion para limpiar los campos del modal cruces totales
         function limpiarcrucestotales(){
@@ -163,7 +191,9 @@ export default {
          //Funcion para abrir el modal de cruces ferromex
         function abrirmodalcrucesferromex(){
             showModalTurno.value = !showModalTurno.value //Cambia el valor de la variable que muestra el modal 
-            bloquear.value = false //Cambiamos la variable a falso para desbloquear los inputs que esten bloqueados
+            bloqueardia.value = false //Cambiamos la variable a falso para desbloquear los inputs que esten bloqueados
+            bloquearsemana.value = false //Cambiamos la variable a falso para desbloquear los inputs que esten bloqueados
+            bloquearmes.value = false //Cambiamos la variable a falso para desbloquear los inputs que esten bloqueados
             limpiarcrucesferromex() //Llamamos la funcion para limpiar los campos correspondientes
         }
          //Funcion para limpiar los campos del modal cruces ferromex
@@ -192,8 +222,14 @@ export default {
         modulos,
         showModal,
         showModalTurno,
-        bloquearinputs,
-        bloquear,
+        hoy,
+        semana,
+        bloquearinputdias,
+        bloquearinputsemana,
+        bloquearinputmes,
+        bloqueardia,
+        bloquearsemana,// bloqueamos los campos
+        bloquearmes,
         abrirmodalcrucestotales,
         abrirmodalcrucesferromex,
         limpiarcrucestotales,

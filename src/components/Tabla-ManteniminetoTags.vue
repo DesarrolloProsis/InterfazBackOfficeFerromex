@@ -17,13 +17,21 @@
       </tr>
       <tr v-for="(cruces, index) in dataCruces" :key="index">
         <td>{{cruces.tag}}</td>
-        <td>{{cruces.estatus}}</td>
-        <td>{{moment(cruces.fecha).format("YYYY-MM-DD  HH:mm:ss a")}}</td>
-        <td><select class="input" v-model="select" @change="accionesTags(select,cruces)">
-          <option :value="undefined">Seleccione una opción</option>
-          <option v-for="(option ,index) in options" :key="index" :value="option">{{option}}</option>
-        </select></td>
+        <td v-if = "cruces.active == true">Activo</td>
+        <td v-else>Desactivado</td>
+        <td>{{moment(cruces.insertionDate).format("YYYY-MM-DD HH:mm:ss a")}}</td>
+        <td>
+          <Multiselect
+          v-model="select" 
+          label="text"
+          valueProp="value"
+          placeholder="Seleccione una acciòn"                  
+          :options="opcionestag(cruces)"
+          @select="accionesTags(cruces)"
+          />
+        </td>
       </tr>
+      
     </table>
   </div>
   <Modal :show="showModalAdvertencia" @cerrarmodal="cerralmodalpadre">
@@ -40,60 +48,131 @@
   </Modal>
 </template>
 <script>
+const API = process.env.VUE_APP_URL_API_PRODUCCION
 import moment from 'moment'
 import { ref } from 'vue'
 import Modal from "../components/Modal.vue"
+import Multiselect from '@vueform/multiselect'//Importamos el componente multiselect para la selección de modulos a asignar
+import axios from 'axios'
+import { notify } from "@kyvg/vue3-notification";
 export default {
   name: "TablaBusquedaCruces",
   components: {
-    Modal
+    Modal,
+    Multiselect
   },
+  emits:["actualizartabla"],
   props: ["dataCruces"],
   created: function () {
     this.moment = moment;
   },
-  setup(){
+  setup(props ,{ emit }){
     //Declaracion de variable
       const showModalAdvertencia = ref(false)
       const texto = ref('')
       const accionestags = ref('')
-      const options = ref(['Activo','Inactivo','Eliminar'])
-      const select = ref(undefined)
+      const options = ref([])
+      const select = ref('')
       const selectestatus = ref(undefined)
       const infotag = ref({})
-
+      const actualizar = ref(false)
+    
     const cerralmodalpadre = (modal) => {
       console.log(modal)
       showModalAdvertencia.value = modal
       texto.value = ""
       console.log(showModalAdvertencia.value)
     }
+    //Funcion para las opciones del tag
+    function opcionestag(cruce){
+      options.value = []
+      let opciones = [{text:'Activo', value:'0'},{text:'Inactivo',value:'1'},{text:'Eliminar',value:'2'}]
+      console.log(cruce.active);
+      if(cruce.active){
+        options.value.push(opciones[1])
+        options.value.push(opciones[2])
+      }else if(cruce.active == false){
+        options.value.push(opciones[0])
+        options.value.push(opciones[2])
+      }
+      return options.value
+    }
     //Funcion para identificar la accion del usuario en el tag
-    function accionesTags(accionestags,cruces) {
-        const guardaroption = accionestags
+    function accionesTags(cruces) {
         infotag.value = cruces
+        console.log(select.value)
         showModalAdvertencia.value = !showModalAdvertencia.value
-        console.log(guardaroption)
         console.log(infotag.value);
-        if(guardaroption == 'Activo'){
+        if(select.value == '0'){
           texto.value = "habilitar"
-          select.value = undefined
+          select.value = ""
         }
-        else if(guardaroption == 'Inactivo'){
+        else if(select.value == '1'){
           texto.value = "deshabilitar"
-          select.value = undefined
+          select.value = ""
         }
-        else if(guardaroption == 'Eliminar'){
+        else if(select.value == '2'){
           texto.value = "eliminar"
-          select.value = undefined
+          select.value = ""
         }
-        
+         
       }
       function accion(texto){
         console.log(texto)
-        console.log(infotag.value);
+        console.log(infotag.value.tag);
+        actualizar.value = false; 
+         const taghabilitar = {
+            "tag" : infotag.value.tag,
+            "insertionDate": infotag.value.insertionDate,
+            "active": true
+          }
+          const tagdeshabilitar = {
+            "tag" : infotag.value.tag,
+            "insertionDate": infotag.value.insertionDate,
+            "active": false
+          }
+          const ruta = encodeURI(`${API}/Ferromex/editartag`)
+        if(texto == "habilitar"){
+          axios.put(ruta,taghabilitar)
+          .then((res)=>{ console.log(res) 
+          actualizar.value = true;
+          emit("actualizartabla",actualizar.value)
+          notify({
+            title:'TAG HABILITADO',
+            text:'El tag se activo de manera correcta' ,
+            type: 'success'
+          });
+          })
+          .catch((err) =>{console.log(err)})
+        }else if( texto == "deshabilitar"){
+          axios.put(ruta,tagdeshabilitar)
+          .then((res)=>{ console.log(res)
+          actualizar.value = true; 
+          emit("actualizartabla",actualizar.value)
+          notify({
+            title:'TAG DESHABILITADO',
+            text:'El tag se deshabilito correctamente' ,
+            type: 'warn'
+          });
+          })
+          .catch((err) =>{ console.log(err) })
+        }else if(texto == "eliminar"){
+          axios.delete(`${API}/Ferromex/eliminartag/${infotag.value.tag}`)
+          .then((res)=>{ console.log(res)
+          actualizar.value = true; 
+          emit("actualizartabla",actualizar.value)
+          notify({
+            title:'TAG ELIMINADO',
+            text:'El tag se elimino de forma correcta' ,
+            type: 'error'
+          });
+          })
+          .catch((err) =>{ console.log(err) })
+        }
+        showModalAdvertencia.value = !showModalAdvertencia.value
+        select.value = ""
       }
-      return{infotag,accion,showModalAdvertencia,texto,accionesTags,accionestags,options,select,selectestatus,cerralmodalpadre}
+      return{infotag,accion,showModalAdvertencia,texto,accionesTags,accionestags,options,select,selectestatus,cerralmodalpadre,opcionestag}
     
   },
 };
@@ -123,7 +202,6 @@ export default {
   border-left-color: white;
   border-right-color: white;
   background: white;
-  
   text-align: center;
 }
 

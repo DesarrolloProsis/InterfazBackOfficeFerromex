@@ -19,7 +19,7 @@
               </div>
               <div class="w-full inline-flex flex-2 justify-center">
                 <label for="tag" class="text-white my-auto">Fecha:</label>
-                  <input v-model="fecha" type="date" class="my-auto p-1 bg-white flex border border-gray-200 rounded ml-2 h-6 w-40 "> 
+                  <input v-model="fecha" type="date" :max="hoy" class="my-auto p-1 bg-white flex border border-gray-200 rounded ml-2 h-6 w-40 "> 
               </div>
               <div class="w-full flex-1">
                 <div class="h-full my-auto text-white font-md p-2 ">                      
@@ -48,9 +48,9 @@
         </div>
     </div>
   </div>
-  <TablaMantenimientoTag :dataCruces="cruces"/>
+  <TablaMantenimientoTag :dataCruces="cruces" @actualizartabla="actualizarLista"/>
   </div>
-  <Paginacion :total-pages="totalPaginas" :total="100" :current-page="currentPage" :has-more-pages="hasMorePages" />  
+  <Paginacion :total-pages="totalPaginas" :total="100" :current-page="currentPage" :has-more-pages="hasMorePages" @pagechanged="showMore"/>  
   <Spinner :modalLoading="modalLoading"/>
   <Modal :show="showModal" @cerrarmodal="cerralmodalpadre">
         <h1 class="text-4xl font-bold font-titulo text-center mt-4">Agregar Tag</h1>
@@ -77,12 +77,12 @@ const API = process.env.VUE_APP_URL_API_PRODUCCION
 import TablaMantenimientoTag from "../../components/Tabla-ManteniminetoTags.vue";
 import Navbar from "../../components/Navbar.vue";
 import Footer from "../../components/Footer";
-//import axios from "axios";
+import axios from "axios";
 //import ServiceFiles from '../../Servicios/Files-Service'
 import Paginacion from "../../components/Paginacion.vue"
 import { notify } from "@kyvg/vue3-notification";
 import Spinner from '../../components/Spinner.vue'
-import { ref,reactive,toRefs } from 'vue'
+import { ref,reactive,toRefs,onMounted } from 'vue'
 import Modal from "../../components/Modal.vue"
 export default {
   name: "BusquedaCruces",
@@ -95,45 +95,13 @@ export default {
     Modal
   },
   setup() {
-    const cruces = ref([
-    {
-      tag: 'XXXXX',
-      estatus: 'Activo',
-      fecha: '2022/05/22'
-    },
-    {
-      tag: 'XXXXX01',
-      estatus: 'Activo',
-      fecha: '2022/05/22'
-    },
-    {
-      tag: 'XXXXX02',
-      estatus: 'Activo',
-      fecha: '2022/05/22'
-    },
-    {
-      tag: 'XXXXX03',
-      estatus: 'Activo',
-      fecha: '2022/05/22'
-    },
-    {
-      tag: 'XXXXX04',
-      estatus: 'Inctivo',
-      fecha: '2022/05/22'
-    },
-    {
-      tag: 'XXXXX05',
-      estatus: 'Activo',
-      fecha: '2022/05/22'
-    }
-      
-
-    ])
+    const cruces = ref([])
     const token = ref("")
     const formato = ref('')
     const tramo = ref('')
     const plaza = ref('')
     const page = ref(1)
+    const hoy = ref('')
     const totalPaginas = ref(0)
     const currentPage = ref(1)
     const hasMorePages = ref(true)
@@ -142,11 +110,53 @@ export default {
     const showModal = ref(false)
     const numerotagagregar = ref('')
     const options = ref(['Activo','Inactivo'])
+    const actualizar = ref(false)
     const header = reactive({
       tag: "",
       estatus: undefined,
       fecha: ""
     })
+    onMounted(()=>{
+        hoy.value = new Date().toISOString().split("T")[0];
+        cargatags()
+    })
+    //Funcion para la primera carga del modal
+    async function cargatags(){
+      cruces.value = []
+      let tagruta = " "
+        let estatusruta = " "
+        let fecharuta = " "
+        const ruta = encodeURI(`${API}/Ferromex/mantenimientotags/${page.value}/${numRespuesta.value}/${tagruta}/${estatusruta}/${fecharuta}`)
+        console.log(ruta);
+        axios.get(ruta)
+        .then((result)=>{
+        console.log(result)
+        if(result.status == 200){
+          modalLoading.value = false
+          totalPaginas.value = result.data.paginas_totales
+          console.log(totalPaginas.value)
+          currentPage.value = result.data.pagina_actual
+          console.log(totalPaginas.value)
+          result.data.tags.forEach((e)=>{
+            let obj = {
+              tag: e.tag,
+              insertionDate : e.insertionDate,
+              active: e.active
+            }
+            cruces.value.push(obj)
+          })
+       }else{
+          modalLoading.value = false
+          notify({
+            title:'Sin Información',
+            text:'No hay registro de tags actualmente' ,
+            type: 'warn'
+          });
+        }
+        }).catch((error) =>
+        {console.log(error)}
+        )
+    }
     //Emit para saber si se cierra el modal
     const cerralmodalpadre = (modal) => {
       console.log(modal)
@@ -158,6 +168,7 @@ export default {
     function search(tag, estatus, fecha){
       modalLoading.value = true
       cruces.value = []
+      console.log(estatus)
       if(tag == ""){
         tag = " "
       }
@@ -170,39 +181,53 @@ export default {
       console.log(tag,estatus,fecha)
       if(tag == ' ' && estatus == ' ' && fecha == ' '){
         modalLoading.value = false
+        cargatags()
         notify({
           title:'Sin Información',
           text:'Se debe llenar por lo menos un filtro para realizar una busqueda',
           type: 'warn'
         });
       }else{
-        const ruta = encodeURI(`${API}/ferromex/mantenimientotagas/${page.value}/${numRespuesta.value}/${tag}/${estatus}/${fecha}`)
+        let estatusurl = ""
+        let fechaurl = fecha
+        if(fecha != " "){
+          fechaurl = new Date(fecha).toISOString()
+        }
+        if(estatus == "Activo"){
+          estatusurl = "true"
+        }else if(estatus == "Inactivo"){
+          estatusurl = "false"
+        }else if(estatus == " "){
+          estatusurl = " "
+        }
+        const ruta = encodeURI(`${API}/ferromex/mantenimientotags/${page.value}/${numRespuesta.value}/${tag}/${estatusurl}/${fechaurl}`)
         console.log(ruta)
         modalLoading.value = false
-        // axios.get(`${API}/Transacciones/BusquedaTransacciones/PaginacionCompleta/${tag}/${estatus}/${fecha}/${page.value}/${numRespuesta.value}`)
-        //   .then((result)=>{
-        //     console.log(result.data);
-        //     if(result.data.status == "Ok" && result.data.body.length > 0){
-        //       modalLoading.value = false
-        //       totalPaginas.value = result.data.numberPages
-        //       currentPage.value = result.data.now
-        //       result.data.body.forEach((e)=>{
-        //         let obj = {
-        //           tag: e.noTag,
-        //           estatus: e.carril,
-        //           fecha: e.fecha,
-        //         }
-        //         cruces.value.push(obj)
-        //       })
-        //     }else{
-        //       modalLoading.value = false
-        //       notify({
-        //         title:'Sin Información',
-        //         text:'No se encontraron transacciones',
-        //         type: 'warn'
-        //       });
-        //     }
-        //   })
+        axios.get(ruta)
+        .then((result)=>{
+          console.log(result);
+            console.log(result.data);
+            if(result.status == 200){
+              modalLoading.value = false
+              totalPaginas.value = result.data.paginas_totales
+              currentPage.value = result.data.pagina_actual
+              result.data.tags.forEach((e)=>{
+                let obj = {
+                  tag: e.tag,
+                  insertionDate : e.insertionDate,
+                  active: e.active
+                }
+                cruces.value.push(obj)
+              })
+            }else{
+              modalLoading.value = false
+              notify({
+                title:'Sin Información',
+                text:'No se encontraron transacciones',
+                type: 'warn'
+              });
+            }
+          })
       }
     }
   //Función que limpia los input de busqueda y regresa las transacciones de la plaza sin filtros
@@ -221,89 +246,138 @@ export default {
         let tagruta = " "
         let estatusruta = " "
         let fecharuta = " "
-        const ruta = encodeURI(`${API}/ferromex/mantenimientotagas/${page.value}/${numRespuesta.value}/${tagruta}/${estatusruta}/${fecharuta}`)
+        const ruta = encodeURI(`${API}/Ferromex/mantenimientotags/${page.value}/${numRespuesta.value}/${tagruta}/${estatusruta}/${fecharuta}`)
+        axios.get(ruta)
+        .then((result)=>{
+          console.log(result)
+        if(result.status == 200){
+          modalLoading.value = false
+          totalPaginas.value = result.data.paginas_totales
+          console.log(totalPaginas.value)
+          currentPage.value = result.data.pagina_actual
+          console.log(totalPaginas.value)
+          result.data.tags.forEach((e)=>{
+            let obj = {
+              tag: e.tag,
+              insertionDate : e.insertionDate,
+              active: e.active
+            }
+            cruces.value.push(obj)
+          })
+       }else{
+          modalLoading.value = false
+          notify({
+            title:'Sin Información',
+            text:'No hay registro de tags actualmente' ,
+            type: 'warn'
+          });
+        }
+        }).catch((error)=>{console.log(error)})
         console.log(ruta);
       }
-      //axios.get(`${API}/Transacciones/BusquedaTransacciones/PaginacionCompleta/${plaza}/null/null/${page.value}/${numRespuesta.value}`)
-      // .then((result)=>{
-      //   if(result.data.status == "Ok"){
-      //     modalLoading.value = false
-      //     totalPaginas.value = result.data.numberPages
-      //     currentPage.value = result.data.now
-      //     result.data.body.forEach((e)=>{
-      //       let obj = {
-      //         tag: e.noTag,
-      //         carril: e.carril,
-      //         fecha: e.fecha,
-      //         medioPago: e.nombrePago,
-      //         tipo: e.tipoVehiculo,
-      //         tarifa: e.tarifa
-      //       }
-      //       cruces.value.push(obj)
-      //     })
-      //   }else{
-      //     modalLoading.value = false
-      //     notify({
-      //       title:'Sin Información',
-      //       text:'No ' ,
-      //       type: 'warn'
-      //     });
-      //   }
-      // })
     }
     function agregarTag(tag){
         console.log(tag)
         const tiempoTranscurrido = Date.now();
-        const hoy = new Date(tiempoTranscurrido);
+        const hoy = new Date(tiempoTranscurrido).toISOString();
         console.log(hoy)
+        const tagcompleto = {
+          "tag": tag,
+          "insertionDate": hoy,
+          "active": true
+        }
+        const ruta = encodeURI(`${API}/Ferromex/agregartag`)
+        axios.post(ruta,tagcompleto)
+        .then((res) =>{
+          console.log(res)
+          notify({
+            title:'TAG AGREGADO EXITOSAMENTE',
+            text:'El tag se agrego de forma correcta' ,
+            type: 'success'
+          });
+          cargatags()
+        }).catch((err) =>{
+          console.log(err)
+        })
         showModal.value = false
     }
     // //Función para cambiar de página
-    // function showMore(page){
-    //   if((fecha.value == '' || fecha.value == null || fecha.value == undefined) && (tag.value == '' || tag.value == null || tag.value == undefined)){
-    //     cruces.value = []
-    //     axios.get(`${API}/Transacciones/BusquedaTransacciones/PaginacionCompleta/${plaza.value}/null/null/${page}/${numRespuesta.value}`)
-    //     .then((result)=>{
-    //       if(result.data.status == "Ok"){
-    //         modalLoading.value = false
-    //         totalPaginas.value = result.data.numberPages
-    //         currentPage.value = result.data.now
-    //         result.data.body.forEach((e)=>{
-    //           let obj = {
-    //             tag: e.noTag,
-    //             carril: e.carril,
-    //             fecha: e.fecha,
-    //             medioPago: e.nombrePago,
-    //             tipo: e.tipoVehiculo,
-    //             tarifa: e.tarifa
-    //           }
-    //           cruces.value.push(obj)
-    //         })
-    //       }
-    //     })
-    //   }else{
-    //     cruces.value = []
-    //     axios.get(`${API}/Transacciones/BusquedaTransacciones/PaginacionCompleta/${plaza.value}/${fecha.value}/${tag.value}/${page}/${numRespuesta.value}`)
-    //     .then((result)=>{
-    //       if(result.data.status == "Ok"){
-    //         modalLoading.value = false
-    //         totalPaginas.value = result.data.numberPages
-    //         currentPage.value = result.data.now
-    //         result.data.body.forEach((e)=>{
-    //           let obj = {
-    //             tag: e.noTag,
-    //             carril: e.carril,
-    //             fecha: e.fecha,
-    //             medioPago: e.nombrePago,
-    //             tipo: e.tipoVehiculo,
-    //             tarifa: e.tarifa
-    //           }
-    //           cruces.value.push(obj)
-    //         })
-    //       }
-    //     })
-    //   }
-    // }                 
+    function showMore(page){
+      cruces.value = []
+      if(header.fecha == '' && header.tag == '' && header.estatus == undefined){
+        let tagruta = " "
+        let estatusruta = " "
+        let fecharuta = " "
+        const ruta = encodeURI(`${API}/Ferromex/mantenimientotags/${page}/${numRespuesta.value}/${tagruta}/${estatusruta}/${fecharuta}`)
+        axios.get(ruta)
+        .then((result)=>{
+          if(result.status == 200){
+            modalLoading.value = false
+              totalPaginas.value = result.data.paginas_totales
+              currentPage.value = result.data.pagina_actual
+              result.data.tags.forEach((e)=>{
+                let obj = {
+                  tag: e.tag,
+                  insertionDate : e.insertionDate,
+                  active: e.active
+                }
+                cruces.value.push(obj)
+          })
+          }
+        })
+      }
+      else{
+        let estatusurl = ""
+        let fechaurl = header.fecha
+        let tagurl = ""
+        if(header.fecha != ""){
+          fechaurl = new Date(header.fecha).toISOString()
+        }else if(header.fecha == ""){
+          fechaurl = " "
+        }
+        if(header.estatus == "Activo"){
+          estatusurl = "true"
+        }else if(header.estatus == "Inactivo"){
+          estatusurl = "false"
+        }else if(header.estatus == undefined){
+          estatusurl = " "
+        }
+        if(header.tag == ""){
+          tagurl = " "
+        }else if(header.tag != ""){
+          tagurl = header.tag
+        }
+       const ruta = encodeURI(`${API}/ferromex/mantenimientotags/${page}/${numRespuesta.value}/${tagurl}/${estatusurl}/${fechaurl}`)
+        console.log(ruta)
+        modalLoading.value = false
+        axios.get(ruta)
+        .then((result)=>{
+          console.log(result);
+            console.log(result.data);
+            if(result.status == 200){
+              modalLoading.value = false
+              totalPaginas.value = result.data.paginas_totales
+              currentPage.value = result.data.pagina_actual
+              result.data.tags.forEach((e)=>{
+                let obj = {
+                  tag: e.tag,
+                  insertionDate : e.insertionDate,
+                  active: e.active
+                }
+                cruces.value.push(obj)
+              })
+          }
+        })
+      }
+    }
+    //Funcion para actualizar datos de la tabla()
+    function actualizarLista(ac) {
+      actualizar.value = ac
+      console.log(actualizar.value);
+      if(actualizar.value){
+        cargatags()
+      }
+    }                 
     // //Función que manda a llamar al servicio para descargar el archivo en el formato seleccionado
     // function downloadApi(tipo) {
     //   var myHeaders = new Headers();
@@ -370,10 +444,14 @@ export default {
       ...toRefs(header),
       search, 
       limpiar,
-      //showMore, 
+      cargatags,
+      showMore,
+      actualizarLista, 
+      actualizar,
       //recibir_tramo_plaza, 
       //downloadApi,
-      options, 
+      options,
+      hoy, 
       cruces, 
       token,  
       formato, 
