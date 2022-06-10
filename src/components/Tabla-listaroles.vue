@@ -65,7 +65,7 @@
   </Modal>
 </template>
 <script>
-//import Servicio from '../Servicios/Token-Services'; //Importamos el Servicio de Toke, para obtener información del usuario con base en el token
+import Servicio from '../Servicios/Token-Services'; //Importamos el Servicio de Toke, para obtener información del usuario con base en el token
 import Multiselect from '@vueform/multiselect' //Importamos el componente Multiselect para utilizarlo en la columna Acciones o en el modal de asignar módulos
 import axios from 'axios';
 import Modal from '../components/Modal.vue'
@@ -86,26 +86,26 @@ export default {
     const modulos = ref([])//Constante que almacena todos los módulos que tiene asignados a un rol en especifico
     const asignarModulos = ref([])//Constante que almacena el array de módulos que se van a asignar a un rol en especifico
     const modulosExistentes = ref([])//Constante que almacena todos los módulos existentes
+    const infoUser = Servicio.obtenerInfoUser() //Constante que obtiene la información del usuario
 
     function cambiarEstatus (rol){//Funciòn praa cambiar el estatus del rol
       let data = {//Literal que va a almacenar la informacion del rol para poder enviarlo al endpoint
-        "id": rol.id,
-        "rol": rol.name,
-        "estatus" : rol.activo = !rol.activo//Cambia el valor de la variable estatus, solo cambia al valor opuesto al que est{a en ese momento}
+        "idRol": rol.idRol,
+        "nombreRol": rol.nombreRol,
+        "estatus" : rol.estatus = !rol.estatus//Cambia el valor de la variable estatus, solo cambia al valor opuesto al que est{a en ese momento}
       }  
-      axios.put(`${API}/ferromex/editRole`, data)//endpoint que hace la edición del rol
-      .then((result) => {//Si el endpoint tiene una respuesta correcta
-        console.log(result);
+      axios.put(`${API}/Identity/editRole`, data)//endpoint que hace la edición del rol
+      .then(() => {//Si el endpoint tiene una respuesta correcta
         notify({//Notifiación que se muestra cuando se realiza el cambio de una manera correcta
           title:'Cambio Exitoso',
-          text:`Se cambió el estatus al Rol ${rol.name}`,
+          text:`Se cambió el estatus al Rol ${rol.nombreRol}`,
           type: 'success'
         });
       }).catch((error) => {
         console.log(error);
         notify({//Notificación que se muestra cuando no se puede hacer el cambio de manera correcta
           title:'Cambio Fallido',
-          text:`No se pudo cambiar el estatus al Rol ${rol.name}`,
+          text:`No se pudo cambiar el estatus al Rol ${rol.nombreRol}`,
           type: 'error'
         });
       })
@@ -175,29 +175,23 @@ export default {
       }
       value.value = ""
     }
-    function opticones_select_acciones(){
-      //let infoUser = Servicio.obtenerInfoUser() //variable que obtiene la información del usuario
-      //console.log(infoUser.role);
+    function opticones_select_acciones(rol){//Función que asigna las opciones dependiendo de el estatus del rol
       let options= [//literal que almacena un array de opciones que se presentan en la columna de Acciones, value corresponde al valor de la opción y name es el texto que se presentará en la columna de Acciones
           {  value: 'Habilitar', name: 'Habilitar'},//0 
           {  value: 'Deshabilitar', name: 'Deshabilitar'},//1
           {  value: 'Editar Modulos', name: 'Editar Modulos'},//2
       ]
-      //console.log(rol);
       let filtroOpciones = [] //Literal que nos da las opciones filtradas que se presentan en la columna de acciones
-      filtroOpciones.push(options[0])
-      filtroOpciones.push(options[1])
-      filtroOpciones.push(options[2])    
-        /* if(rol.estatus == 'Inactivo')
+        if(rol.estatus == false)
           filtroOpciones.push(options[0])
-        if(rol.name != infoUser.role && rol.estatus == 'Activo'){
+        if(rol.nombreRol != infoUser.role && rol.estatus == true){
           filtroOpciones.push(options[1])
           filtroOpciones.push(options[2])    
-        } */
+        }
       return filtroOpciones //Regresamos el array con las opciones ya filtradas
     }
 
-    return { modalModulos, perfilSelected, value, modulos, asignarModulos, modulosExistentes, cambiarEstatus, modulosExistente, traerModulos,editarModulos, acciones_mapper, opticones_select_acciones }
+    return { modalModulos, perfilSelected, value, modulos, asignarModulos, modulosExistentes, infoUser, cambiarEstatus, modulosExistente, traerModulos,editarModulos, acciones_mapper, opticones_select_acciones }
   }
 };
 </script>

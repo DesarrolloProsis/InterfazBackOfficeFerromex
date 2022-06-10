@@ -169,7 +169,6 @@ export default {
       }else{//Si se manda un nombre o un estatus, o ambos, realizaremos la busqueda correspondiente
         roles.value = [] //Constante que contiene los roles se muestra en vacio para hacer una busqueda limpia, y no se queden datos en cache
         const ruta = encodeURI(`${API}/Identity/roles/${paginaActual.value}/${numRespuesta.value}/${nombre}/${estatus}`)
-        console.log(ruta)
         axios.get(ruta)//Llamada al endpoint que trae los roles existentes
         .then((result) => {//Si el endpoint tiene una respuesta correcta
           if(result.status == 200){//valida que el estatus de la respuesta sea 200 para saber que es una respuesta correcta y con contenido
