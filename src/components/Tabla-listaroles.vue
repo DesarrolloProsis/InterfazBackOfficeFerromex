@@ -59,7 +59,7 @@
         />
       </div>
       <div class="mt-10 text-center mx-auto mb-4">
-        <button @click="editarModulos(perfilSelected.name, asignarModulos)" class="rounded-lg w-18 bg-ferromex text-white p-10">Guardar</button>
+        <button @click="editarModulos(perfilSelected.nombreRol, asignarModulos)" class="rounded-lg w-18 bg-ferromex text-white p-10">Guardar</button>
       </div>
     </div>
   </Modal>
@@ -121,7 +121,7 @@ export default {
     function traerModulos(rol){//Función que trae los modulos asignados a un rol en especifico
       modulosExistente()//Llamamos a la función que trae todos los roles, para llenar el multiselect
       modulos.value = []
-      axios.get(`${API}/Ferromex/modules?role=${rol.name}`)//Endpoint que trae los módulos asignados a un rol en especificio, si no le mandamos ningún rol, trae todos los módulos
+      axios.get(`${API}/Ferromex/modules?role=${rol.nombreRol}`)//Endpoint que trae los módulos asignados a un rol en especificio, si no le mandamos ningún rol, trae todos los módulos
       .then((result)=>{//Si el endpoint tiene una respuesta correcta
         for(let i=0; i<result.data.content.length; i++){ //recorremos la respuesta, y cada que recorremos sumamos un 1 para el siguiente rol
           modulos.value.push({'value':result.data.content[i].id, 'label':result.data.content[i].nameModule})//asignamos los roles existentes a la variable roles, para mostrarlos en el multiselect
