@@ -39,7 +39,23 @@
         <p class="text-sm mb-1 font-semibold text-gray-700 mt-2 sm:-ml-6">Apellidos*</p>
         <input v-model="usuario.apellidos" type="text" class="border mx-auto w-52 rounded-lg">
         <p class="text-sm mb-1 font-semibold text-gray-700 mt-2 sm:-ml-6">Contraseña *</p>
-        <input v-model="usuario.pass" type="text" class="border mx-auto w-52 rounded-lg">
+        <div>
+          <input v-model="usuario.pass" :type="tipoInput" class="border mx-auto w-52 rounded-lg" :class="{'border border-red-500':!mayuscula || !corta}" @input="mayuscula = true, corta = true">
+          <span @click="tipoInput == 'password' ? tipoInput = 'text' : tipoInput = 'password'" class="absolute right-0 mt-1 mr-69 cursor-pointer">
+            <fa v-if="tipoInput == 'password'" icon="eye" class="text-gray-600 w-5 h-5" />
+            <fa v-else  icon="eye-slash" class="text-gray-600 w-5 h-5" />
+          </span>
+        </div>
+        <span></span>
+        <span v-if="!mayuscula || !corta" class="text-xs text-red-300 mx-auto">
+          <p>Se necesita mínimo una mayuscula</p>
+          <p>Se necesita mínimo 6 caracteres</p>
+        </span>
+        <span v-else></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
         <p class="text-sm mb-1 font-semibold text-gray-700 mt-2 sm:-ml-6">Rol *</p>
         <Multiselect
           v-model="usuario.rol"
@@ -68,7 +84,7 @@ import Multiselect from '@vueform/multiselect';//Importamos el componente Multis
 import { notify } from "@kyvg/vue3-notification";//Componente que realiuza las notificaciones
 import Spinner from '../../components/Spinner.vue'//Componente que contiene el spinner para las pantallas de cargas
 import Paginacion from "../../components/Paginacion.vue"//Componente que contiene la paginación
-import Modal from "../../components/Modal.vue"
+import Modal from "../../components/Modal.vue"//Importamos el componente modal
 import axios from "axios";
 import { onMounted, reactive, ref, toRefs } from 'vue'
 export default {
@@ -93,6 +109,9 @@ export default {
     const hasMorePages = ref(true)//Constante que nos indica si puede haber más páginas y si puede hacer un cambio de página
     const numRespuesta = ref(9)//Constante que indica el número de respuestas que va a mostrar por página
     const usuario = reactive ({})//constante reactiva que va a almacenar la información de un usuario nuevo
+    const mayuscula = ref(true)//Constante que almacena la respuesta de la validación si es que hay o no mayusculas para la contraseña
+    const corta = ref(true)//Constante que alamcena la respuesta de la validación si es que la contraseña es muy corta
+    const tipoInput = ref('password')//Constante que nos permite cambiar el tipo de input de la contraseña para poder verla
     const abrirModal = async () => {//función asincorna que espera a que des click en el botón Agregar usuario, que abre el formulario para agreagar un usuario
       modalAgregar.value = true //Habilitamos el spinner de pantalla de carga
       axios.get(`${API}/Identity/roles/%20/%20/%20/%20`)//Llamada al endpoint que trae los roles existentes
@@ -184,29 +203,55 @@ export default {
         "roleName":usuario.rol//rol que se seleccionó en el formulario de agregar usuario
       }
       console.log(data);
-      axios.post(`${API}/Identity/register`,data)//endpoitn que registra usuario en la base de datos
-      .then((result) => {//si el usuario tiene una respuesta correcta
-        if(result.status == 201){//si el status de la respuesta es 201, es decir respuesta correcta
-          modalAgregar.value = false//cerramos el spinner de la pantalla de carga
-          usuario.pass = '',//limpiamos el valor de password del formulario de agregar usuario
-          usuario.nombre = '',//limpiamos el valor de nombre del formulario de agregar usuario
-          usuario.apellidos = '',//limpiamos el valor de apellido o apellidos del formulario de agregar usuario
-          notify({//notificación de que el usuario se inserto correctamente
-            title:'Nuevo Usuario',//titulo de la notificaci{on}
-            text:`Se creo correctamente el nuevo usuario userName`,//texto de la notificación 
-            duration: 20000,//duración de la notificación
-            closeonclick:true,//si le damos click se cierra la notificación
-            type: 'success'//el tipo de notificación, si es success el color será verde
-          });
+      if(data.nombre == '' || data.password == '' || data.apellidos == '' || data.roleName == ''){//Si alguno de los campos está vacio
+        notify({//notificación de que el usuario se inserto correctamente
+          title:'Nuevo Usuario',//titulo de la notificaci{on}
+          text:`Todos los campos son obligatorios`,//texto de la notificación 
+          duration: 20000,//duración de la notificación
+          closeonclick:true,//si le damos click se cierra la notificación
+          type: 'warn'//el tipo de notificación, si es success el color será verde
+        });
+      }else{
+        if(data.password.length >= 6){//Si la contraseña es menor a 6 carácteres
+          let mayusculas = 'ABCDEFGHYJKLMNÑOPQRSTUVWXYZ'//Literal que almacena todas las letras en mayusculas
+          for(let i = 0; i< data.password.length; i++){//Recorremos toda la palabra insertada en el password y si no encuentra alguna mayuscula no nos dejará insertar
+            if (mayusculas.indexOf(data.password.charAt(i),0)!=-1){
+              mayuscula.value = true
+            }
+          }
+          if(mayuscula.value ==  true){
+            axios.post(`${API}/Identity/register`,data)//endpoitn que registra usuario en la base de datos
+            .then((result) => {//si el usuario tiene una respuesta correcta
+              console.log(result);
+              if(result.status == 200){//si el status de la respuesta es 201, es decir respuesta correcta
+                modalAgregar.value = false//cerramos el spinner de la pantalla de carga
+                usuario.pass = '',//limpiamos el valor de password del formulario de agregar usuario
+                usuario.nombre = '',//limpiamos el valor de nombre del formulario de agregar usuario
+                usuario.apellidos = '',//limpiamos el valor de apellido o apellidos del formulario de agregar usuario
+                usuario.rol = ''//limpiamos el valor de rol del formulario de agregar usuario
+                notify({//notificación de que el usuario se inserto correctamente
+                  title:'Nuevo Usuario',//titulo de la notificaci{on}
+                  text:`Se creo correctamente el nuevo usuario ${result.data.nombreUsuario}`,//texto de la notificación 
+                  duration: 3000,//duración de la notificación
+                  closeonclick:true,//si le damos click se cierra la notificación
+                  type: 'success'//el tipo de notificación, si es success el color será verde
+                });
+                todos()//LLamamos a la función para refrescar la tabla
+              }
+            })
+            .catch(error => {
+              console.log(error.request.response);
+            })
+          }
+        }else{
+          corta.value = false //La contraseña es demasiado corta
         }
-      })
-      .catch(error => {
-        console.log(error.request.response[0]);
-      })
-      
+      }
     }
     const cerrarModal = (modal) => {//constante que emite el cierre del modal para agregar roles, y limpia los valores del modal
       modalAgregar.value = modal
+      mayuscula.value = true
+      corta.value = true
       usuario.nombre = ''
       usuario.apellidos = ''
       usuario.pass = ''
@@ -214,7 +259,7 @@ export default {
     }
     onMounted(todos)//Montamos la función todos para que en la primer carga traiga todos los usuarios existentes
 
-  return { abrirModal, todos, guardar, buscar, cambiarPagina, cerrarModal, usuario, usuarios, options, ...toRefs(header), modalAgregar, roles, modalLoading, paginaActual, hasMorePages, numRespuesta, totalPaginas }
+  return { abrirModal, todos, guardar, buscar, cambiarPagina, cerrarModal, usuario, usuarios, options, ...toRefs(header), mayuscula, tipoInput, corta, modalAgregar, roles, modalLoading, paginaActual, hasMorePages, numRespuesta, totalPaginas }
   },
 }
 </script>
@@ -224,29 +269,10 @@ export default {
   background-color: #BB2028;
   padding: 10px 5px;
 }
-.modal-container{
-    position: fixed;
-    width: 100%;
-    height: 100vh;
-    z-index: 1000;
-    background: rgba(0, 0, 0, 0.2);
-}
 .title {
   text-align: center;
   font-size: 25px;
   padding-top: 20px;
-}
-.button-pagination {
-  padding: 2px;
-  border: 1px solid #2c5282;
-  border-radius: 5px;
-  margin-right: 5px;
-  font-size: 12px;
-  margin-top: 20px;
-}
-.bg-blue {
-  background-color: #2c5282;
-  padding: 10px 5px;
 }
 .filter-style {
   color: white;
@@ -258,23 +284,6 @@ export default {
   color: black;
   border: 1px solid black;
   padding: 0px 5px;
-}
-.ml-right {
-  display: block;
-  margin-left: auto;
-  margin-right: 10px;
-}
-.btn-carriles {
-  background-color: #017296;
-  color: white;
-  font-size: 15px;
-  height: 100%;
-  padding: 0px 5px;
-  border: 1px solid black;
-  border-radius: 5px;
-}
-.btn-carriles:focus {
-  outline: 0;
 }
 .btn-buscar:focus {
   outline: 0;
@@ -293,14 +302,6 @@ export default {
   .filter-style {
     padding-top: 5px;
     padding-bottom: 15px;
-  }
-  .btn-carriles {
-    background-color: #017296;
-    color: white;
-    font-size: 15px;
-    padding: 10px 5px;
-    border: 1px solid black;
-    border-radius: 5px;
   }
 }
 </style>
