@@ -13,7 +13,11 @@
           </div>
           <div class="input-container">
             <fa icon="key" class="w-10 h-6 mt-3 mr-2 text-red-700"/>
-            <input id="password" v-model="pass" class="input-field" type="password" placeholder="Contraseña" />
+            <input id="password" v-model="pass" class="input-field" :type="tipoInput" placeholder="Contraseña" />
+              <span @click="tipoInput == 'password' ? tipoInput = 'text' : tipoInput = 'password'" class="absolute right-0 mt-3 mr-14 cursor-pointer">
+                <fa v-if="tipoInput == 'password'" icon="eye" class="text-gray-600 w-5 h-5" />
+                <fa v-else  icon="eye-slash" class="text-gray-600 w-5 h-5" />
+              </span>
           </div>
           <button class="btn mt-12" @click="login()">Iniciar Sesión</button>
         </div>
@@ -46,6 +50,7 @@ export default {
     const pass = ref('')//Constante que almacena el valor del password insetado en el input
     const message = ref('')//Constante que almacena el posible mensaje de error
     const modalLoading = ref(false)
+    const tipoInput = ref('password')
 
     function login() {//Función que genera el inicio de sesión
       let data = {//Literal que almacena el json que se enviará para iniciar sesión
@@ -73,7 +78,7 @@ export default {
         message.value ="Los campos Usuario y COntraseña son obligatorios."
       }
     }
-    return { user, pass, message, modalLoading, login} //Regreasamos las const y las funciones que utilizamos en la vista
+    return { user, pass, message, modalLoading, tipoInput, login} //Regreasamos las const y las funciones que utilizamos en la vista
   }
 };
 </script>
