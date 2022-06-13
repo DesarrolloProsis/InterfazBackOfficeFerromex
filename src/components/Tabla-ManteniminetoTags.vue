@@ -19,7 +19,7 @@
         <td>{{cruces.tag}}</td>
         <td v-if = "cruces.active == true">Activo</td>
         <td v-else>Desactivado</td>
-        <td>{{moment(cruces.insertionDate).format("YYYY-MM-DD HH:mm:ss a")}}</td>
+        <td>{{moment.utc(cruces.insertionDate).local().format("YYYY-MM-DD HH:mm:ss a")}}</td>
         <td>
           <Multiselect
           v-model="select" 
@@ -82,6 +82,7 @@ export default {
       showModalAdvertencia.value = modal
       texto.value = ""
       console.log(showModalAdvertencia.value)
+      emit("actualizartabla",true)
     }
     //Funcion para las opciones del tag
     function opcionestag(cruce){
