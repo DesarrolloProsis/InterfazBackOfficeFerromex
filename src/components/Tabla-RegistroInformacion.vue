@@ -20,25 +20,19 @@
       </th>
     </tr>
     <tr v-for="(cruce, index) in dataCruces" :key="index" class="bg-white">
-      <td>{{ moment(cruce.fecha).format("YYYY-MM-DD  HH:mm:ss a") }}</td>
-      <td>{{ cruce.carril }}</td>
-      <td>{{ cruce.carril }}</td>
+      <td>{{ cruce.fecha }}</td>
+      <td>{{ cruce.hora }}</td>
       <td>{{ cruce.tag }}</td>
-      <td>{{ cruce.clase }}</td>
+      <td>{{ cruce.carril }}</td>
+      <td>{{ cruce.tarifa }}</td>
     </tr>
   </table>
 </div>
 </template>
-
-
 <script>
-import moment from 'moment'
 export default {
   name: "Tabla",
   props: ["dataCruces"],
-  created: function () {
-    this.moment = moment;
-  },
 };
 </script>
 <style scoped>
@@ -49,7 +43,6 @@ export default {
   max-height: 600px;
 
 }
-
 .tftable {
   font-size: 12px;
   color: #333333;
