@@ -24,7 +24,7 @@
         <button @click="abrirModal" class="btn-buscar animacion">Agregar Usuario</button>
       </div>
     </div>
-    <TablaListaUsuarios :dataUsuarios="usuarios" />
+    <TablaListaUsuarios @refrescarTabla="todos()" :dataUsuarios="usuarios"/>
     <div class="ml-24">
       <Paginacion :total-pages="totalPaginas" :total="100" :current-page="paginaActual" :has-more-pages="hasMorePages" @pagechanged="cambiarPagina"/>
     </div>
