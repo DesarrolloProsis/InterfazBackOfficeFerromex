@@ -58,7 +58,7 @@ import Navbar from "../../components/Navbar.vue";
 import Footer from "../../components/Footer";
 import { notify } from "@kyvg/vue3-notification";//Componente para poder hacer las notificaciones
 import { onMounted, ref, reactive, toRefs, onUnmounted } from 'vue'
-//import axios from "axios";
+import axios from "axios";
 import moment from 'moment'
 import Spinner from '../../components/Spinner.vue'
 export default {
@@ -67,29 +67,7 @@ export default {
   setup() {
 
     const modalLoading = ref(false) //Constante que permite abrir el spinner de las pantalla de carga
-    const cruces = ref([ //Constante que almacena los cruces para mostrar en la tabla
-      { 
-      fecha: '2022/05/22',
-      hora: '12pm',
-      carril: 'A02',
-      tag:  'XXXXX',
-      clase: '$70'
-      },
-      { 
-      fecha: '2022/05/22',
-      hora: '12pm',
-      carril: 'A02',
-      tag:  'XXXXX',
-      clase: '$70'
-      },
-      { 
-      fecha: '2022/05/22',
-      hora: '12pm',
-      carril: 'A02',
-      tag:  'XXXXX',
-      clase: '$70'
-      },
-    ])
+    const cruces = ref([])//Constante que almacena los cruces para mostrar en la tabla
     const tiempo = ref('') //Constante que almacena el tiempo seleccionado para actualizar la tabla
     const contador = ref(0) //Constante que almacena el contador por segundos para la actualización de la tabla
     const seconds = ref(10) //Constante que almacena los segundos para actualizar la tabla
@@ -124,11 +102,9 @@ export default {
           expires_in.value = seconds.value //Se cambia el valor, a que tenga por defaul el valor de seconds en este caso 180
           if(header.fecha != ''|| header.tag != '' || header.carril != '' || header.cuerpo != ''){//Si el header esta vacio mandamos a llamr a la función buscar
             buscar(header.fecha, header.tag, header.carril, header.cuerpo)
-            console.log('if');
           } 
           else{//Si no llamamos a todos
             todos()
-            console.log('else');
           }
         }
         else {//Si no es el último segundo
@@ -148,6 +124,15 @@ export default {
       let carrilRuta = ' '
       let cuerpoRuta = ' '
       const ruta = (encodeURI(`${API}/ferromex/registroInformacion/${paginaActual.value}/${numRespuesta.value}/${fechaRuta}/${tagRuta}/${carrilRuta}/${cuerpoRuta}`))
+      axios.get(ruta)
+      .then((result) => {
+        console.log(result);
+        modalLoading.value = false
+      })
+      .catch((error) => {
+        console.log(error);
+        modalLoading.value = false
+      })
       console.log(ruta);
       modalLoading.value = false
     }

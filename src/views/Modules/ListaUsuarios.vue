@@ -1,8 +1,8 @@
 <template>
   <Navbar/>
+  <h1 class="title border ml-24 font-titulo font-bold">Lista de Usuarios</h1>
   <!-- header -->
-  <h1 class="title font-titulo font-bold">Lista de Usuarios</h1>
-  <div class="container mx-auto px-0 pb-24 pt-4">
+  <div class="container mx-auto px-0 pb-2 pt-4">
     <div class="flex flex-wrap ferromex-color p-1 rounded-lg">
       <div class="flex-none my-auto text-white font-md p-2 ml-10">
         Nombre:<input v-model="nombre" type="text" class="rounded ml-2 text-black" />
@@ -24,8 +24,8 @@
         <button @click="abrirModal" class="btn-buscar animacion">Agregar Usuario</button>
       </div>
     </div>
-    <TablaListaUsuarios :dataUsuarios="usuarios" />
-    <div class="-mt-2 -mb-14">
+    <TablaListaUsuarios @refrescarTabla="todos()" :dataUsuarios="usuarios"/>
+    <div class="ml-24">
       <Paginacion :total-pages="totalPaginas" :total="100" :current-page="paginaActual" :has-more-pages="hasMorePages" @pagechanged="cambiarPagina"/>
     </div>
   </div>
@@ -91,7 +91,7 @@ export default {
     const totalPaginas = ref(0)//Constante que almacena el total de páginas que hay en la busqueda
     const paginaActual = ref(1)//Constante que almacena la página actual de la busqueda realizada
     const hasMorePages = ref(true)//Constante que nos indica si puede haber más páginas y si puede hacer un cambio de página
-    const numRespuesta = ref(10)//Constante que indica el número de respuestas que va a mostrar por página
+    const numRespuesta = ref(9)//Constante que indica el número de respuestas que va a mostrar por página
     const usuario = reactive ({})//constante reactiva que va a almacenar la información de un usuario nuevo
     const abrirModal = async () => {//función asincorna que espera a que des click en el botón Agregar usuario, que abre el formulario para agreagar un usuario
       modalAgregar.value = true //Habilitamos el spinner de pantalla de carga
@@ -233,7 +233,7 @@ export default {
 }
 .title {
   text-align: center;
-  font-size: 45px;
+  font-size: 25px;
   padding-top: 20px;
 }
 .button-pagination {

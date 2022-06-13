@@ -45,9 +45,15 @@
       <p class="text-gray-900 font-bold text-xl -mt-8 mb-8 text-center">Cambiar Contraseña a {{ seleccionado.nombre + ' ' + seleccionado.apellidos }}</p>
       <div class="grid grid-cols-2 mt-2">
         <p class="mx-auto">Nueva Contraseña:</p>
-        <input v-model="pass" class="border-b-2 rounded-lg mx-auto" type="password" :class="{'border-red-600': validacion}">
-        <span></span>
-        <span v-if="validacion" class="text-xs text-red-600 text-center">Campo Obligatorio</span>
+        <div class="input-container">
+          <input v-model="pass" class="border-b-2 rounded-lg mx-auto" :type="tipoInput" :class="{'border-red-600': validacion}">
+          <span @click="tipoInput == 'password' ? tipoInput = 'text' : tipoInput = 'password'" class="absolute ml-64 mt-1 cursor-pointer">
+            <fa v-if="tipoInput == 'password'" icon="eye" class="text-gray-600 w-5 h-5" />
+            <fa v-else  icon="eye-slash" class="text-gray-600 w-5 h-5" />
+          </span>
+          <span></span>
+          <span v-if="validacion" class="text-xs text-red-600 text-center">Campo Obligatorio</span>
+        </div>
       </div>
       <div class="mt-10 text-center mx-auto mb-4">
         <button @click="cambiarPass(seleccionado)" class="rounded-lg w-18 bg-ferromex text-white p-10">Cambiar Contraseña</button>
@@ -113,8 +119,7 @@ export default {
   },
   components:{ Multiselect, Spinner, Modal },
   emits: ["refrescarTabla"],
-    setup() {
-    
+    setup(props, {emit}) {
     const modalEditar = ref(false)//Constante que va a abrir el modal que permite editar el usuario
     const modalPass = ref(false)//Modal que va a abrir el modal que permite cambiar la contraseña del usuario
     const modalRol = ref(false)//Constancia que va a abrir el modal que permite cambiar el rol del usuario
@@ -127,15 +132,15 @@ export default {
     const pass = ref('')//Constatnte que alamcena el password para la edición de la contraseña del usuario
     const status = ref('')//Constante que almacena el estatus del usuario para habilitarlo o deshabilitarlo
     const errorMessage = ref('')//Constante que almacena el mensaje de error que se da al hacer una petición
-    const infoUser = Servicio.obtenerInfoUser()
-
+    const infoUser = Servicio.obtenerInfoUser()//Constante que trae toda la información del usuario que inicio sesión
+    const tipoInput = ref('password')
     const modal_Rol = async () => {
       modalRol.value = true
-      axios.get(`${API}/Identity/roles`)//Llamada al endpoint que trae los roles existentes
+      axios.get(`${API}/Identity/roles/%20/%20/%20/%20`)//Llamada al endpoint que trae los roles existentes
       .then((result) => {//Si el endpoint tiene una respuesta correcta
         console.log(result);
-        for(let i=0; i<result.data.length; i++){ //recorremos la respuesta, y cada que recorremos sumamos un 1 para el siguiente rol
-          roles.value.push({'value':result.data[i].name, 'label':result.data[i].name})//asignamos los roles existentes a la variable roles, para mostrarlos en el multiselect
+        for(let i=0; i<result.data.roles.length; i++){ //recorremos la respuesta, y cada que recorremos sumamos un 1 para el siguiente rol
+          roles.value.push({'value':result.data.roles[i].nombreRol, 'label':result.data.roles[i].nombreRol})//asignamos los roles existentes a la variable roles, para mostrarlos en el multiselect
         }
       }).catch((error)=>{//si el endpoint tiene un error
         console.log(error);//Mostramos en consola el error  que nos da el endpoint
@@ -177,8 +182,9 @@ export default {
         "estatus": usuario.estatus
       }
       axios.put(`${API}/Identity/editUser`, data)//endpoint que recibe un JSON con la información del usuario para editar
-      .then((result) => {//Si el endpoint tiene una respuesta correcta
-        console.log(result);
+      .then(() => {//Si el endpoint tiene una respuesta correcta
+        modalEditar.value = false
+        emit('refrescarTabla', true)//Se realiza el emit al componente padre, para refrescar la tabla con los cambios realizados
         notify({//Notifiación que se le muestra al usuario si se hizo el cmabio correcto
           title:'Cambio Exitoso',
           text:`Se cambió el estatus al usuario ${usuario.nombre + ' ' + usuario.apellidos}`,
@@ -197,16 +203,18 @@ export default {
       })
     }
     function cambiarEstatus(usuario) {//Función que cambia el estatus del usuario
-      let data = {
+      let data = { //literal que almacena los datos para enviar al endpoint de la edición
         "usuarioId": usuario.usuarioId,
+        "nombreUsuario": usuario.nombreUsuario,
         "nombre": usuario.nombre,
-        "apellido": usuario.apellidos,
+        "apellidos": usuario.apellidos,
         "rol": usuario.rol,
-        "estatus": usuario.estatus = !usuario.estatus //Cambia el valor de la variable estatus, solo cambia al valor opuesto al que est{a en ese momento}
+        "nombreCompleto": usuario.nombreCompleto,
+        "estatus": usuario.estatus = !usuario.estatus
       }
-      axios.put(`${API}/ferromex/editUser`, data)//endpoint que hace la edición del usuario
-      .then((result) => {
-        console.log(result);
+      axios.put(`${API}/Identity/editUser`, data)//endpoint que recibe un JSON con la información del usuario para editar
+      .then(() => {
+        emit('refrescarTabla', true)//Se realiza el emit al componente padre, para refrescar la tabla con los cambios realizados
         notify({
           title:'Cambio Exitoso',
           text:`Se cambió el estatus al usuario ${usuario.nombre + ' ' + usuario.apellidos}`,
@@ -222,18 +230,20 @@ export default {
       })
     }
     function cambiarRol(usuario){//Función que cambia de rol al usuario
-      console.log(usuario);
-      let data = {
+      let data = { //literal que almacena los datos para enviar al endpoint de la edición
         "usuarioId": usuario.usuarioId,
+        "nombreUsuario": usuario.nombreUsuario,
         "nombre": usuario.nombre,
-        "apellido": usuario.apellidos,
+        "apellidos": usuario.apellidos,
         "rol": seleccionado.value.rol,
+        "nombreCompleto": usuario.nombreCompleto,
         "estatus": usuario.estatus
       }
       console.log(data);
-      axios.put(`${API}/ferromex/editUser`, data)
+      axios.put(`${API}/Identity/editUser`, data)//endpoint que recibe un JSON con la información del usuario para editar
       .then((result) => {
         console.log(result);
+        emit('refrescarTabla', true)//Se realiza el emit al componente padre, para refrescar la tabla con los cambios realizados
         notify({
           title:'Cambio Exitoso',
           text:`Se cambió el estatus al usuario ${usuario.nombre + ' ' + usuario.apellidos}`,
@@ -269,11 +279,12 @@ export default {
         console.log(usuario);
       }if(accion.value == 'Cambiar Rol'){
         modal_Rol()//Llamamos a la función que abre el modal para cambiar el Rol
-        usuario.value.nombre = item.nombre//Asignamos los valores utiles a la constante usuario
-        usuario.value.apellidos = item.apellidos
-        usuario.value.rol = item.rol
-        usuario.value.estatus = item.estatus
-        usuario.value.usuarioId = item.usuarioId
+        //usuario.value.nombre = item.nombre//Asignamos los valores utiles a la constante usuario
+        //usuario.value.apellidos = item.apellidos
+        //usuario.value.rol = item.rol
+        //usuario.value.estatus = item.estatus
+        //usuario.value.usuarioId = item.usuarioId
+        usuario.value = item
       }
       accion.value = ""
     }
@@ -298,46 +309,12 @@ export default {
           }
       return filtroOpciones  //Regresamos la lista de acciones filtrada
     }
-    return{ cambiarRol, cambiarEstatus, editarUsuario, cambiarPass, modal_Rol, acciones_mapper, opticones_select_acciones, infoUser, modalEditar, modalPass, modalRol, modalLoading, seleccionado, accion, validacion, usuario, roles, pass, status, errorMessage }
+    return{ cambiarRol, cambiarEstatus, editarUsuario, cambiarPass, modal_Rol, acciones_mapper, opticones_select_acciones, tipoInput, infoUser, modalEditar, modalPass, modalRol, modalLoading, seleccionado, accion, validacion, usuario, roles, pass, status, errorMessage }
   }
 }
 </script>
 <style src="@vueform/multiselect/themes/default.css"></style>
 <style scoped>
-.modal-container{
-    position: fixed;
-    width: 100%;
-    height: 100vh;
-    z-index: 1000;
-    background: rgba(0, 0, 0, 0.5);
-}
-.input-pass {
-  width: 100%;
-  font-size: 20px;
-  border: 1px solid black;
-  padding: 5px;
-}
-.button {
-  padding: 5px 10px;
-  border-radius: 10px;
-  min-width: 100px;
-}
-.button:focus {
-  outline: 0;
-}
-.btn-actualizar {
-  background-color: #55f768;
-  color: #00be0f;
-}
-
-.btn-activo {
-  background-color: #614dff;
-  color: #000071;
-}
-.btn-inactivo {
-  background-color: #ff3131;
-  color: #6f0404;
-}
 .responsive-table {
   padding-top: 20px;
   max-height: 640px;
@@ -365,5 +342,12 @@ export default {
 .bg-ferromex {
   background-color: #BB2028;
   padding: 10px 5px;
+}
+.input-container {
+  display: -ms-flexbox;
+  /* IE10 */
+  display: flex;
+  width: 100%;
+  margin-bottom: 15px;
 }
 </style>
