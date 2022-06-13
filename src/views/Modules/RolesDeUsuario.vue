@@ -1,8 +1,8 @@
 <template>
   <Navbar/>
-  <h1 class="title font-titulo font-bold">Roles de Usuario</h1>
+  <h1 class="title font-titulo ml-24 font-bold">Roles de Usuario</h1>
   <!-- Header Rol  -->
-  <div class="container mx-auto px-0 pb-24 pt-4">    
+  <div class="container mx-auto px-0 pb-2 pt-4">    
     <div class="flex flex-wrap ferromex-color p-1 rounded-lg">
       <div class="flex-none my-auto text-white font-md p-2 ml-10">
         Nombre:<input v-model="nombre" type="text" class="rounded text-black ml-2 md:w-20 2xl:w-44"/>
@@ -25,7 +25,7 @@
       </div>
     </div>
     <TablaRoles :infoRoles="roles"/>
-    <div class="mt-10 -mb-14">
+    <div class="ml-20">
       <Paginacion :total-pages="totalPaginas" :total="100" :current-page="paginaActual" :has-more-pages="hasMorePages" @pagechanged="cambiarPagina"/>
     </div>
   </div>
@@ -93,7 +93,7 @@ export default {
     const totalPaginas = ref(0) //variable que indica el número total de páginas por resultado
     const paginaActual = ref(1) //variable que indica la página en la que estás dentro de la paginación, en la primer carga siempre es la página 1
     const hasMorePages = ref(true) //variable para poder cambiar de páginas con los botones
-    const numRespuesta = ref(10)//Variable que indica el número de respuestas por página
+    const numRespuesta = ref(9)//Variable que indica el número de respuestas por página
     const newRol = reactive({ nombre: "", vistas: [] }) //constante reactiva que nos va a permitir generar un arreglo con los datos de los modulos a agregar al rol
     const header = reactive({ nombre: "", estatus: undefined })//Constante reactiva que almacena el nombre y estatus para realizar el filtro de busqueda
                         
