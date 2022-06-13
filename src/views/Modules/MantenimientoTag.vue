@@ -62,7 +62,10 @@
                 </div>
                 <div class="flex flex-col gap-10">
                     <div>
-                        <input type="text" class="border border-gray-500 rounded" v-model="numerotagagregar">
+                        <input type="text" class="border border-gray-500 rounded focus:border-blue-400 focus:outline-none" :class="{'border-red-600': validarTag}" v-model="numerotagagregar" @input="limpiarvalidacion()">
+                        <span v-if="validarTag" class="flex items-center font-medium tracking-wide text-red-500 text-xs mt-1 ml-1">
+                         {{validarTagTexto}}
+                        </span>
                     </div>
                 </div>
             </div>
@@ -106,11 +109,13 @@ export default {
     const currentPage = ref(1)
     const hasMorePages = ref(true)
     const modalLoading = ref(false)
-    const numRespuesta = ref(10)
+    const numRespuesta = ref(9)
     const showModal = ref(false)
     const numerotagagregar = ref('')
     const options = ref(['Activo','Inactivo'])
     const actualizar = ref(false)
+    const validarTag = ref(false)
+    const validarTagTexto = ref(false)
     const header = reactive({
       tag: "",
       estatus: undefined,
@@ -156,6 +161,11 @@ export default {
         }).catch((error) =>
         {console.log(error)}
         )
+    }
+    //Funcion para limipiar la validacion del input del tag
+    function limpiarvalidacion() {
+      validarTag.value = false
+      validarTagTexto.value = ''
     }
     //Emit para saber si se cierra el modal
     const cerralmodalpadre = (modal) => {
@@ -219,6 +229,13 @@ export default {
                 }
                 cruces.value.push(obj)
               })
+            if(cruces.value.length == 0){
+              notify({
+              title:'Sin Información',
+              text:'No existen registros con los criterios de tu busqueda' ,
+              type: 'warn'
+            });
+            }
             }else{
               modalLoading.value = false
               notify({
@@ -278,28 +295,34 @@ export default {
     }
     function agregarTag(tag){
         console.log(tag)
-        const tiempoTranscurrido = Date.now();
-        const hoy = new Date(tiempoTranscurrido).toISOString();
-        console.log(hoy)
-        const tagcompleto = {
-          "tag": tag,
-          "insertionDate": hoy,
-          "active": true
+        if(tag == ""){
+          validarTag.value = true
+          validarTagTexto.value = 'El campo del tag no puede ir vacio'
+        }else{
+          const tiempoTranscurrido = Date.now();
+          const hoy = new Date(tiempoTranscurrido).toISOString();
+          console.log(hoy)
+          const tagcompleto = {
+            "tag": tag.toUpperCase(),
+            "insertionDate": hoy,
+            "active": true
+          }
+          const ruta = encodeURI(`${API}/Ferromex/agregartag`)
+          axios.post(ruta,tagcompleto)
+          .then((res) =>{
+            console.log(res)
+            notify({
+              title:'TAG AGREGADO EXITOSAMENTE',
+              text:'El tag se agrego de forma correcta' ,
+              type: 'success'
+            });
+            numerotagagregar.value = ''
+            cargatags()
+          }).catch((err) =>{
+            console.log(err)
+          })
+          showModal.value = false
         }
-        const ruta = encodeURI(`${API}/Ferromex/agregartag`)
-        axios.post(ruta,tagcompleto)
-        .then((res) =>{
-          console.log(res)
-          notify({
-            title:'TAG AGREGADO EXITOSAMENTE',
-            text:'El tag se agrego de forma correcta' ,
-            type: 'success'
-          });
-          cargatags()
-        }).catch((err) =>{
-          console.log(err)
-        })
-        showModal.value = false
     }
     // //Función para cambiar de página
     function showMore(page){
@@ -446,8 +469,11 @@ export default {
       limpiar,
       cargatags,
       showMore,
-      actualizarLista, 
+      actualizarLista,
+      limpiarvalidacion, 
       actualizar,
+      validarTag,
+      validarTagTexto,
       //recibir_tramo_plaza, 
       //downloadApi,
       options,

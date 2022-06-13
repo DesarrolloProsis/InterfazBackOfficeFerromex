@@ -44,28 +44,28 @@
    <Modal :show="showModal">
         <h1 class="text-4xl font-bold font-titulo text-center mt-4">Seleccione las bolsas</h1>
             <div class="w-full justify-center p-10 ">
-                <table class="tftable w-full">
+      <table class="tftable w-full">
       <tr class="h-10 w-full bg-gray-200 text-center">
         <th>
-          <label class="text-black 2xl:px-28">#</label>
+          <label class="text-black 2xl:px-10">#</label>
         </th>
         <th>
-          <label class="text-black 2xl:px-28">Inicio</label>
+          <label class="text-black 2xl:px-16">Inicio</label>
         </th>
         <th>
-          <label class="text-black 2xl:px-28">Fin</label>
+          <label class="text-black 2xl:px-10">Fin</label>
         </th>
         <th>
-          <label class="text-black 2xl:px-28">Carril</label>
+          <label class="text-black 2xl:px-10">Carril</label>
         </th>
         <th>
-          <label class="text-black 2xl:px-28">Bolsa</label>
+          <label class="text-black 2xl:px-12">Bolsa</label>
         </th>
         <th>
-          <label class="text-black 2xl:px-28">Acciones</label>
+          <label class="text-black 2xl:px-10">Acciones</label>
         </th>
       </tr>
-      <tr class="text-center w-full">
+      <tr class="text-center w-full text-sm">
         <td >1</td>
         <td >04/13/2022 16:59:16</td>
         <td >04/13/2022 16:59:16</td>
