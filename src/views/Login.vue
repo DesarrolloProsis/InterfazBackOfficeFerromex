@@ -22,6 +22,7 @@
   </div>
   <Footer titulocentro = "BOSQUE DE CIRUELOS NO 99,COL. BOSQUES DE LAS LOMAS, MÉXICO, D.F.,C.P. 11700" tituloderecha = "V 2.0.5" tituloizquierda = "" color = "red"/>  
 </div>
+<Spinner class="-mt-1" :modalLoading="modalLoading"></Spinner>
 </template>
 <script>
 const API = process.env.VUE_APP_URL_API_PRODUCCION//constante global que 
@@ -30,10 +31,12 @@ import axios from "axios";
 import serviceToken from '../Servicios/Token-Services'
 import { ref } from 'vue'
 import router from '../router';
+import Spinner from "../components/Spinner.vue"
 export default {
 
   components: {
     Footer,
+    Spinner
   },
   props: {
     msg: String,
@@ -42,6 +45,7 @@ export default {
     const user = ref('')//Constante que almacena el valor del usuario insertado en el input
     const pass = ref('')//Constante que almacena el valor del password insetado en el input
     const message = ref('')//Constante que almacena el posible mensaje de error
+    const modalLoading = ref(false)
 
     function login() {//Función que genera el inicio de sesión
       let data = {//Literal que almacena el json que se enviará para iniciar sesión
@@ -52,21 +56,24 @@ export default {
         "cliente_secret":''//es una contraseña que generamos con el servidor OAuth
       }
       if(data.username != '' && data.password != ''){//validación para que el username y el password no esté vacio
+        modalLoading.value = true
         axios.post(`${API}/identity/login`, data) //Se consume el endpoint, se le madna un JSON con los datos necesarios
         .then((result) => { 
           message.value = ''
           serviceToken.guardarToken(result.data.access_token) //Guardamos el token utiizando un servicio
           axios.defaults.headers.common['Authorization'] = 'Bearer ' + result.data.access_token //Enviamos el token en la cabecera llamada Authorization porque todos los endpoints lo piden
           router.push('/inicio') //Enviamos la página al incio
+          modalLoading.value = false
         }).catch((error) => {
           console.log(error);
           message.value ="Error, verifica tus datos o intentalo más tarde."
+          modalLoading.value = false
         })
       }else{//Validación si es que el usuario no inserto algún campo
         message.value ="Los campos Usuario y COntraseña son obligatorios."
       }
     }
-    return { user, pass, message, login} //Regreasamos las const y las funciones que utilizamos en la vista
+    return { user, pass, message, modalLoading, login} //Regreasamos las const y las funciones que utilizamos en la vista
   }
 };
 </script>
