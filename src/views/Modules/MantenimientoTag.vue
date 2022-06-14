@@ -38,7 +38,7 @@
               </div>
               <div class="w-full flex-2">
                 <div class="h-full my-auto text-white font-md p-2">                      
-                  <button :disabled="modalLoading" class="botonIconBuscar animacion" :class="{'cursor-not-allowed': modalLoading}">
+                  <button :disabled="modalLoading" class="botonIconBuscar animacion" :class="{'cursor-not-allowed': modalLoading}" @click="downloadApi(tag,estatus,fecha)">
                     Descargar
                     <fa icon="download" class="hover:text-white"/>
                   </button>
@@ -81,7 +81,7 @@ import TablaMantenimientoTag from "../../components/Tabla-ManteniminetoTags.vue"
 import Navbar from "../../components/Navbar.vue";
 import Footer from "../../components/Footer";
 import axios from "axios";
-//import ServiceFiles from '../../Servicios/Files-Service'
+import ServiceFiles from '../../Servicios/Files-Service'
 import Paginacion from "../../components/Paginacion.vue"
 import { notify } from "@kyvg/vue3-notification";
 import Spinner from '../../components/Spinner.vue'
@@ -402,64 +402,39 @@ export default {
       }
     }                 
     // //Función que manda a llamar al servicio para descargar el archivo en el formato seleccionado
-    // function downloadApi(tipo) {
-    //   var myHeaders = new Headers();
-    //   myHeaders.append("Authorization", "Bearer " + token.value);
-    //   myHeaders.append("Content-Type", "application/json");
-    //   if(plaza.value == ''){
-    //     notify({
-    //       title:'Sin Información',
-    //       text:'No se puede exportar sin antes hacer una busqueda',
-    //       type: 'warn'
-    //     });
-    //   }else{
-    //     //Sin filtros solo Plaza
-    //     if(fecha.value == null && tag.value == null && plaza.value != ''){
-    //       if (tipo == "csv") {
-    //         ServiceFiles.xml_hhtp_request(`${API}/Transacciones/Download/Csv/${plaza.value}/null/null`, 'transacciones.csv')
-    //       } 
-    //       else if (tipo == "excel") {        
-    //         ServiceFiles.xml_hhtp_request(`${API}/Transacciones/Download/Excel/${plaza.value}/null/null`, 'transacciones.xlsx')            
-    //       } 
-    //       else if (tipo == "txt") {
-    //         ServiceFiles.xml_hhtp_request(`${API}/Transacciones/Download/txt/${plaza.value}/null/null`, 'transacciones.txt')
-    //       }
-    //     }//Filtro de Tag y Plaza
-    //     else if(tag.value != null && fecha.value == null && plaza.value != ''){
-    //       if (tipo == "csv") {
-    //         ServiceFiles.xml_hhtp_request(`${API}/Transacciones/Download/Csv/${plaza.value}/${tag.value}/null`, 'transacciones.csv')
-    //       } 
-    //       else if (tipo == "excel") {        
-    //         ServiceFiles.xml_hhtp_request(`${API}/Transacciones/Download/Excel/${plaza.value}/${tag.value}/null`, 'transacciones.xlsx')            
-    //       } 
-    //       else if (tipo == "txt") {
-    //         ServiceFiles.xml_hhtp_request(`${API}/Transacciones/Download/txt/${plaza.value}/${tag.value}/null`, 'transacciones.txt')
-    //       }
-    //     }//Filtro de Fecha y Plaza
-    //     else if(fecha.value != null && tag.value == null && plaza.value != ''){
-    //       if (tipo == "csv") {
-    //         ServiceFiles.xml_hhtp_request(`${API}/Transacciones/Download/Csv/${plaza.value}/null/${fecha.value}`, 'transacciones.csv')
-    //       } 
-    //       else if (tipo == "excel") {        
-    //         ServiceFiles.xml_hhtp_request(`${API}/Transacciones/Download/Excel/${plaza.value}/null/${fecha.value}`, 'transacciones.xlsx')            
-    //       } 
-    //       else if (tipo == "txt") {
-    //         ServiceFiles.xml_hhtp_request(`${API}/Transacciones/Download/txt/${plaza.value}/null/${fecha.value}`, 'transacciones.txt')
-    //       }
-    //     }//Todos los filtros
-    //     else{
-    //       if (tipo == "csv") {
-    //         ServiceFiles.xml_hhtp_request(`${API}/Transacciones/Download/Csv/${plaza.value}/${tag.value}/${fecha.value}`, 'transacciones.csv')
-    //       } 
-    //       else if (tipo == "excel") {        
-    //         ServiceFiles.xml_hhtp_request(`${API}/Transacciones/Download/Excel/${plaza.value}/${tag.value}/${fecha.value}`, 'transacciones.xlsx')            
-    //       } 
-    //       else if (tipo == "txt") {
-    //         ServiceFiles.xml_hhtp_request(`${API}/Transacciones/Download/txt/${plaza.value}/${tag.value}/${fecha.value}`, 'transacciones.txt')
-    //       }
-    //     }
-    //   }
-    // }
+    function downloadApi(tag,estatus,fecha) {
+      if(tag == ""){
+        tag = " "
+      }
+      if(estatus == undefined){
+        estatus = " "
+      }
+      if(fecha == ""){
+        fecha = " "
+      }
+      console.log(tag,estatus,fecha)
+      if(tag == ' ' && estatus == ' ' && fecha == ' '){
+        const ruta = encodeURI(`${API}/ferromex/Download/pdf/mantenimientotags/${tag}/${estatus}/${fecha}`)
+        ServiceFiles.xml_hhtp_request(ruta, 'reportemantenimientotags.pdf')
+      }else{
+        let estatusurl = ""
+        let fechaurl = fecha
+        if(fecha != " "){
+          fechaurl = new Date(fecha).toISOString()
+        }
+        if(estatus == "Activo"){
+          estatusurl = "true"
+        }else if(estatus == "Inactivo"){
+          estatusurl = "false"
+        }else if(estatus == " "){
+          estatusurl = " "
+        }
+        const ruta = encodeURI(`${API}/ferromex/Download/pdf/mantenimientotags/${tag}/${estatusurl}/${fechaurl}`)
+        console.log(ruta)
+        ServiceFiles.xml_hhtp_request(ruta, 'reportemantenimientotags.pdf')
+        
+      }
+    }
 
     return{ 
       cerralmodalpadre,
@@ -474,8 +449,7 @@ export default {
       actualizar,
       validarTag,
       validarTagTexto,
-      //recibir_tramo_plaza, 
-      //downloadApi,
+      downloadApi,
       options,
       hoy, 
       cruces, 

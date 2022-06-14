@@ -53,17 +53,17 @@
                 </div>
             </div>
             <div class="flex w-full justify-center mt-10 mb-8">
-                <button class="border w-40 bg-ferromex text-white ferromex-color">Generar Reporte</button>
+                <button class="border w-40 bg-ferromex text-white ferromex-color" @click="concentradoFerromex(concentradoferromex.diascfe,concentradoferromex.mesescfe,concentradoferromex.semanacfe)">Generar Reporte</button>
             </div>
     </Modal>
 </template>
 <script>
-import Servicio from '../../Servicios/Token-Services';
-//import jwt_decode from "jwt-decode";
+const API = process.env.VUE_APP_URL_API_PRODUCCION
 import { ref,reactive } from 'vue'
 import Navbar from "../../components/Navbar.vue";
 import Footer from "../../components/Footer";
 import Modal from "../../components/Modal.vue"
+import ServiceFiles from '../../Servicios/Files-Service'
 
 import ModuloGeneracionReportes from "../../components/Modulo-generacionreportes";
 export default {
@@ -74,7 +74,18 @@ export default {
         Modal
     },
     setup() {
-        const modulos = ref([])
+        const modulos = ref([  {
+                    img_src: "Menu/capacidad-de-almacenamiento.png",
+                    nombre: "Reportes Operativos",
+                    ruta: "/inicio/Reportes-Operativos",
+                    color: "red"
+                },
+                {
+                    img_src: "Menu/monitoreo-servicios.png",
+                    nombre: "Cruces Ferromex",
+                    ruta: "/inicio/Cruces",
+                    color: "red"
+                }])
         const carriles = ref(true)
         const showModal = ref(false)
         const bloquear = ref(false)
@@ -104,56 +115,29 @@ export default {
         function bloquearinputs(){
             bloquear.value = true // bloqueamos los campos
         }
-        //if(Servicio.getCookie("Token")){
-        if(Servicio.obtenerToken()){
-            //let info = jwt_decode(Servicio.getCookie("Token"))
-            let info = Servicio.obtenerInfoUser()
-            carriles.value = info['Monitoreo Carriles']
-        }
-        if(carriles.value == 'false'){
-            modulos.value = [
-                {
-                    img_src: "Menu/bitacoras.png",
-                    nombre: "Reportes Operativos",
-                    ruta: "/inicio/bitacora-antifraude",
-                    color: "red"
-                },
-                {
-                    img_src: "Menu/bitacoras.png",
-                    nombre: "Cruces Ferromex",
-                    ruta: "/inicio/monitoreo-servicios",
-                    color: "red"
-                },
-                {
-                    img_src: "Menu/bitacoras.png",
-                    nombre: "Bitácora De Accesos",
-                    ruta: "/inicio/bitacora-accesos",
-                    color: "red"
-                },
-            ]
-        }else{
-            modulos.value = [
-                /* {
-                    img_src: "Menu/bitacoras.png",
-                    nombre: "Bitácora De Alarmas",
-                    ruta: "/inicio/monitoreo-carriles/bitacora-alarmas",
-                    color: "green"
-                }, */
-                {
-                    img_src: "Menu/capacidad-de-almacenamiento.png",
-                    nombre: "Reportes Operativos",
-                    ruta: "/inicio/Reportes-Operativos",
-                    color: "red"
-                },
-                {
-                    img_src: "Menu/monitoreo-servicios.png",
-                    nombre: "Cruces Ferromex",
-                    ruta: "/inicio/Cruces",
-                    color: "red"
-                }
-            ]    
-        }
-
+       function concentradoFerromex(dias,meses,semana){
+           let urldias = ""
+            let urlmeses = ""
+            let urlsemana = ""
+            if(dias == ''){
+               urldias = " "
+            }else if(dias != ''){
+                urldias = dias
+            }
+            if(meses == ''){
+                urlmeses = " "
+            }else if(meses != ''){
+                urlmeses = meses
+            }
+            if(semana == ''){
+                urlsemana = " "
+            }else if(semana != ''){
+                urlsemana = semana
+            }
+            const ruta = encodeURI(`${API}/ferromex/Download/pdf/mantenimientotags/${urldias}/${urlmeses}/${urlsemana}`)
+            console.log(ruta)
+            ServiceFiles.xml_hhtp_request(ruta, 'reportetotal.pdf')
+       }
         return {
             modulos,
             carriles, 
@@ -163,7 +147,8 @@ export default {
             limpiarconcentradoferromex,
             bloquearinputs,
             abrirmodalconcentradoferromex,
-            concentradoferromex
+            concentradoferromex,
+            concentradoFerromex
             }
     }
 }

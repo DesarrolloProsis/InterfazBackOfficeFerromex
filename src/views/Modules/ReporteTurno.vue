@@ -21,17 +21,20 @@
             <label for="">Mazanillo</label>
         </div>
         <div>
-            <select class="input">
-                <option>Seleccione un turno</option>
+            <select class="input" v-model="turno"  placeholder="XXXXX">
+              <option value="undefined" disabled>Seleccione un turno</option>
+              <option value="1">Turno 1</option>
+              <option value="2">Turno 2</option>
+              <option value="3">Turno 3</option>
             </select>
         </div>
         <div>
-            <input class="input" type="date">
+            <input type="date" class="input" v-model="fecha" :max="hoy">
         </div>
     </div>
   </div>
   <div class="flex w-full justify-center p-14 2xl:p-20">
-      <button class="border w-40 bg-ferromex text-white">Generar Reporte</button>
+      <button class="border w-40 bg-ferromex text-white" @click="generareporte(turno,fecha)">Generar Reporte</button>
   </div>
 </div>
 </div>
@@ -40,14 +43,40 @@
 </template>
 
 <script>
+const API = process.env.VUE_APP_URL_API_PRODUCCION
 import Navbar from "../../components/Navbar.vue";
 import Footer from "../../components/Footer";
-
+import { notify } from "@kyvg/vue3-notification";
+import { reactive, ref,onMounted } from 'vue'
+import ServiceFiles from '../../Servicios/Files-Service'
 export default {
 components: {
         Navbar,
         Footer,
     },
+setup(){
+  const cajero = reactive({
+    turno: undefined,
+    fecha: "" 
+  })
+  const hoy = ref('')
+  onMounted(()=>{
+        hoy.value = new Date().toISOString().split("T")[0];
+  })
+  function generareporte(idturno,fechareporte){
+    if((idturno == undefined && fechareporte == undefined) || idturno == undefined || fechareporte == undefined){
+     notify({
+            title:'Sin parametros',
+            text:'Para generar las bolsas requieres llenar todos los campos' ,
+            type: 'error'
+     });
+    }else{
+    //Generamos la ruta que hara la llamada a las bolsas
+    ServiceFiles.xml_hhtp_request(`${API}/Ferromex/Download/pdf/reporteOperativo/reporteTurno/${idturno}/${fechareporte}`, 'reporteturno.pdf')
+  }
+  }
+return {generareporte,cajero,hoy}
+}
 }
 </script>
 

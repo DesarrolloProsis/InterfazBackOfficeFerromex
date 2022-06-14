@@ -54,7 +54,7 @@
                 </div>
             </div>
             <div class="flex w-full justify-center mt-10 mb-8">
-                <button class="border w-40 bg-ferromex text-white ferromex-color" @click="generarreportetotal()">Generar Reporte</button>
+                <button class="border w-40 bg-ferromex text-white ferromex-color" @click="generarreportetotal(dias,meses,semana)">Generar Reporte</button>
             </div>
     </Modal>
     <Modal :show="showModalTurno" @cerrarmodal="cerramodalcruceferromex">
@@ -85,17 +85,19 @@
                 </div>
             </div>
             <div class="flex w-full justify-center mt-10 mb-8">
-                <button class="border w-40 bg-ferromex text-white ferromex-color" >Generar Reporte</button>
+                <button class="border w-40 bg-ferromex text-white ferromex-color" @click="generarreportecruceferromex(diascf,mesescf,semanacf)">Generar Reporte</button>
             </div>
     </Modal>
 </template>
 <script>
+const API = process.env.VUE_APP_URL_API_PRODUCCION
 //import Servicio from '../../Servicios/Token-Services';
 //import jwt_decode from "jwt-decode";
 import { ref,reactive,toRefs,onMounted } from 'vue'
 import Navbar from "../../components/Navbar.vue";
 import Footer from "../../components/Footer";
-import Modal from "../../components/Modal.vue"
+import Modal from "../../components/Modal.vue";
+import ServiceFiles from '../../Servicios/Files-Service'
 
 export default {
     components: {
@@ -203,18 +205,51 @@ export default {
             crucesferromex.semanacf= '' //Limpiamos el campo de semana
         }
         //Funcion para generar reporte cruces totales
-        function generarreportetotal(){
-            if(crucestotales.dias != ''){
-                console.log('Generar reporte de dia');
-                console.log(crucestotales.dias);
-            }else if( crucestotales.meses != ''){
-                console.log('Generar reporte de meses');
-                console.log(crucestotales.meses);
+        function generarreportetotal(dias,meses,semana){
+            let urldias = ""
+            let urlmeses = ""
+            let urlsemana = ""
+            if(dias == ''){
+               urldias = " "
+            }else if(dias != ''){
+                urldias = dias
             }
-            else if(crucestotales.semana != ''){
-                console.log('generar reportes de semana');
-                console.log(crucestotales.semana);
-            } 
+            if(meses == ''){
+                urlmeses = " "
+            }else if(meses != ''){
+                urlmeses = meses
+            }
+            if(semana == ''){
+                urlsemana = " "
+            }else if(semana != ''){
+                urlsemana = semana
+            }
+            const ruta = encodeURI(`${API}/ferromex/Download/pdf/mantenimientotags/${urldias}/${urlmeses}/${urlsemana}`)
+            console.log(ruta)
+            ServiceFiles.xml_hhtp_request(ruta, 'reportetotal.pdf')
+        }
+        function generarreportecruceferromex(dias,meses,semana){
+            let urldias = ""
+            let urlmeses = ""
+            let urlsemana = ""
+            if(dias == ''){
+               urldias = " "
+            }else if(dias != ''){
+                urldias = dias
+            }
+            if(meses == ''){
+                urlmeses = " "
+            }else if(meses != ''){
+                urlmeses = meses
+            }
+            if(semana == ''){
+                urlsemana = " "
+            }else if(semana != ''){
+                urlsemana = semana
+            }
+            const ruta = encodeURI(`${API}/ferromex/Download/pdf/mantenimientotags/${urldias}/${urlmeses}/${urlsemana}`)
+            console.log(ruta)
+            ServiceFiles.xml_hhtp_request(ruta, 'reporteferromex.pdf')
         }
 
         //Declaracion de las variables para usar en la pantalla
@@ -235,6 +270,7 @@ export default {
         limpiarcrucestotales,
         limpiarcrucesferromex,
         generarreportetotal,
+        generarreportecruceferromex,
         cerralmodalcrucestotales,
         cerramodalcruceferromex,
         ...toRefs(crucestotales),
