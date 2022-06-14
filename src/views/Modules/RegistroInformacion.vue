@@ -70,7 +70,7 @@ export default {
     const cruces = ref([])//Constante que almacena los cruces para mostrar en la tabla
     const tiempo = ref('') //Constante que almacena el tiempo seleccionado para actualizar la tabla
     const contador = ref(0) //Constante que almacena el contador por segundos para la actualización de la tabla
-    const seconds = ref(10) //Constante que almacena los segundos para actualizar la tabla
+    const seconds = ref(180) //Constante que almacena los segundos para actualizar la tabla
     const expires_in = ref(0) //Constante que nos indica en cuanto tiempo expira el contados
     const interval = ref('')//Constante que almacena un intervalo de tiempo, que va a disminuir el contador
     const header = reactive({ fecha:"", tag: "", carril: "", cuerpo: "" })//Constante que almacena los valores de los header insertados para hacer los filtros correspondientes
@@ -94,7 +94,7 @@ export default {
 
     contador.value = moment.utc(seconds.value).format('HH:mm:ss');
     expires_in.value = seconds.value;
-    onMounted(setInterval_)
+    onMounted(setInterval_, todos())
     
     function setInterval_() { //Funcion que genera la cuenta regresiva para la actualización en automatico
       interval.value = setInterval(() => {//se genera una función de tipo setInterval
@@ -127,6 +127,9 @@ export default {
       axios.get(ruta)
       .then((result) => {
         console.log(result);
+        cruces.value = result.data.cruces
+        totalPaginas.value = result.data.paginas_totales
+        paginaActual.value = result.data.pagina_actual
         modalLoading.value = false
       })
       .catch((error) => {
@@ -178,7 +181,9 @@ export default {
         expires_in.value = seconds.value
       }
     }
-    function showMore (){}
+    function showMore (){
+      
+    }
     function stopInterval(){//Función que detiene le intervalo, para que no se esté llamanmdo aunque salgas de la vbista
       clearInterval(interval.value)//ClearInterval, limpia el intervalo, lo vuelte 0 para que nunca se repita
     }
