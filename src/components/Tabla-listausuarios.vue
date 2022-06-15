@@ -68,10 +68,13 @@
       <p class="text-gray-900 font-bold text-2xl -mt-8 mb-8 text-center">Editar Usuario</p>
       <div class="grid grid-cols-2 mt-2">
         <p class="text-sm mb-1 mx-auto font-semibold text-gray-700">Nombre</p>
-        <input v-model="usuario.nombre" class="border rounded-lg w-56" type="text">
+        <input v-model="usuario.nombre" class="border rounded-lg w-56" type="text" :class="{'border border-red-500': usuario.nombre.trim() == ''}">
         <p class="text-sm mb-1 font-semibold text-gray-700 mx-auto">Apellido(s)</p>
-        <input v-model="usuario.apellidos" class="border rounded-lg w-56" type="text">
+        <input v-model="usuario.apellidos" class="border rounded-lg w-56" type="text" :class="{'border border-red-500': usuario.apellidos.trim() == ''}">
       </div>
+      <span v-if="usuario.nombre.trim() == '' || usuario.apellidos.trim() == ''" class="text-xs text-center text-red-300 mx-auto">
+          <p>Todos los campos son obligatorios</p>
+      </span>
       <div class="mt-10 text-center mx-auto mb-4">
         <button class="rounded-lg w-18 bg-ferromex text-white p-10" @click="editarUsuario(usuario)">Editar Usuario</button>
       </div>
@@ -199,26 +202,35 @@ export default {
         "nombreCompleto": usuario.nombreCompleto,
         "estatus": usuario.estatus
       }
-      axios.put(`${API}/Identity/editUser`, data)//endpoint que recibe un JSON con la información del usuario para editar
-      .then(() => {//Si el endpoint tiene una respuesta correcta
-        modalEditar.value = false
-        emit('refrescarTabla', true)//Se realiza el emit al componente padre, para refrescar la tabla con los cambios realizados
-        notify({//Notifiación que se le muestra al usuario si se hizo el cmabio correcto
-          title:'Cambio Exitoso',
-          text:`Se cambió el estatus al usuario ${usuario.nombre + ' ' + usuario.apellidos}`,
-          type: 'success'
+      if( data.nombreUsuario.trim() != '' && data.apellidos.trim() != '' ){
+        axios.put(`${API}/Identity/editUser`, data)//endpoint que recibe un JSON con la información del usuario para editar
+        .then(() => {//Si el endpoint tiene una respuesta correcta
+          modalEditar.value = false
+          emit('refrescarTabla', true)//Se realiza el emit al componente padre, para refrescar la tabla con los cambios realizados
+          notify({//Notifiación que se le muestra al usuario si se hizo el cmabio correcto
+            title:'Cambio Exitoso',
+            text:`Se cambió el estatus al usuario ${usuario.nombre + ' ' + usuario.apellidos}`,
+            type: 'success'
+          });
+        })
+        .catch(error => {//Si el endpoint tiene un error en la respuesta
+          console.log(error);//Mostramos el error en la consola
+          notify({//Notifiación que se le muestra al usuario si no se hace el cambio
+            title:'Cambio Exitoso',
+            text:`No se pudo cambiar el estatus al usuario ${usuario.nombre + ' ' + usuario.apellidos}`,
+            type: 'error'
+          });
+          return error
+        })
+      }else{
+        notify({//notificación de que el usuario se inserto correctamente
+          title:'Nuevo Usuario',//titulo de la notificaci{on}
+          text:`Todos los campos son obligatorios`,//texto de la notificación 
+          duration: 5000,//duración de la notificación
+          closeonclick:true,//si le damos click se cierra la notificación
+          type: 'warn'//el tipo de notificación, si es success el color será verde
         });
-      })
-      .catch(error => {//Si el endpoint tiene un error en la respuesta
-        console.log('errir');
-        console.log(error);//Mostramos el error en la consola
-        notify({//Notifiación que se le muestra al usuario si no se hace el cambio
-          title:'Cambio Exitoso',
-          text:`No se pudo cambiar el estatus al usuario ${usuario.nombre + ' ' + usuario.apellidos}`,
-          type: 'error'
-        });
-        return error
-      })
+      }
     }
     function cambiarEstatus(usuario) {//Función que cambia el estatus del usuario
       let data = { //literal que almacena los datos para enviar al endpoint de la edición
