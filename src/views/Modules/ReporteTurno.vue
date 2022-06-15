@@ -67,11 +67,11 @@ setup(){
     if((idturno == undefined && fechareporte == undefined) || idturno == undefined || fechareporte == undefined){
      notify({
             title:'Sin parametros',
-            text:'Para generar las bolsas requieres llenar todos los campos' ,
+            text:'Para generar un reporte debes llenar los parametros necesarios' ,
             type: 'error'
      });
     }else{
-    //Generamos la ruta que hara la llamada a las bolsas
+    //Generamos la ruta que hara la llamada a la generacion de los reportes
     ServiceFiles.xml_hhtp_request(`${API}/Ferromex/Download/pdf/reporteOperativo/reporteTurno/${idturno}/${fechareporte}`, 'reporteturno.pdf')
   }
   }

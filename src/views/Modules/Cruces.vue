@@ -97,7 +97,8 @@ import { ref,reactive,toRefs,onMounted } from 'vue'
 import Navbar from "../../components/Navbar.vue";
 import Footer from "../../components/Footer";
 import Modal from "../../components/Modal.vue";
-import ServiceFiles from '../../Servicios/Files-Service'
+import ServiceFiles from '../../Servicios/Files-Service';
+import { notify } from "@kyvg/vue3-notification";
 
 export default {
     components: {
@@ -224,9 +225,18 @@ export default {
             }else if(semana != ''){
                 urlsemana = semana
             }
-            const ruta = encodeURI(`${API}/ferromex/Download/pdf/mantenimientotags/${urldias}/${urlmeses}/${urlsemana}`)
-            console.log(ruta)
-            ServiceFiles.xml_hhtp_request(ruta, 'reportetotal.pdf')
+            if(urldias == " " && urlmeses == " " && urlsemana == " "){
+                  notify({
+                    title:'Sin parametros',
+                    text:'Para generar un reporte se necesita seleccionar un parametro',
+                    type: 'error'
+                });
+            }else{
+                const ruta = encodeURI(`${API}/ferromex/Download/pdf/mantenimientotags/${urldias}/${urlmeses}/${urlsemana}`)
+                console.log(ruta)
+                ServiceFiles.xml_hhtp_request(ruta, 'reportetotal.pdf')
+                cerralmodalcrucestotales(false)
+            }
         }
         function generarreportecruceferromex(dias,meses,semana){
             let urldias = ""
@@ -247,9 +257,18 @@ export default {
             }else if(semana != ''){
                 urlsemana = semana
             }
-            const ruta = encodeURI(`${API}/ferromex/Download/pdf/mantenimientotags/${urldias}/${urlmeses}/${urlsemana}`)
-            console.log(ruta)
-            ServiceFiles.xml_hhtp_request(ruta, 'reporteferromex.pdf')
+            if(urldias == " " && urlmeses == " " && urlsemana == " "){
+                  notify({
+                    title:'Sin parametros',
+                    text:'Para generar un reporte se necesita seleccionar un parametro' ,
+                    type: 'error'
+                });
+            }else{
+                const ruta = encodeURI(`${API}/ferromex/Download/pdf/mantenimientotags/${urldias}/${urlmeses}/${urlsemana}`)
+                console.log(ruta)
+                ServiceFiles.xml_hhtp_request(ruta, 'reportecrucesferromex.pdf')
+                cerramodalcruceferromex(false)
+            }
         }
 
         //Declaracion de las variables para usar en la pantalla

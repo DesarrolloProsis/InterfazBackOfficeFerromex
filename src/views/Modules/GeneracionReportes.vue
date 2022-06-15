@@ -64,6 +64,7 @@ import Navbar from "../../components/Navbar.vue";
 import Footer from "../../components/Footer";
 import Modal from "../../components/Modal.vue"
 import ServiceFiles from '../../Servicios/Files-Service'
+import { notify } from "@kyvg/vue3-notification";
 
 import ModuloGeneracionReportes from "../../components/Modulo-generacionreportes";
 export default {
@@ -134,9 +135,18 @@ export default {
             }else if(semana != ''){
                 urlsemana = semana
             }
-            const ruta = encodeURI(`${API}/ferromex/Download/pdf/mantenimientotags/${urldias}/${urlmeses}/${urlsemana}`)
-            console.log(ruta)
-            ServiceFiles.xml_hhtp_request(ruta, 'reportetotal.pdf')
+            if(urldias == " " && urlmeses == " " && urlsemana == " "){
+                  notify({
+                    title:'Sin parametros',
+                    text:'Para generar un reporte se necesita seleccionar un parametro',
+                    type: 'error'
+                });
+            }else{
+                const ruta = encodeURI(`${API}/ferromex/Download/pdf/mantenimientotags/${urldias}/${urlmeses}/${urlsemana}`)
+                console.log(ruta)
+                ServiceFiles.xml_hhtp_request(ruta, 'reporteconcentradoferromex.pdf')
+                cerramodalconcentradoferromex(false)
+            }
        }
         return {
             modulos,
