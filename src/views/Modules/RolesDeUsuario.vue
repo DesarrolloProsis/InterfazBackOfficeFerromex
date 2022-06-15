@@ -35,7 +35,7 @@
       <p class="text-gray-900 font-bold text-2xl -mt-8 mb-8 text-center">Agregar Nuevo Rol</p>     
       <div class="grid grid-cols-2 mt-2">
         <p class="text-sm mb-1 font-semibold text-gray-700 text-center sm:-ml-6">Nombre Rol</p>
-        <input v-model="newRol.nombre" type="text" class="border mx-auto w-52 rounded-lg">
+        <input v-model="newRol.nombre" type="text" class="border mx-auto w-52 rounded-lg" :class="{'border border-red-400': vacio}" @input="vacio = false">
       </div>
       <div class="grid grid-cols-2 mt-2">
         <p class="text-sm mb-1 text-center font-semibold text-gray-700 mt-2 sm:-ml-6">Módulos</p>
@@ -48,8 +48,12 @@
           :options="modulosExistentes"
           :close-on-select="false"
           class="w-52"
+          :class="{'border border-red-400': vacio}"
         /> 
-      </div>      
+      </div>  
+      <span v-if="vacio" class="text-xs text-center text-red-300 mx-auto">
+          <p>Todos los campos son obligatorios</p>
+      </span>    
       <div class="mt-10 text-center mx-auto mb-4">
         <button @click="craer_nuevo_rol" class="rounded-lg w-18 bg-ferromex text-white p-10">Guardar</button>
       </div>
@@ -96,7 +100,7 @@ export default {
     const numRespuesta = ref(9)//Variable que indica el número de respuestas por página
     const newRol = reactive({ nombre: "", vistas: [] }) //constante reactiva que nos va a permitir generar un arreglo con los datos de los modulos a agregar al rol
     const header = reactive({ nombre: "", estatus: undefined })//Constante reactiva que almacena el nombre y estatus para realizar el filtro de busqueda
-                        
+    const vacio = ref(false)                   
     const abrir_modal_new_rol = () => { //Constante que permite abrir el modal de creación de roles
       userModal.value = true
       modulosExistentes.value = []//Vaciamos la constante que obtine los módulos existentes
@@ -111,46 +115,50 @@ export default {
       userModal.value = modal
       newRol.nombre = ''
       newRol.vistas = [{}]
+      vacio.value = false
     }
     const craer_nuevo_rol = async () => { //Funcion que inserta el nuevo rol
-    let data = { //literal que guarda el nombre del rol, para mandarselo al endpoint en el body
-      "roleName": newRol.nombre
-    }
-      axios.post(`${API}/Identity/addRoles`, data) //llamada al enpoint que inserta el rol en la base, se le envia data en body
-      .then((result) => {//Si el endpoint funcionó correctamente
-        modalLoading.value = true //Activamos el modalloading
-        if(result.status == 204){//Validamos que la respuesta sea correcta
-          let data = { //literal con la que guardamos el nombre del rol y los modulos que va a tener este
-            "roleName": newRol.nombre,
-            "modules": newRol.vistas //id de los modulos que se van a agregar
-          }
-          axios.post(`${API}/Ferromex/addRoleModules`, data) //llamada al endpoint que inserta los modulos al rol correspondiente
-          .then((result)=>{
-            if(result.status == 204)//Validamos que la respuesta sea correcta
-            {
+      let data = { //literal que guarda el nombre del rol, para mandarselo al endpoint en el body
+        "roleName": newRol.nombre
+      }
+      if(newRol.nombre != '' && newRol.vistas != ''){
+        axios.post(`${API}/Identity/addRoles`, data) //llamada al enpoint que inserta el rol en la base, se le envia data en body
+        .then((result) => {//Si el endpoint funcionó correctamente
+          modalLoading.value = true //Activamos el modalloading
+          if(result.status == 204){//Validamos que la respuesta sea correcta
+            let data = { //literal con la que guardamos el nombre del rol y los modulos que va a tener este
+              "roleName": newRol.nombre,
+              "modules": newRol.vistas //id de los modulos que se van a agregar
+            }
+            axios.post(`${API}/Ferromex/addRoleModules`, data) //llamada al endpoint que inserta los modulos al rol correspondiente
+            .then((result)=>{
+              if(result.status == 204)//Validamos que la respuesta sea correcta
+              {
+                modalLoading.value = false//Desactivamos el spinner
+                notify({ type: 'success', title:'Rol creado', text: `Se creo correctamente el rol ${newRol.nombre}`});//Mostramos notificación de que se creo correctamente el rol
+                newRol.vistas = []; newRol.nombre = "";//limpiamos los input del modal para agregar roles
+                cerralmodalpadre()//Llamamos a la función que cierra el modal
+                todos()
+              }
+            }).catch((error) => {//Si el enpoint tiene algun error
+              console.log(error.request.response);//Imprimimos el error en consola
               modalLoading.value = false//Desactivamos el spinner
-              notify({ type: 'success', title:'Rol creado', text: `Se creo correctamente el rol ${newRol.nombre}`});//Mostramos notificación de que se creo correctamente el rol
+              notify({ type: 'warning', title:'Rol no creado', text: `No se pudo insertar los modulos al rol ${newRol.nombre}`});//Mostramos nositificación de que no se creo el rol
               newRol.vistas = []; newRol.nombre = "";//limpiamos los input del modal para agregar roles
               cerralmodalpadre()//Llamamos a la función que cierra el modal
               todos()
-            }
-          }).catch((error) => {//Si el enpoint tiene algun error
-            console.log(error.request.response);//Imprimimos el error en consola
-            modalLoading.value = false//Desactivamos el spinner
-            notify({ type: 'warning', title:'Rol no creado', text: `No se pudo insertar los modulos al rol ${newRol.nombre}`});//Mostramos nositificación de que no se creo el rol
-            newRol.vistas = []; newRol.nombre = "";//limpiamos los input del modal para agregar roles
-            cerralmodalpadre()//Llamamos a la función que cierra el modal
-            todos()
-          })
-        }
-      }).catch((error) => {
-        console.log(error.request.response);//Imprimimos el error en consola
-        modalLoading.value = false//Desactivamos el spinner
-        notify({ type: 'warning', title:'Rol no creado', text: `No se pudo crear el rol ${newRol.nombre}`});//Mostramos nositificación de que no se creo el rol
-        newRol.vistas = []; newRol.nombre = "";//limpiamos los input del modal para agregar roles
-        cerralmodalpadre()//Llamamos a la función que cierra el modal
-        todos()
-      })
+            })
+          }
+        }).catch((error) => {
+          console.log(error.request.response);//Imprimimos el error en consola
+          modalLoading.value = false//Desactivamos el spinner
+          notify({ type: 'warning', title:'Rol no creado', text: `No se pudo crear el rol ${newRol.nombre}`});//Mostramos nositificación de que no se creo el rol
+          newRol.vistas = []; newRol.nombre = "";//limpiamos los input del modal para agregar roles
+          cerralmodalpadre()//Llamamos a la función que cierra el modal
+          todos()
+        })
+      }else
+        vacio.value = true
     }
     function buscar (nombre, estatus){//Función que realiza la busqueda de los roles existentes, o uno en especificos
       modalLoading.value = true
@@ -226,7 +234,7 @@ export default {
 
     onMounted(todos)//Montamos la función todos apra que traiga todos los roles existentes en la primer carga
 
-    return { roles, modulosExistentes, userModal, abrir_modal_new_rol, newRol, ...toRefs(header), options, craer_nuevo_rol, buscar, todos, modalLoading, totalPaginas, paginaActual, hasMorePages, numRespuesta, cambiarPagina, cerralmodalpadre }
+    return { roles, modulosExistentes, userModal, abrir_modal_new_rol, newRol, ...toRefs(header), options, craer_nuevo_rol, buscar, todos, vacio, modalLoading, totalPaginas, paginaActual, hasMorePages, numRespuesta, cambiarPagina, cerralmodalpadre }
 
   }, 
 };
