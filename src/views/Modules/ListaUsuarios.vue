@@ -212,13 +212,18 @@ export default {
           type: 'warn'//el tipo de notificación, si es success el color será verde
         });
       }else{
+        console.log(mayuscula.value);
         if(data.password.length >= 6){//Si la contraseña es menor a 6 carácteres
           let mayusculas = 'ABCDEFGHYJKLMNÑOPQRSTUVWXYZ'//Literal que almacena todas las letras en mayusculas
+          let contador = []
           for(let i = 0; i< data.password.length; i++){//Recorremos toda la palabra insertada en el password y si no encuentra alguna mayuscula no nos dejará insertar
-            if (mayusculas.indexOf(data.password.charAt(i),0)!=-1){
-              mayuscula.value = true
-            }
+            if (mayusculas.indexOf(data.password.charAt(i),0)!=-1)
+              contador.push(true)
+            else
+              mayuscula.value = false 
           }
+          if(contador.includes(true))
+            mayuscula.value = true
           if(mayuscula.value ==  true){
             axios.post(`${API}/Identity/register`,data)//endpoitn que registra usuario en la base de datos
             .then((result) => {//si el usuario tiene una respuesta correcta
