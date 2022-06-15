@@ -37,9 +37,9 @@
   </div>
   <br />
   <!-- Editar Rol -->
-  <Modal :show="modalModulos" @cerrarmodal="modalModulos = false">
+  <Modal :show="modalModulos" @cerrarmodal="modalModulos = false, vacio = false">
     <div>
-      <p class="text-gray-900 font-bold text-2xl -mt-8 mb-8 text-center">Actualizar Módulos {{ perfilSelected.name }}</p>
+      <p class="text-gray-900 font-bold text-2xl -mt-8 mb-8 text-center">Actualizar Módulos del Rol {{ perfilSelected.nombreRol }}</p>
       <div class="grid grid-cols-2 mt-2" v-for="(modulos, index) in modulos" :key="index">
         <p class="text-center">{{ modulos.label }}</p>
         <p class="text-center">
@@ -50,12 +50,13 @@
         <p class="text-sm mb-1 font-semibold text-gray-700 text-center ">Modulos a Asignar</p>
         <Multiselect
           v-model="asignarModulos"
-          placeholder="Seleccione los modulos par este rol"
+          placeholder="Seleccione los modulos para este rol"
           mode="multiple"
           :searchable="true"
           :options="modulosExistentes"
           :close-on-select="false"
           class="w-52"
+          :class="{'border border-red-400': vacio}"
         />
       </div>
       <div class="mt-10 text-center mx-auto mb-4">
@@ -87,7 +88,7 @@ export default {
     const asignarModulos = ref([])//Constante que almacena el array de módulos que se van a asignar a un rol en especifico
     const modulosExistentes = ref([])//Constante que almacena todos los módulos existentes
     const infoUser = Servicio.obtenerInfoUser() //Constante que obtiene la información del usuario
-
+    const vacio = ref(false)
     function cambiarEstatus (rol){//Funciòn praa cambiar el estatus del rol
       let data = {//Literal que va a almacenar la informacion del rol para poder enviarlo al endpoint
         "idRol": rol.idRol,
@@ -130,6 +131,7 @@ export default {
     }
     function editarModulos(rol, modulos){//Función que permite agregar o quitar módulos a un rol en especifico, recibe el nombre del rol y un array con los módulos a asignar
       if(modulos.length === 0){// Si no se ha seleccionado ningún módulo, no nos va a permitir actualizarlos
+        vacio.value = true
         notify({//Notificación que se muestra cuando no se puede hacer el cambio de manera correcta
           title:'Sin Módulos Seleccionados',
           text:`Se debe de seleccionar mínimo un módulo para el rol`,
@@ -149,9 +151,13 @@ export default {
             text:`Se cambiaron los módulos al Rol ${rol}`,
             type: 'success'
           });
+          asignarModulos.value = []//Limpiamos la constante que almacena los módulos a asignar
+          vacio.value = false//Cambiamos el valor de la constante que indica si está vacio el campo
         }).catch((error) => {//Si el endpoint tiene un error en la respuesta
           console.log(error.request.response);
           modalModulos.value = false //cerramos el modal de asignación de módulos
+          asignarModulos.value = []//Limpiamos la constante que almacena los módulos a asignar
+          vacio.value = false//Cambiamos el valor de la constante que indica si está vacio el campo
           notify({//Notificación que se muestra cuando no se puede hacer el cambio de manera correcta
             title:'Cambio Fallido',
             text:`No se pudo cambiar los módulos al Rol ${rol.name}`,
@@ -191,7 +197,7 @@ export default {
       return filtroOpciones //Regresamos el array con las opciones ya filtradas
     }
 
-    return { modalModulos, perfilSelected, value, modulos, asignarModulos, modulosExistentes, infoUser, cambiarEstatus, modulosExistente, traerModulos,editarModulos, acciones_mapper, opticones_select_acciones }
+    return { modalModulos, perfilSelected, value, modulos, asignarModulos, modulosExistentes, infoUser, vacio, cambiarEstatus, modulosExistente, traerModulos,editarModulos, acciones_mapper, opticones_select_acciones }
   }
 };
 </script>
@@ -246,8 +252,6 @@ export default {
 }
 .responsive-table {
   padding-top: 20px;
-  overflow-x: auto;
-  overflow-y: auto;
   max-height: 640px;
 }
 .tftable {
