@@ -100,7 +100,7 @@ export default {
     const numRespuesta = ref(9)//Variable que indica el número de respuestas por página
     const newRol = reactive({ nombre: "", vistas: [] }) //constante reactiva que nos va a permitir generar un arreglo con los datos de los modulos a agregar al rol
     const header = reactive({ nombre: "", estatus: undefined })//Constante reactiva que almacena el nombre y estatus para realizar el filtro de busqueda
-    const vacio = ref(false)                   
+    const vacio = ref(false)//Constante que activa la bandera de validaciones sobre campos vacios en los modales
     const abrir_modal_new_rol = () => { //Constante que permite abrir el modal de creación de roles
       userModal.value = true
       modulosExistentes.value = []//Vaciamos la constante que obtine los módulos existentes
@@ -112,16 +112,16 @@ export default {
       })
     }
     const cerralmodalpadre = (modal) => {//constante que emite el cierre del modal para agregar roles, y limpia los valores del modal
-      userModal.value = modal
-      newRol.nombre = ''
-      newRol.vistas = [{}]
-      vacio.value = false
+      userModal.value = modal//Toma el valor que se le envia a la constante, siempre será false, esto hará que se cierre el modal
+      newRol.nombre = ''//Limpiamos la constante para que la siguiente vez que lo abramos esté en blanco
+      newRol.vistas = [{}]//Limpiamos la constante para que la siguiente vez que lo abramos esté en blanco
+      vacio.value = false//Cambiamos el valor de la constante, para que la siguiente vez que lo abramos no este activada la validación
     }
     const craer_nuevo_rol = async () => { //Funcion que inserta el nuevo rol
       let data = { //literal que guarda el nombre del rol, para mandarselo al endpoint en el body
         "roleName": newRol.nombre
       }
-      if(newRol.nombre != '' && newRol.vistas != ''){
+      if(newRol.nombre != '' && newRol.vistas != ''){//Si el nombre y las vistas no están vacias
         axios.post(`${API}/Identity/addRoles`, data) //llamada al enpoint que inserta el rol en la base, se le envia data en body
         .then((result) => {//Si el endpoint funcionó correctamente
           modalLoading.value = true //Activamos el modalloading
@@ -138,7 +138,7 @@ export default {
                 notify({ type: 'success', title:'Rol creado', text: `Se creo correctamente el rol ${newRol.nombre}`});//Mostramos notificación de que se creo correctamente el rol
                 newRol.vistas = []; newRol.nombre = "";//limpiamos los input del modal para agregar roles
                 cerralmodalpadre()//Llamamos a la función que cierra el modal
-                todos()
+                todos()//Llamamos a la función que trae todos los resultados actualizados
               }
             }).catch((error) => {//Si el enpoint tiene algun error
               console.log(error.request.response);//Imprimimos el error en consola
@@ -146,7 +146,7 @@ export default {
               notify({ type: 'warning', title:'Rol no creado', text: `No se pudo insertar los modulos al rol ${newRol.nombre}`});//Mostramos nositificación de que no se creo el rol
               newRol.vistas = []; newRol.nombre = "";//limpiamos los input del modal para agregar roles
               cerralmodalpadre()//Llamamos a la función que cierra el modal
-              todos()
+              todos()//Llamamos a la función que trae todos los resultados actualizados
             })
           }
         }).catch((error) => {
@@ -155,12 +155,12 @@ export default {
           notify({ type: 'warning', title:'Rol no creado', text: `No se pudo crear el rol ${newRol.nombre}`});//Mostramos nositificación de que no se creo el rol
           newRol.vistas = []; newRol.nombre = "";//limpiamos los input del modal para agregar roles
           cerralmodalpadre()//Llamamos a la función que cierra el modal
-          todos()
+          todos()//Llamamos a la función que trae todos los resultados actualizados
         })
-      }else
-        vacio.value = true
+      }else//Si el nombre y las vistas están vacias
+        vacio.value = true//Activamos la bandera que nos da los estilos y advertencias
     }
-    function buscar (nombre, estatus){//Función que realiza la busqueda de los roles existentes, o uno en especificos
+    function buscar (nombre, estatus){//Función que realiza la busqueda de los roles existentes, o uno en especificos, recibe como parametros el nombre y el estatus, pueden llegar vacios
       modalLoading.value = true
       if(nombre == "")//Si no se ha escrito ningún nombre en el header, el valor de nombre será un espacio en blanco
         nombre = ' '
@@ -180,8 +180,8 @@ export default {
         axios.get(ruta)//Llamada al endpoint que trae los roles existentes
         .then((result) => {//Si el endpoint tiene una respuesta correcta
           if(result.status == 200){//valida que el estatus de la respuesta sea 200 para saber que es una respuesta correcta y con contenido
-            totalPaginas.value = result.data.paginas_totales
-            paginaActual.value = result.data.pagina_actual
+            totalPaginas.value = result.data.paginas_totales//Asignamos el valor de las páginas totales para el componente de páginación
+            paginaActual.value = result.data.pagina_actual//Asignamos el valor de la pagina actual para saber en cual nos posicionamos en el componente de paginación
             modalLoading.value = false//Cerramos el spinner de carga
             roles.value = result.data.roles //asignamos los resultados que nos trajo el endpoint a la constante roles
           }
@@ -202,8 +202,8 @@ export default {
       axios.get(ruta)//Llamada al endpoint que trae los roles existentes
       .then((result) => {//Si el endpoint tiene una respuesta correcta
         if(result.status == 200){//valida que el estatus de la respuesta sea 200 para saber que es una respuesta correcta y con contenido
-          totalPaginas.value = result.data.paginas_totales
-          paginaActual.value = result.data.pagina_actual
+          totalPaginas.value = result.data.paginas_totales//Asignamos el valor de las páginas totales para el componente de páginación
+          paginaActual.value = result.data.pagina_actual//Asignamos el valor de la pagina actual para saber en cual nos posicionamos en el componente de paginación
           modalLoading.value = false//Cerramos el spinner de carga
           roles.value = result.data.roles //asignamos los resultados que nos trajo el endpoint a la constante roles
         }
@@ -221,13 +221,13 @@ export default {
       axios.get(ruta)//Llamada al endpoint que trae los roles existentes
       .then((result) => {//SI el endpoint tiene una respuesta correcta
         if(result.status == 200){//valida que el estatus de la respuesta sea 200 para saber que es una respuesta correcta y con contenido
-          totalPaginas.value = result.data.paginas_totales
-          paginaActual.value = result.data.pagina_actual
+          totalPaginas.value = result.data.paginas_totales//Asignamos el valor de las páginas totales para el componente de páginación
+          paginaActual.value = result.data.pagina_actual//Asignamos el valor de la pagina actual para saber en cual nos posicionamos en el componente de paginación
           modalLoading.value = false//Cerramos el spinner de carga
           roles.value = result.data.roles //asignamos los resultados que nos trajo el endpoint a la constante roles
         }
       }).catch((error) => {//Si el endpoint tiene un error 
-        console.log(error);//Mostramos en consola el error  que nos da el endpoint
+        console.log(error.request.response);//Mostramos en consola el error  que nos da el endpoint
         modalLoading.value = false //cerramos el spinner de carga
       })
     }
@@ -249,28 +249,10 @@ export default {
   font-size: 25px;
   padding-top: 20px;
 }
-.filter-style {
-  color: white;
-  font-size: 16px;
-  margin-left: 10px;
-}
-.filter-style input {
-  margin-left: 20px;
-  color: black;
-  border: 1px solid black;
-  padding: 0px 5px;
-}
-.color-black:focus {
-  outline: 0;
-}
 @media (max-width: 750px) {
   .title {
     font-size: 20px;
     padding-bottom: 20px;
-  }
-  .filter-style {
-    padding-top: 5px;
-    padding-bottom: 15px;
   }
 }
 </style>
