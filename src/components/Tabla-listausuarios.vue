@@ -40,21 +40,23 @@
     </table>
   </div>
   <!--MODAL DE ACTUALIZAR CONTRASEÑA -->
-  <Modal :show="modalPass" @cerrarmodal="modalPass = false, validacion = false, pass = ''">
+  <Modal :show="modalPass" @cerrarmodal="modalPass = false, pass = ''">
     <div>
       <p class="text-gray-900 font-bold text-xl -mt-8 mb-8 text-center">Cambiar Contraseña a {{ seleccionado.nombre + ' ' + seleccionado.apellidos }}</p>
       <div class="grid grid-cols-2 mt-2">
         <p class="mx-auto">Nueva Contraseña:</p>
         <div class="input-container">
-          <input v-model="pass" class="border border-gray-300 rounded-lg mx-auto input" :type="tipoInput" :class="{'border-red-600': validacion}">
+          <input v-model="pass" class="border border-gray-300 rounded-lg mx-auto input" :type="tipoInput" :class="{'border-red-600': !mayuscula}" @input="mayuscula = true">
           <span @click="tipoInput == 'password' ? tipoInput = 'text' : tipoInput = 'password'" class="absolute ml-64 mt-1 cursor-pointer">
             <fa v-if="tipoInput == 'password'" icon="eye" class="text-gray-600 w-5 h-5" />
             <fa v-else  icon="eye-slash" class="text-gray-600 w-5 h-5" />
           </span>
         </div>
         <span></span>
-        <span v-if="validacion" class="text-xs text-red-600 mx-auto">Campo Obligatorio</span>
-        <span v-if="!mayuscaula" class="text-xs text-red-600 mx-auto">Se necesita mínimo una mayuscula</span>
+        <span v-if="!mayuscula" class="text-xs text-red-300 mx-auto">
+          <p>Se necesita mínimo una mayuscula</p>
+          <p>Se necesita mínimo 6 caracteres</p>
+        </span>
       </div>
       <div class="mt-10 text-center mx-auto mb-4">
         <button @click="cambiarPass(seleccionado)" class="rounded-lg w-18 bg-ferromex text-white p-10">Cambiar Contraseña</button>
@@ -68,10 +70,13 @@
       <p class="text-gray-900 font-bold text-2xl -mt-8 mb-8 text-center">Editar Usuario</p>
       <div class="grid grid-cols-2 mt-2">
         <p class="text-sm mb-1 mx-auto font-semibold text-gray-700">Nombre</p>
-        <input v-model="usuario.nombre" class="border rounded-lg w-56" type="text">
+        <input v-model="usuario.nombre" class="border rounded-lg w-56" type="text" :class="{'border border-red-500': usuario.nombre.trim() == ''}">
         <p class="text-sm mb-1 font-semibold text-gray-700 mx-auto">Apellido(s)</p>
-        <input v-model="usuario.apellidos" class="border rounded-lg w-56" type="text">
+        <input v-model="usuario.apellidos" class="border rounded-lg w-56" type="text" :class="{'border border-red-500': usuario.apellidos.trim() == ''}">
       </div>
+      <span v-if="usuario.nombre.trim() == '' || usuario.apellidos.trim() == ''" class="text-xs text-center text-red-300 mx-auto">
+          <p>Todos los campos son obligatorios</p>
+      </span>
       <div class="mt-10 text-center mx-auto mb-4">
         <button class="rounded-lg w-18 bg-ferromex text-white p-10" @click="editarUsuario(usuario)">Editar Usuario</button>
       </div>
@@ -79,7 +84,7 @@
   </Modal>
   <!-- FIN MODAL-->
   <!-- MODAL CAMBIAR ROL -->
-  <Modal :show="modalRol"  @cerrarmodal="modalRol = false, seleccionado.rol = ''">
+  <Modal :show="modalRol"  @cerrarmodal="modalRol = false, validacion = false, seleccionado.rol = ''">
     <div>
       <p class="text-gray-900 font-bold text-2xl -mt-8 mb-8 text-center -mx-6">Cambiar Rol a {{ usuario.nombre +' '+ usuario.apellidos }}</p>
       <p class="text-gray-900 font-bold text-2xl -mt-8 mb-8 text-center">con Rol {{ usuario.rol }}</p>
@@ -91,8 +96,13 @@
           :searchable="true"
           :options="roles"
           :close-on-select="true"
+          :class="{'border border-red-500': validacion}"
           class="w-52"
         />
+        <span ></span>
+        <span v-if="validacion" class="text-xs text-center text-red-300 mx-auto">
+            <p>Todos los campos son obligatorios</p>
+        </span>
       </div>
       <div class="mt-10 text-center mx-auto mb-4">
         <button @click="cambiarRol(usuario)" class="rounded-lg w-18 bg-ferromex text-white p-10">Cambiar Rol</button>
@@ -135,57 +145,67 @@ export default {
     const errorMessage = ref('')//Constante que almacena el mensaje de error que se da al hacer una petición
     const infoUser = Servicio.obtenerInfoUser()//Constante que trae toda la información del usuario que inicio sesión
     const tipoInput = ref('password')//Constante que almacena el tipo de input para poder ver la contraseña dentro del modal de cambiar contraseña
-    const mayuscaula = ref(false)//Constante que almacena la respuesta de la validación si es que hya o no mayusculas para la contraseña
+    const mayuscula = ref(true)//Constante que almacena la respuesta de la validación si es que hya o no mayusculas para la contraseña
     const modal_Rol = async () => {//Constante que abre el modal para cambiar el rol, y trae todos los roles existentes
       modalRol.value = true
       axios.get(`${API}/Identity/roles/%20/%20/%20/%20`)//Llamada al endpoint que trae los roles existentes
       .then((result) => {//Si el endpoint tiene una respuesta correcta
-        console.log(result);
         for(let i=0; i<result.data.roles.length; i++){ //recorremos la respuesta, y cada que recorremos sumamos un 1 para el siguiente rol
           roles.value.push({'value':result.data.roles[i].nombreRol, 'label':result.data.roles[i].nombreRol})//asignamos los roles existentes a la variable roles, para mostrarlos en el multiselect
         }
       }).catch((error)=>{//si el endpoint tiene un error
-        console.log(error);//Mostramos en consola el error  que nos da el endpoint
+        console.log(error.request.response);//Mostramos en consola el error  que nos da el endpoint
         modalLoading.value = false //cerramos el spinner de carga
       })
     }
     function cambiarPass(usuario) {//Función que hace el cambio de contraseña del usuario seleccionado
-      console.log(usuario);
       let data = { //literal que almacena el id del usuario y la nueva contraseña ingresada en el formulario
         "usuarioId": usuario.usuarioId, //id del usuario, viene desde el option mapper
         "password": pass.value //nueva password que se ingresó en el formulario
       }
       if(data.password.trim().length == 0 || data.password == '')//Si la contraseña tiene espacios en blanco y está vacia
       {
-        validacion.value = true
+        notify({//notificación de que el usuario se inserto correctamente
+          title:'Nuevo Usuario',//titulo de la notificaci{on}
+          text:`Todos los campos son obligatorios`,//texto de la notificación 
+          duration: 20000,//duración de la notificación
+          closeonclick:true,//si le damos click se cierra la notificación
+          type: 'warn'//el tipo de notificación, si es success el color será verde
+        });
       }else{
-        let mayusculas = 'ABCDEFGHYJKLMNÑOPQRSTUVWXYZ'//Literal que almacena toda las letras en mayusculas
-        for(let i = 0; i< data.password.length; i++){//Iteramos toda la cadena de caracteras que escribimos en la contraseña
-          if (mayusculas.indexOf(data.password.charAt(i),0)!=-1){//Si algún caracter está incluido en la literal de mayusculas
-            mayuscaula. value = true//Si existe una mayuscula en la contraseña
+        if(data.password.length >= 6){
+          let mayusculas = 'ABCDEFGHYJKLMNÑOPQRSTUVWXYZ'//Literal que almacena todas las letras en mayusculas
+          let contador = []
+          for(let i = 0; i< data.password.length; i++){//Recorremos toda la palabra insertada en el password y si no encuentra alguna mayuscula no nos dejará insertar
+            if (mayusculas.indexOf(data.password.charAt(i),0)!=-1)
+              contador.push(true)
+            else
+              mayuscula.value = false 
           }
-        }
-        if(mayuscaula.value ==  true){//Si hay mínimo una mayuscula en la 
-          axios.put(`${API}/Identity/changePassword`, data)
-          .then((result) => {
-            console.log(result);
-            validacion.value = false
-            modalPass.value = false
-            emit('refrescarTabla', true)//Se realiza el emit al componente padre, para refrescar la tabla con los cambios realizados
-            notify({//Notifiación que se le muestra al usuario si se hizo el cmabio correcto
-              title:'Cambio Exitoso',
-              text:`Se cambió la contraseña al usuario ${usuario.nombre + ' ' + usuario.apellidos}`,
-              type: 'success'
-            });
-          })
-          .catch((error) => {
-            notify({//Notifiación que se le muestra al usuario si no se hace el cambio
-              title:'Cambio Exitoso',
-              text:`No se pudo cambiar la contraseña al usuario ${usuario.nombre + ' ' + usuario.apellidos}`,
-              type: 'error'
-            });
-            console.log(error.request.response[0]);
-          })
+          if(contador.includes(true))
+            mayuscula.value = true
+          if(mayuscula.value ==  true){//Si hay mínimo una mayuscula en la 
+            axios.put(`${API}/Identity/changePassword`, data)
+            .then(() => {
+              modalPass.value = false
+              emit('refrescarTabla', true)//Se realiza el emit al componente padre, para refrescar la tabla con los cambios realizados
+              notify({//Notifiación que se le muestra al usuario si se hizo el cmabio correcto
+                title:'Cambio Exitoso',
+                text:`Se cambió la contraseña al usuario ${usuario.nombre + ' ' + usuario.apellidos}`,
+                type: 'success'
+              });
+            })
+            .catch((error) => {
+              notify({//Notifiación que se le muestra al usuario si no se hace el cambio
+                title:'Cambio Exitoso',
+                text:`No se pudo cambiar la contraseña al usuario ${usuario.nombre + ' ' + usuario.apellidos}`,
+                type: 'error'
+              });
+              console.log(error.request.response);
+            })
+          }
+        }else{
+          mayuscula. value = false//Si existe una mayuscula en la contraseña
         }
       }
     }
@@ -199,26 +219,34 @@ export default {
         "nombreCompleto": usuario.nombreCompleto,
         "estatus": usuario.estatus
       }
-      axios.put(`${API}/Identity/editUser`, data)//endpoint que recibe un JSON con la información del usuario para editar
-      .then(() => {//Si el endpoint tiene una respuesta correcta
-        modalEditar.value = false
-        emit('refrescarTabla', true)//Se realiza el emit al componente padre, para refrescar la tabla con los cambios realizados
-        notify({//Notifiación que se le muestra al usuario si se hizo el cmabio correcto
-          title:'Cambio Exitoso',
-          text:`Se cambió el estatus al usuario ${usuario.nombre + ' ' + usuario.apellidos}`,
-          type: 'success'
+      if( data.nombreUsuario.trim() != '' && data.apellidos.trim() != '' ){
+        axios.put(`${API}/Identity/editUser`, data)//endpoint que recibe un JSON con la información del usuario para editar
+        .then(() => {//Si el endpoint tiene una respuesta correcta
+          modalEditar.value = false
+          emit('refrescarTabla', true)//Se realiza el emit al componente padre, para refrescar la tabla con los cambios realizados
+          notify({//Notifiación que se le muestra al usuario si se hizo el cmabio correcto
+            title:'Cambio Exitoso',
+            text:`Se cambió el estatus al usuario ${usuario.nombre + ' ' + usuario.apellidos}`,
+            type: 'success'
+          });
+        })
+        .catch(error => {//Si el endpoint tiene un error en la respuesta
+          console.log(error.request.response);//Mostramos el error en la consola
+          notify({//Notifiación que se le muestra al usuario si no se hace el cambio
+            title:'Cambio Exitoso',
+            text:`No se pudo cambiar el estatus al usuario ${usuario.nombre + ' ' + usuario.apellidos}`,
+            type: 'error'
+          });
+        })
+      }else{
+        notify({//notificación de que el usuario se inserto correctamente
+          title:'Nuevo Usuario',//titulo de la notificaci{on}
+          text:`Todos los campos son obligatorios`,//texto de la notificación 
+          duration: 5000,//duración de la notificación
+          closeonclick:true,//si le damos click se cierra la notificación
+          type: 'warn'//el tipo de notificación, si es success el color será verde
         });
-      })
-      .catch(error => {//Si el endpoint tiene un error en la respuesta
-        console.log('errir');
-        console.log(error);//Mostramos el error en la consola
-        notify({//Notifiación que se le muestra al usuario si no se hace el cambio
-          title:'Cambio Exitoso',
-          text:`No se pudo cambiar el estatus al usuario ${usuario.nombre + ' ' + usuario.apellidos}`,
-          type: 'error'
-        });
-        return error
-      })
+      }
     }
     function cambiarEstatus(usuario) {//Función que cambia el estatus del usuario
       let data = { //literal que almacena los datos para enviar al endpoint de la edición
@@ -239,7 +267,7 @@ export default {
           type: 'success'
         });
       }).catch((error) => {
-        console.log(error);
+        console.log(error.request.response);
         notify({
           title:'Cambio Exitoso',
           text:`No se pudo cambiar el estatus al usuario ${usuario.nombre + ' ' + usuario.apellidos}`,
@@ -257,29 +285,31 @@ export default {
         "nombreCompleto": usuario.nombreCompleto,
         "estatus": usuario.estatus
       }
-      console.log(data);
-      axios.put(`${API}/Identity/editUser`, data)//endpoint que recibe un JSON con la información del usuario para editar
-      .then((result) => {
-        console.log(result);
-        modalRol.value = false
-        seleccionado.value.rol = ''
-        emit('refrescarTabla', true)//Se realiza el emit al componente padre, para refrescar la tabla con los cambios realizados
-        notify({
-          title:'Cambio Exitoso',
-          text:`Se cambió el estatus al usuario ${usuario.nombre + ' ' + usuario.apellidos}`,
-          type: 'success'
-        });
-      }).catch((error) => {
-        console.log(error);
-        notify({
-          title:'Cambio Exitoso',
-          text:`No se pudo cambiar el estatus al usuario ${usuario.nombre + ' ' + usuario.apellidos}`,
-          type: 'error'
-        });
-      })
+      if(data.rol != undefined){
+        axios.put(`${API}/Identity/editUser`, data)//endpoint que recibe un JSON con la información del usuario para editar
+        .then(() => {
+          modalRol.value = false
+          validacion.value = false
+          seleccionado.value.rol = ''
+          emit('refrescarTabla', true)//Se realiza el emit al componente padre, para refrescar la tabla con los cambios realizados
+          notify({
+            title:'Cambio Exitoso',
+            text:`Se cambió el rol del usuario ${usuario.nombre + ' ' + usuario.apellidos}`,
+            type: 'success'
+          });
+        }).catch((error) => {
+          console.log(error.request.response);
+          notify({
+            title:'No se pudo hacer el cambio',
+            text:`No se pudo cambiar el rol del usuario ${usuario.nombre + ' ' + usuario.apellidos}`,
+            type: 'error'
+          });
+        })
+      }else{
+        validacion.value = true
+      }
     }
     function acciones_mapper(item){//Asignación de funciones de la lista de opciones que hay en el menú de acciones
-      console.log(item);
       if(accion.value == 'Habilitar'){
         cambiarEstatus(item)//Llamamos a la función cambiarEstatus y le enviamos el parámetro del usuario que seleccionamos
       }if(accion.value == 'Deshabilitar'){
@@ -290,7 +320,6 @@ export default {
       }if(accion.value == 'Editar Usuario'){
         modalEditar.value = true//Abrimos el modal para editar el usuario
         usuario.value = item//Asignamos los parametros utiles para la edición
-        console.log(usuario);
       }if(accion.value == 'Cambiar Rol'){
         modal_Rol()//Llamamos a la función que abre el modal para cambiar el Rol
         usuario.value = item//Asignamos los parametros utiles para la edición
@@ -319,7 +348,7 @@ export default {
           }
       return filtroOpciones  //Regresamos la lista de acciones filtrada
     }
-    return{ cambiarRol, cambiarEstatus, editarUsuario, cambiarPass, modal_Rol, acciones_mapper, opticones_select_acciones, mayuscaula, tipoInput, infoUser, modalEditar, modalPass, modalRol, modalLoading, seleccionado, accion, validacion, usuario, roles, pass, status, errorMessage }
+    return{ cambiarRol, cambiarEstatus, editarUsuario, cambiarPass, modal_Rol, acciones_mapper, opticones_select_acciones, mayuscula, tipoInput, infoUser, modalEditar, modalPass, modalRol, modalLoading, seleccionado, accion, validacion, usuario, roles, pass, status, errorMessage }
   }
 }
 </script>

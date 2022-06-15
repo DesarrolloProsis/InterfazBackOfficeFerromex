@@ -102,7 +102,7 @@ export default {
           type: 'success'
         });
       }).catch((error) => {
-        console.log(error);
+        console.log(error.request.response);
         notify({//Notificación que se muestra cuando no se puede hacer el cambio de manera correcta
           title:'Cambio Fallido',
           text:`No se pudo cambiar el estatus al Rol ${rol.nombreRol}`,
@@ -150,7 +150,7 @@ export default {
             type: 'success'
           });
         }).catch((error) => {//Si el endpoint tiene un error en la respuesta
-          console.log(error);
+          console.log(error.request.response);
           modalModulos.value = false //cerramos el modal de asignación de módulos
           notify({//Notificación que se muestra cuando no se puede hacer el cambio de manera correcta
             title:'Cambio Fallido',
