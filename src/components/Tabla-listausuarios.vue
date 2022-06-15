@@ -150,17 +150,15 @@ export default {
       modalRol.value = true
       axios.get(`${API}/Identity/roles/%20/%20/%20/%20`)//Llamada al endpoint que trae los roles existentes
       .then((result) => {//Si el endpoint tiene una respuesta correcta
-        console.log(result);
         for(let i=0; i<result.data.roles.length; i++){ //recorremos la respuesta, y cada que recorremos sumamos un 1 para el siguiente rol
           roles.value.push({'value':result.data.roles[i].nombreRol, 'label':result.data.roles[i].nombreRol})//asignamos los roles existentes a la variable roles, para mostrarlos en el multiselect
         }
       }).catch((error)=>{//si el endpoint tiene un error
-        console.log(error);//Mostramos en consola el error  que nos da el endpoint
+        console.log(error.request.response);//Mostramos en consola el error  que nos da el endpoint
         modalLoading.value = false //cerramos el spinner de carga
       })
     }
     function cambiarPass(usuario) {//Función que hace el cambio de contraseña del usuario seleccionado
-      console.log(usuario);
       let data = { //literal que almacena el id del usuario y la nueva contraseña ingresada en el formulario
         "usuarioId": usuario.usuarioId, //id del usuario, viene desde el option mapper
         "password": pass.value //nueva password que se ingresó en el formulario
@@ -188,8 +186,7 @@ export default {
             mayuscula.value = true
           if(mayuscula.value ==  true){//Si hay mínimo una mayuscula en la 
             axios.put(`${API}/Identity/changePassword`, data)
-            .then((result) => {
-              console.log(result);
+            .then(() => {
               modalPass.value = false
               emit('refrescarTabla', true)//Se realiza el emit al componente padre, para refrescar la tabla con los cambios realizados
               notify({//Notifiación que se le muestra al usuario si se hizo el cmabio correcto
@@ -204,7 +201,7 @@ export default {
                 text:`No se pudo cambiar la contraseña al usuario ${usuario.nombre + ' ' + usuario.apellidos}`,
                 type: 'error'
               });
-              console.log(error.request.response[0]);
+              console.log(error.request.response);
             })
           }
         }else{
@@ -234,13 +231,12 @@ export default {
           });
         })
         .catch(error => {//Si el endpoint tiene un error en la respuesta
-          console.log(error);//Mostramos el error en la consola
+          console.log(error.request.response);//Mostramos el error en la consola
           notify({//Notifiación que se le muestra al usuario si no se hace el cambio
             title:'Cambio Exitoso',
             text:`No se pudo cambiar el estatus al usuario ${usuario.nombre + ' ' + usuario.apellidos}`,
             type: 'error'
           });
-          return error
         })
       }else{
         notify({//notificación de que el usuario se inserto correctamente
@@ -271,7 +267,7 @@ export default {
           type: 'success'
         });
       }).catch((error) => {
-        console.log(error);
+        console.log(error.request.response);
         notify({
           title:'Cambio Exitoso',
           text:`No se pudo cambiar el estatus al usuario ${usuario.nombre + ' ' + usuario.apellidos}`,
@@ -289,11 +285,9 @@ export default {
         "nombreCompleto": usuario.nombreCompleto,
         "estatus": usuario.estatus
       }
-      console.log(data);
       if(data.rol != undefined){
         axios.put(`${API}/Identity/editUser`, data)//endpoint que recibe un JSON con la información del usuario para editar
-        .then((result) => {
-          console.log(result);
+        .then(() => {
           modalRol.value = false
           validacion.value = false
           seleccionado.value.rol = ''
@@ -316,7 +310,6 @@ export default {
       }
     }
     function acciones_mapper(item){//Asignación de funciones de la lista de opciones que hay en el menú de acciones
-      console.log(item);
       if(accion.value == 'Habilitar'){
         cambiarEstatus(item)//Llamamos a la función cambiarEstatus y le enviamos el parámetro del usuario que seleccionamos
       }if(accion.value == 'Deshabilitar'){
@@ -327,7 +320,6 @@ export default {
       }if(accion.value == 'Editar Usuario'){
         modalEditar.value = true//Abrimos el modal para editar el usuario
         usuario.value = item//Asignamos los parametros utiles para la edición
-        console.log(usuario);
       }if(accion.value == 'Cambiar Rol'){
         modal_Rol()//Llamamos a la función que abre el modal para cambiar el Rol
         usuario.value = item//Asignamos los parametros utiles para la edición

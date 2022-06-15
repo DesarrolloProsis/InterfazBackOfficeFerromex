@@ -120,7 +120,7 @@ export default {
           roles.value.push({'value':result.data.roles[i].nombreRol, 'label':result.data.roles[i].nombreRol})//asignamos los roles existentes a la variable roles, para mostrarlos en el multiselect
         }
       }).catch((error)=>{//si el endpoint tiene un error
-        console.log(error);//Mostramos en consola el error  que nos da el endpoint
+        console.log(error.request.response);//Mostramos en consola el error  que nos da el endpoint
         modalLoading.value = false //cerramos el spinner de carga
       })
     }
@@ -133,7 +133,6 @@ export default {
       const ruta = encodeURI(`${API}/Identity/user/1/${numRespuesta.value}/${nombreRuta}/${estatusRuta}`)
       axios.get(ruta)//Llamada al endpoint que trae los roles existentes
       .then((result) => {//Si el endpoint tiene una respuesta correcta
-        console.log(result.data);
         if(result.status == 200){//valida que el estatus de la respuesta sea 200 para saber que es una respuesta correcta y con contenido
           totalPaginas.value = result.data.paginas_totales
           paginaActual.value = result.data.pagina_actual
@@ -141,7 +140,7 @@ export default {
           usuarios.value = result.data.usuarios //asignamos los resultados que nos trajo el endpoint a la constante roles
         }
       }).catch((error)=>{//Si el endpoint tiene un error en la respuesta
-        console.log(error);//Mostramos en consola el error  que nos da el endpoint
+        console.log(error.request.response);//Mostramos en consola el error  que nos da el endpoint
         modalLoading.value = false //cerramos el spinner de carga
       })
     }
@@ -163,7 +162,6 @@ export default {
         const ruta = encodeURI(`${API}/Identity/user/${paginaActual.value}/${numRespuesta.value}/${nombre}/${estatus}`)
         axios.get(ruta)//Llamada al endpoint que trae los roles existentes
         .then((result) => {//Si el endpoint tiene una respuesta correcta
-        console.log(result);
           if(result.status == 200){//valida que el estatus de la respuesta sea 200 para saber que es una respuesta correcta y con contenido
             totalPaginas.value = result.data.paginas_totales
             paginaActual.value = result.data.pagina_actual
@@ -171,7 +169,7 @@ export default {
             usuarios.value = result.data.usuarios //asignamos los resultados que nos trajo el endpoint a la constante roles
           }
         }).catch((error)=>{//Si el endpoint tiene un error en la respuesta
-          console.log(error);//Mostramos en consola el error  que nos da el endpoint
+          console.log(error.request.response);//Mostramos en consola el error  que nos da el endpoint
           modalLoading.value = false //cerramos el spinner de carga
         })
       }
@@ -191,7 +189,7 @@ export default {
             usuarios.value = result.data.usuarios //asignamos los resultados que nos trajo el endpoint a la constante roles
           }
         }).catch((error)=>{//Si el endpoint tiene un error en la respuesta
-          console.log(error);//Mostramos en consola el error  que nos da el endpoint
+          console.log(error.request.response);//Mostramos en consola el error  que nos da el endpoint
           modalLoading.value = false //cerramos el spinner de carga
         })
     }
@@ -202,7 +200,6 @@ export default {
         "apellidos":usuario.apellidos,//apellido o apellidos que se escribieron en el formulario de agregar usuario
         "roleName":usuario.rol//rol que se seleccionó en el formulario de agregar usuario
       }
-      console.log(data);
       if(data.nombre == '' || data.password == '' || data.apellidos == '' || data.roleName == ''){//Si alguno de los campos está vacio
         notify({//notificación de que el usuario se inserto correctamente
           title:'Nuevo Usuario',//titulo de la notificaci{on}
@@ -212,7 +209,6 @@ export default {
           type: 'warn'//el tipo de notificación, si es success el color será verde
         });
       }else{
-        console.log(mayuscula.value);
         if(data.password.length >= 6){//Si la contraseña es menor a 6 carácteres
           let mayusculas = 'ABCDEFGHYJKLMNÑOPQRSTUVWXYZ'//Literal que almacena todas las letras en mayusculas
           let contador = []
@@ -227,7 +223,6 @@ export default {
           if(mayuscula.value ==  true){
             axios.post(`${API}/Identity/register`,data)//endpoitn que registra usuario en la base de datos
             .then((result) => {//si el usuario tiene una respuesta correcta
-              console.log(result);
               if(result.status == 200){//si el status de la respuesta es 201, es decir respuesta correcta
                 modalAgregar.value = false//cerramos el spinner de la pantalla de carga
                 usuario.pass = '',//limpiamos el valor de password del formulario de agregar usuario

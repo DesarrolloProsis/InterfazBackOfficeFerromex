@@ -135,7 +135,7 @@ export default {
               todos()
             }
           }).catch((error) => {//Si el enpoint tiene algun error
-            console.log(error);//Imprimimos el error en consola
+            console.log(error.request.response);//Imprimimos el error en consola
             modalLoading.value = false//Desactivamos el spinner
             notify({ type: 'warning', title:'Rol no creado', text: `No se pudo insertar los modulos al rol ${newRol.nombre}`});//Mostramos nositificación de que no se creo el rol
             newRol.vistas = []; newRol.nombre = "";//limpiamos los input del modal para agregar roles
@@ -144,7 +144,7 @@ export default {
           })
         }
       }).catch((error) => {
-        console.log(error);//Imprimimos el error en consola
+        console.log(error.request.response);//Imprimimos el error en consola
         modalLoading.value = false//Desactivamos el spinner
         notify({ type: 'warning', title:'Rol no creado', text: `No se pudo crear el rol ${newRol.nombre}`});//Mostramos nositificación de que no se creo el rol
         newRol.vistas = []; newRol.nombre = "";//limpiamos los input del modal para agregar roles
@@ -178,7 +178,7 @@ export default {
             roles.value = result.data.roles //asignamos los resultados que nos trajo el endpoint a la constante roles
           }
         }).catch((error)=>{//Si el endpoint tiene un erro en la respuesta
-          console.log(error);//Mostramos en consola el error  que nos da el endpoint
+          console.log(error.request.response);//Mostramos en consola el error  que nos da el endpoint
           modalLoading.value = false //cerramos el spinner de carga
         })
       }
@@ -200,7 +200,7 @@ export default {
           roles.value = result.data.roles //asignamos los resultados que nos trajo el endpoint a la constante roles
         }
       }).catch((error)=>{//Si el endpoint tiene un error en la respuesta
-        console.log(error);//Mostramos en consola el error  que nos da el endpoint
+        console.log(error.request.response);//Mostramos en consola el error  que nos da el endpoint
         modalLoading.value = false //cerramos el spinner de carga
       })
     }
