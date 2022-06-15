@@ -24,7 +24,7 @@
       </div>
     </div>
   </div>
-  <Footer titulocentro = "BOSQUE DE CIRUELOS NO 99,COL. BOSQUES DE LAS LOMAS, MÉXICO, D.F.,C.P. 11700" tituloderecha = "V 2.0.5" tituloizquierda = "" color = "red"/>  
+  <Footer titulocentro = "BOSQUE DE CIRUELOS NO 99,COL. BOSQUES DE LAS LOMAS, MÉXICO, D.F.,C.P. 11700" tituloderecha = "V 1.0" tituloizquierda = "" color = "red"/>  
 </div>
 <Spinner class="-mt-1" :modalLoading="modalLoading"></Spinner>
 </template>
