@@ -317,7 +317,7 @@ export default {
               type: 'success'
             });
             numerotagagregar.value = ''
-            cargatags()
+            cargatags(header.tag,header.estatus,header.fecha )
           }).catch((err) =>{
             console.log(err)
           })
