@@ -16,9 +16,9 @@
         </th>
       </tr>
       <tr v-for="(usuario, index) in dataUsuarios" :key="index">
-        <td :class="{'text-gray-300': !usuario.estatus}">{{ usuario.nombreUsuario }}</td>
-        <td :class="{'text-gray-300': !usuario.estatus}">{{ usuario.nombreCompleto }}</td>
-        <td :class="{'text-gray-300': !usuario.estatus}">
+        <td :class="{'text-gray-400': !usuario.estatus}">{{ usuario.nombreUsuario }}</td>
+        <td :class="{'text-gray-400': !usuario.estatus}">{{ usuario.nombreCompleto }}</td>
+        <td :class="{'text-gray-400': !usuario.estatus}">
           <span v-if="usuario.estatus == true">Activo</span>
           <span v-else>Inactivo</span>
         </td>
@@ -45,9 +45,9 @@
       <p class="text-gray-900 font-bold text-xl -mt-8 mb-8 text-center">Cambiar Contraseña a {{ seleccionado.nombre + ' ' + seleccionado.apellidos }}</p>
       <div class="grid grid-cols-2 mt-2">
         <p class="mx-auto">Nueva Contraseña:</p>
-        <div class="input-container">
-          <input v-model="pass" class="border border-gray-300 rounded-lg mx-auto input" :type="tipoInput" :class="{'border-red-600': !mayuscula}" @input="mayuscula = true">
-          <span @click="tipoInput == 'password' ? tipoInput = 'text' : tipoInput = 'password'" class="absolute ml-64 mt-1 cursor-pointer">
+        <div class="w-full inline-flex relative flex-row-reverse">
+          <input v-model="pass" class="border border-gray-300 rounded-lg mx-16 w-full " :type="tipoInput" :class="{'border-red-600': !mayuscula}" @input="mayuscula = true">
+          <span @click="tipoInput == 'password' ? tipoInput = 'text' : tipoInput = 'password'" class="absolute mx-16 mt-1 curor-pointer">
             <fa v-if="tipoInput == 'password'" icon="eye" class="text-gray-600 w-5 h-5" />
             <fa v-else  icon="eye-slash" class="text-gray-600 w-5 h-5" />
           </span>
