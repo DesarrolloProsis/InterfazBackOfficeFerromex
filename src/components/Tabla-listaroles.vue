@@ -13,8 +13,8 @@
         </th>
       </tr>
       <tr v-for="(rol, index) in infoRoles" :key="index">
-        <td :class="{'text-gray-300': rol.estatus == false}">{{ rol.nombreRol }}</td>
-        <td :class="{'text-gray-300': rol.estatus == false}">
+        <td :class="{'text-gray-400': rol.estatus == false}">{{ rol.nombreRol }}</td>
+        <td :class="{'text-gray-400': rol.estatus == false}">
           <span v-if="rol.estatus == true">Activo</span>
           <span v-if="rol.estatus == false">Inactivo</span>
         </td>

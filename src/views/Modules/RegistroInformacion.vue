@@ -11,16 +11,18 @@
       </div>
       <div class="flex-none my-auto text-white font-md p-2">
         Carril:
-        <select v-model="carril" class="flex-none filter-style color-black rounded" name="select" placeholder="Selecciona">
+        <select v-model="carril" class="flex-none text-black rounded" name="select" placeholder="Selecciona">
           <option :value="undefined">Seleccione un Carril</option>
-          <option v-for="(carril ,index) in carriles" :key="index" :value="carril.id">{{carril.carril}}</option>
+          <option v-for="(carril ,index) in carriles" :key="index" :value="carril.id">
+              {{ carril.Carril }}
+          </option>
         </select>
       </div>
       <div class="flex-none my-auto text-white font-md p-2">
         Cuerpo:
         <select v-model="cuerpo" class="text-gray-800 w-16 rounded">
-          <option value="uno">A</option>
-          <option value="dos">B</option>
+          <option value="uno">Cuerpo A</option>
+          <option value="dos">Cuerpo B</option>
         </select>
       </div>
       <div class="flex-none my-auto text-white font-md p-2 ml-39 md:ml-10">
@@ -43,8 +45,8 @@
     <TablaInformacionTelepeaje :dataCruces="cruces"/>
     <p class="mt-10">Próxima actualización en {{ contador.slice(3)  }}</p> 
   </div>
-  <div class="">
-    <Paginacion :total-pages="totalPaginas" :total="100" :current-page="paginaActual" :has-more-pages="hasMorePages" @pagechanged="showMore"/>
+  <div>
+    <Paginacion :total-pages="totalPaginas" :total="100" :current-page="paginaActual" :has-more-pages="hasMorePages" @pagechanged="cambiarPagina"/>
   </div>
   <!-- MODAL CARGANDO -->
   <Spinner :modalLoading="modalLoading"/>
@@ -54,10 +56,10 @@
 const API = process.env.VUE_APP_URL_API_PRODUCCION //Constante que almacena la cadena de conexión con el API
 import TablaInformacionTelepeaje from "../../components/Tabla-RegistroInformacion.vue";//Componente tabla, que almacena todos los valores de los cruces
 import Paginacion from "../../components/Paginacion.vue"//Componente que tiene la paginación
-import Navbar from "../../components/Navbar.vue";
-import Footer from "../../components/Footer";
+import Navbar from "../../components/Navbar.vue";//Importamos el componente navbar
+import Footer from "../../components/Footer";//Importamos el componente Footer
 import { notify } from "@kyvg/vue3-notification";//Componente para poder hacer las notificaciones
-import { onMounted, ref, reactive, toRefs, onUnmounted } from 'vue'
+import { onMounted, ref, reactive, toRefs, onUnmounted } from 'vue'//Importamos componente de vue que nos van a permitir montar funciones par acargas iniciales, hooks para constantes que se vuelvan reactivas
 import axios from "axios";
 import moment from 'moment'
 import Spinner from '../../components/Spinner.vue'
@@ -74,27 +76,15 @@ export default {
     const expires_in = ref(0) //Constante que nos indica en cuanto tiempo expira el contados
     const interval = ref('')//Constante que almacena un intervalo de tiempo, que va a disminuir el contador
     const header = reactive({ fecha:"", tag: "", carril: "", cuerpo: "" })//Constante que almacena los valores de los header insertados para hacer los filtros correspondientes
-    const carriles = ref([ //Constante que almacena los carriles para hacer el filtro en el header
-      {'id':5, 'carril': 'C01'},
-      {'id':6, 'carril':'C03'},
-      {'id':7, 'carril':'C05'},
-      {'id':8, 'carril':'C07'},
-      {'id':9, 'carril':'C09'},
-      {'id':10, 'carril':'C11'},
-      {'id':11, 'carril':'C02'},
-      {'id':12, 'carril':'C04'},
-      {'id':13, 'carril':'C06'},
-      {'id':14, 'carril':'C08'},
-      {'id':15, 'carril':'C10'},
-      ])
+    const carriles = ref([])//Constante que almacena los carriles para hacer el filtro en el header
     const totalPaginas = ref(0) //variable que indica el número total de páginas por resultado
     const paginaActual = ref(1) //variable que indica la página en la que estás dentro de la paginación, en la primer carga siempre es la página 1
     const hasMorePages = ref(true) //variable para poder cambiar de páginas con los botones
     const numRespuesta = ref(10)//Variable que indica el número de respuestas por página
 
-    contador.value = moment.utc(seconds.value).format('HH:mm:ss');
-    expires_in.value = seconds.value;
-    onMounted(setInterval_, todos())
+    contador.value = moment.utc(seconds.value).format('HH:mm:ss');//Damos formato para el contador, nos mostrará unicamente los minutos y segundos
+    expires_in.value = seconds.value;//Asignamos el valor de los segundos que queremos que descienda desde un inicio
+    onMounted(setInterval_, todos(),carrilesExistentes())//Montamos las funciones que queremos que se incialicen cuando se monte la vista
     
     function setInterval_() { //Funcion que genera la cuenta regresiva para la actualización en automatico
       interval.value = setInterval(() => {//se genera una función de tipo setInterval
@@ -113,35 +103,41 @@ export default {
         }
       }, 1000)//Esto se repite cada segundo
     }
+    function carrilesExistentes (){//Función que trae todos los carriles existentes
+      const ruta = (encodeURI(`${API}/ferromex/carriles`))//Constante que guarda la ruta encriptada para la consulta en el API
+      axios.get(ruta)//Hacemos una petición http al API con la ruta previamente encriptada
+      .then((result) => {//Si el endpoint responde de manera correcta
+        carriles.value = result.data //Asignamos los valores de la respuesta del endpoint para mostrarlos en el header para los filtros
+      }).catch((error) => {//Si el endpoint tiene un error en la respuesta
+        console.log(error.request.response);//Mostramos en consola el error
+      })
+    }
     function todos (){ //Función que trae todos los cruces, y limpia los header
-      modalLoading.value = true
-      header.fecha = ''
+      modalLoading.value = true//Activamos la bandera que nos muestra el spinner de la pantalla de carga
+      header.fecha = ''//Limpiamos los filtros del header
       header.tag = ''
       header.carril = ''
       header.cuerpo = ''
-      let fechaRuta = ' '
+      let fechaRuta = ' '//Creamos literales con un espacio en blanco, que nos va a servir para enviarlo en la ruta encriptada
       let tagRuta = ' '
       let carrilRuta = ' '
       let cuerpoRuta = ' '
-      const ruta = (encodeURI(`${API}/ferromex/registroInformacion/${paginaActual.value}/${numRespuesta.value}/${fechaRuta}/${tagRuta}/${carrilRuta}/${cuerpoRuta}`))
-      axios.get(ruta)
-      .then((result) => {
-        console.log(result);
-        cruces.value = result.data.cruces
-        totalPaginas.value = result.data.paginas_totales
-        paginaActual.value = result.data.pagina_actual
-        modalLoading.value = false
+      const ruta = (encodeURI(`${API}/ferromex/registroInformacion/${paginaActual.value}/${numRespuesta.value}/${fechaRuta}/${tagRuta}/${carrilRuta}/${cuerpoRuta}`))//Constante almacena la ruta encriptada para hacer la petición al API
+      axios.get(ruta)//Hacemos la petición https al API con la ruta encriptada anteriormente
+      .then((result) => {//Si el endpoint tiene una respuesta correcta
+        cruces.value = result.data.cruces//Asignamos el valor de los resultados del endpoint para mostrarlos en la tabla
+        totalPaginas.value = result.data.paginas_totales//Asignamos el valor del número de páginas totales para la paginación
+        paginaActual.value = result.data.pagina_actual//Asignamos el valor de la página actual, para saber en que página estamos en el componente de páginación
+        modalLoading.value = false//Desactivamos la bandera que muestra el spinner de la pantalla de carga
       })
-      .catch((error) => {
-        console.log(error);
-        modalLoading.value = false
+      .catch((error) => {//Si el endpoint contiene un error en la respuesta
+        console.log(error.request.response);//Mostramos en la consola el erros que nos muestra el endpoitn
+        modalLoading.value = false//Desactivamos la bandera que muestra el spinner de la pantalla de carga
       })
-      console.log(ruta);
-      modalLoading.value = false
     }
     function buscar(fecha, tag, carril, cuerpo){ //Función que realiza la busqueda en la base con un evento click
       modalLoading.value = true
-      if(fecha == '')
+      if(fecha == '')//Hacemos la validaciones necesarias para poder agregar el espacio vacio es que no se ha escrito o seleccionado un dato en los filtros
         fecha = ' '
       if(tag == '')
         tag = ' '
@@ -149,7 +145,7 @@ export default {
         carril = ' '
       if(cuerpo == '')
         cuerpo = ' '
-      if(fecha == ' ' && tag == ' ' && carril == ' ' && cuerpo == ' ')
+      if(fecha == ' ' && tag == ' ' && carril == ' ' && cuerpo == ' ')//Hacemos la validación para saber si no se escribió o seleccionó nada en los filtros
       {
         notify({//Notificación en la que indicamos que no se ha insertado ningún dato para buscar
           title:'Sin Información',
@@ -158,14 +154,21 @@ export default {
         });
         modalLoading.value = false
       }else{
-        const ruta = (encodeURI(`${API}/ferromex/registroInformacion/${paginaActual.value}/${numRespuesta.value}/${fecha}/${tag}/${carril}/${cuerpo}`))
-        console.log(ruta);
-        modalLoading.value = false
+        const ruta = (encodeURI(`${API}/ferromex/registroInformacion/${paginaActual.value}/${numRespuesta.value}/${fecha}/${tag}/${carril}/${cuerpo}`))//Constante que almacena la ruta encriptada para hacer la petición al API
+        axios.get(ruta)//Realizamos la petición http al API
+        .then((result) => {//Si el endpoint tiene una respuesta correcta
+          cruces.value = result.data.cruces//Asignamos los valores del resultado a la constrante que se va a mostrar en la tabla
+          totalPaginas.value = result.data.paginas_totales//Asignamos el valor de las páginas totales para saber el limite de páginas en el componente de paginación
+          paginaActual.value = result.data.pagina_actual//Asignamos el valor de la página actual para enviarlo al componente de paginación
+          modalLoading.value = false
+        }).catch((error) => {//Si el endpoint tiene un error en la respuesta
+          console.log(error.request.response);
+        })
       }
     }
     function tiempos(minutos){ //función donde se indica los segundos para poder reiniciar la busqueda dependiendo de la opción seleccionada
       if(minutos == 'tres'){
-        seconds.value = 10
+        seconds.value = 180
         expires_in.value = seconds.value
       }else if(minutos == 'seis'){
         seconds.value = 360
@@ -181,15 +184,34 @@ export default {
         expires_in.value = seconds.value
       }
     }
-    function showMore (){
-      
+    function cambiarPagina (page){//Función que nos permite realizar el cambio de pagina mediante el componente de paginación
+      modalLoading.value = true
+      let fechaVacia = ''
+      if(header.fecha == '')//Hacemos la validaciones necesarias para poder agregar el espacio vacio es que no se ha escrito o seleccionado un dato en los filtros
+        fechaVacia = ' '
+      if(header.tag == '')
+        header.tag = ' '
+      if(header.carril == '')
+        header.carril = ' '
+      if(header.cuerpo == '')
+        header.cuerpo = ' '
+      const ruta = (encodeURI(`${API}/ferromex/registroInformacion/${page}/${numRespuesta.value}/${fechaVacia}/${header.tag}/${header.carril}/${header.cuerpo}`))//Constante que almacena la ruta encriptada para hacer la petición al API
+      axios.get(ruta)
+      .then((result) => {//Si el endpoint contiene una respuesta correcta
+        cruces.value = result.data.cruces//Asignamos el valor de los resultados del endpoint para mostrarlos en la tabla
+        totalPaginas.value = result.data.paginas_totales//Asignamos el valor de las páginas totales para saber el limite de páginas en el componente de paginación
+        paginaActual.value = result.data.pagina_actual//Asignamos el valor de la página actual para enviarlo al componente de paginación
+        modalLoading.value = false
+      }).catch((error) => {//Si el endpoint contiene un error en la respuesta
+        console.log(error.request.response);
+      })  
     }
     function stopInterval(){//Función que detiene le intervalo, para que no se esté llamanmdo aunque salgas de la vbista
       clearInterval(interval.value)//ClearInterval, limpia el intervalo, lo vuelte 0 para que nunca se repita
     }
     onUnmounted(stopInterval)//Ejecuta la función cuando se desmonta el componente
 
-    return { header, carriles, modalLoading, showMore, buscar, setInterval_, tiempos, todos, ...toRefs(header), stopInterval, cruces, contador, tiempo, totalPaginas, paginaActual, hasMorePages, numRespuesta}
+    return { header, carriles, modalLoading, cambiarPagina, buscar, setInterval_, tiempos, todos, ...toRefs(header), carrilesExistentes, stopInterval, cruces, contador, tiempo, totalPaginas, paginaActual, hasMorePages, numRespuesta}
 }
 }
 </script>

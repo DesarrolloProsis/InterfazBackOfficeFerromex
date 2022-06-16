@@ -41,7 +41,7 @@
         <p class="text-sm mb-1 font-semibold text-gray-700 mt-2 sm:-ml-6">Contraseña *</p>
         <div>
           <input v-model="usuario.pass" :type="tipoInput" class="border mx-auto w-52 rounded-lg" :class="{'border border-red-500':!mayuscula || !corta}" @input="mayuscula = true, corta = true">
-          <span @click="tipoInput == 'password' ? tipoInput = 'text' : tipoInput = 'password'" class="absolute right-0 mt-1 mr-69 cursor-pointer">
+          <span @click="tipoInput == 'password' ? tipoInput = 'text' : tipoInput = 'password'" class="absolute right-0 mt-1 mr-79 cursor-pointer">
             <fa v-if="tipoInput == 'password'" icon="eye" class="text-gray-600 w-5 h-5" />
             <fa v-else  icon="eye-slash" class="text-gray-600 w-5 h-5" />
           </span>
