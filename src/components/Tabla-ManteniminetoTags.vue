@@ -15,20 +15,26 @@
           <label class="rounded-full px-20 bg-gray-200 ring-2 ring-gray-500 p-2 text-black 2xl:px-28">Acciones</label>
           </th>
       </tr>
-      <tr v-for="(cruces, index) in dataCruces" :key="index">
+      <tr v-for="(cruces, index) in dataCruces" :key="index"  :class="{'text-gray-100':cruces.active == 'false'}" class="text-black">
         <td>{{cruces.tag}}</td>
         <td v-if = "cruces.active == true">Activo</td>
         <td v-else>Desactivado</td>
         <td>{{moment.utc(cruces.insertionDate).local().format("YYYY-MM-DD HH:mm:ss a")}}</td>
         <td>
-          <Multiselect
-          v-model="select" 
-          label="text"
-          valueProp="value"
-          placeholder="Seleccione una acciòn"                  
-          :options="opcionestag(cruces)"
-          @select="accionesTags(cruces)"
-          />
+          <Multiselect v-model="select" 
+          placeholder="Seleccione una Acción"
+           @close="acciones_mapper(cruces)" 
+           :options="opticones_select_acciones(cruces)"
+           >
+              <template v-slot:singleLabel="{ value }">
+                <div class="multiselect-single-label">
+                  <img height="26" style="margin: 0 6px 0 0;"> {{ value.name }}
+                </div>
+              </template>
+              <template v-slot:option="{ option }">
+                <img height="22" style="margin: 0 6px 0 0;">{{ option.name }}
+              </template>
+            </Multiselect>
         </td>
       </tr>
       
@@ -40,7 +46,7 @@
         </div>
         <h1 class="text-5xl font-bold font-titulo text-center ">Advertencia</h1>  
         <div class="w-full flex justify-center mt-4 text-xl font-medium text-center">
-          <p class="">Estas a punto de <label :class="{'text-green-400':texto == 'habilitar','text-yellow-400' :texto === 'deshabilitar','text-red-600' :texto === 'eliminar',  }">{{texto}}</label> este tag estas seguro?</p>
+          <p class="">Estas a punto de <label :class="{'text-green-400':texto == 'habilitar','text-yellow-400' :texto === 'deshabilitar','text-red-600' :texto === 'eliminar',  }">{{texto}}</label> el tag "{{infotag.tag}}" estas seguro?</p>
         </div>
         <div class="w-full flex justify-center space-x-28 mt-6 mb-6">
           <button class="botonIconOk animacion" @click="accion(texto)">Aceptar</button>
@@ -88,7 +94,6 @@ export default {
     function opcionestag(cruce){
       options.value = []
       let opciones = [{text:'Activo', value:'0'},{text:'Inactivo',value:'1'},{text:'Eliminar',value:'2'}]
-      console.log(cruce.active);
       if(cruce.active){
         options.value.push(opciones[1])
         options.value.push(opciones[2])
@@ -120,60 +125,105 @@ export default {
       }
       function accion(texto){
         console.log(texto)
-        console.log(infotag.value.tag);
         actualizar.value = false; 
-         const taghabilitar = {
+        const tag = {
             "tag" : infotag.value.tag,
             "insertionDate": infotag.value.insertionDate,
-            "active": true
-          }
-          const tagdeshabilitar = {
-            "tag" : infotag.value.tag,
-            "insertionDate": infotag.value.insertionDate,
-            "active": false
-          }
-          const ruta = encodeURI(`${API}/Ferromex/editartag`)
-        if(texto == "habilitar"){
-          axios.put(ruta,taghabilitar)
+            "active": infotag.value.active = !infotag.value.active
+        }
+        console.log(tag);
+        const ruta = encodeURI(`${API}/Ferromex/editartag`)
+        if(texto == "habilitar" || texto == "deshabilitar"){
+          axios.put(ruta,tag)
           .then((res)=>{ console.log(res) 
           actualizar.value = true;
           emit("actualizartabla",actualizar.value)
           notify({
-            title:'TAG HABILITADO',
-            text:'El tag se activo de manera correcta' ,
+            title:'Tag Modificado',
+            text:'El estatus del tag cambio correctamente' ,
             type: 'success'
           });
           })
-          .catch((err) =>{console.log(err)})
-        }else if( texto == "deshabilitar"){
-          axios.put(ruta,tagdeshabilitar)
-          .then((res)=>{ console.log(res)
-          actualizar.value = true; 
-          emit("actualizartabla",actualizar.value)
-          notify({
-            title:'TAG DESHABILITADO',
-            text:'El tag se deshabilito correctamente' ,
-            type: 'warn'
-          });
+          .catch((err) =>{
+            console.log(err.request.responseText)
+            notify({
+            title:'Upps ocurrio un error ' + err.request.status,
+            text: err.request.responseText,
+            type: 'error'
+            });
+            emit("actualizartabla",true)
           })
-          .catch((err) =>{ console.log(err) })
         }else if(texto == "eliminar"){
           axios.delete(`${API}/Ferromex/eliminartag/${infotag.value.tag}`)
           .then((res)=>{ console.log(res)
           actualizar.value = true; 
           emit("actualizartabla",actualizar.value)
           notify({
-            title:'TAG ELIMINADO',
+            title:'Tag Eliminado',
             text:'El tag se elimino de forma correcta' ,
             type: 'error'
           });
           })
-          .catch((err) =>{ console.log(err) })
+          .catch((err) =>{ 
+            console.log(err.request.responseText)
+            notify({
+            title:'Upps ocurrio un error ' + err.request.status,
+            text: err.request.responseText,
+            type: 'error'
+            });
+            emit("actualizartabla",true)
+            })
         }
         showModalAdvertencia.value = !showModalAdvertencia.value
         select.value = ""
       }
-      return{infotag,accion,showModalAdvertencia,texto,accionesTags,accionestags,options,select,selectestatus,cerralmodalpadre,opcionestag}
+      function opticones_select_acciones(item){//Lista de opciones que se muestran en el menú de acciones
+      let options = [
+          {  value: '0', name: 'Activo'},//0
+          {  value: '1', name: 'Inactivo'},//1
+          {  value: '2', name: 'Eliminar'},//2
+      ]
+      let filtroOpciones = []
+          if(item.active == true)
+            filtroOpciones.push(options[1])
+            filtroOpciones.push(options[2])
+          if(item.active ==  false){
+            filtroOpciones.push(options[0])
+            filtroOpciones.push(options[2])
+          }
+      return filtroOpciones  //Regresamos la lista de acciones filtrada
+    }
+     function acciones_mapper(item){//Asignación de funciones de la lista de opciones que hay en el menú de acciones
+     console.log(select.value);
+     console.log(item);
+     showModalAdvertencia.value = !showModalAdvertencia.value
+      if(select.value == '0'){
+        texto.value = "habilitar"
+        infotag.value = item
+      }if(select.value == '1'){
+        texto.value = "deshabilitar"
+        infotag.value = item
+      }if(select.value == '2'){
+       texto.value = "eliminar"
+       infotag.value = item
+      }
+      select.value = ""
+    }
+      return{
+      infotag,
+      acciones_mapper,
+      opticones_select_acciones,
+      accion,
+      showModalAdvertencia,
+      texto,
+      accionesTags,
+      accionestags,
+      options,
+      select,
+      selectestatus,
+      cerralmodalpadre,
+      opcionestag,
+      }
     
   },
 };

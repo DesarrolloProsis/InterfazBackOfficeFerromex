@@ -108,7 +108,7 @@ export default {
     const totalPaginas = ref(0)
     const currentPage = ref(1)
     const hasMorePages = ref(true)
-    const modalLoading = ref(false)
+    const modalLoading = ref(true)
     const numRespuesta = ref(9)
     const showModal = ref(false)
     const numerotagagregar = ref('')
@@ -127,6 +127,7 @@ export default {
     })
     //Funcion para la primera carga del modal
     async function cargatags(){
+      modalLoading.value = true
       cruces.value = []
       let tagruta = " "
         let estatusruta = " "
@@ -249,6 +250,7 @@ export default {
     }
   //Función que limpia los input de busqueda y regresa las transacciones de la plaza sin filtros
     function limpiar(){
+      modalLoading.value = true
       if(header.tag == " " && header.estatus == undefined && header.fecha == " "){
          notify({
             title:'Sin Información',
@@ -432,7 +434,6 @@ export default {
         const ruta = encodeURI(`${API}/ferromex/Download/pdf/mantenimientotags/${tag}/${estatusurl}/${fechaurl}`)
         console.log(ruta)
         ServiceFiles.xml_hhtp_request(ruta, 'reportemantenimientotags.pdf')
-        
       }
     }
 
