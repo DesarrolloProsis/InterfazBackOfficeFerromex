@@ -15,14 +15,14 @@
           <label class="rounded-full px-20 bg-gray-200 ring-2 ring-gray-500 p-2 text-black 2xl:px-28">Acciones</label>
           </th>
       </tr>
-      <tr v-for="(cruces, index) in dataCruces" :key="index"  :class="{'text-gray-100':cruces.active == 'false'}" class="text-black">
-        <td>{{cruces.tag}}</td>
+      <tr v-for="(cruces, index) in dataCruces" :key="index"  class="text-black">
+        <td :class="{'text-gray-400':!cruces.active}">{{cruces.tag}}</td>
         <td v-if = "cruces.active == true">Activo</td>
-        <td v-else>Desactivado</td>
-        <td>{{moment.utc(cruces.insertionDate).local().format("YYYY-MM-DD HH:mm:ss a")}}</td>
+        <td v-else :class="{'text-gray-400':!cruces.active}">Desactivado</td>
+        <td :class="{'text-gray-400':!cruces.active}" >{{moment.utc(cruces.insertionDate).local().format("YYYY-MM-DD HH:mm:ss a")}}</td>
         <td>
           <Multiselect v-model="select" 
-          placeholder="Seleccione una Acción"
+           placeholder="Seleccione una Acción"
            @close="acciones_mapper(cruces)" 
            :options="opticones_select_acciones(cruces)"
            >
@@ -74,140 +74,96 @@ export default {
   },
   setup(props ,{ emit }){
     //Declaracion de variable
-      const showModalAdvertencia = ref(false)
-      const texto = ref('')
-      const accionestags = ref('')
-      const options = ref([])
-      const select = ref('')
-      const selectestatus = ref(undefined)
-      const infotag = ref({})
-      const actualizar = ref(false)
-    
-    const cerralmodalpadre = (modal) => {
-      console.log(modal)
-      showModalAdvertencia.value = modal
-      texto.value = ""
-      console.log(showModalAdvertencia.value)
-      emit("actualizartabla",true)
-    }
-    //Funcion para las opciones del tag
-    function opcionestag(cruce){
-      options.value = []
-      let opciones = [{text:'Activo', value:'0'},{text:'Inactivo',value:'1'},{text:'Eliminar',value:'2'}]
-      if(cruce.active){
-        options.value.push(opciones[1])
-        options.value.push(opciones[2])
-      }else if(cruce.active == false){
-        options.value.push(opciones[0])
-        options.value.push(opciones[2])
-      }
-      return options.value
-    }
-    //Funcion para identificar la accion del usuario en el tag
-    function accionesTags(cruces) {
-        infotag.value = cruces
-        console.log(select.value)
-        showModalAdvertencia.value = !showModalAdvertencia.value
-        console.log(infotag.value);
-        if(select.value == '0'){
-          texto.value = "habilitar"
-          select.value = ""
-        }
-        else if(select.value == '1'){
-          texto.value = "deshabilitar"
-          select.value = ""
-        }
-        else if(select.value == '2'){
-          texto.value = "eliminar"
-          select.value = ""
-        }
-         
-      }
-      function accion(texto){
-        console.log(texto)
-        actualizar.value = false; 
-        const tag = {
+      const showModalAdvertencia = ref(false)//Variable que manipula el modal de advertencia
+      const texto = ref('') //Variable que contiene el texto del modal
+      const select = ref('') // Variable que contiene el valor del multiselect
+      const infotag = ref({}) // Variable para asignar todo el valor del tag
+    //Funcion que emitimos al modal para que se cierre
+    const cerralmodalpadre = (modal) => { //Se abre la funcion con un parametro que recibimos desde el modal
+      showModalAdvertencia.value = modal //Recibimos el valor de la varible y la asignamos al padre para que cerrar el modal
+      texto.value = "" //Limpiamos el texto que mostramos en el modal
+      emit("actualizartabla",true) //Emitimos un evento para actualizar la tabla con el endpoint de la primera carga
+    }//Cerramos funcion
+    //Funcion que determina la accion del modal de advertencia
+      function accion(texto){ //Se abre la funcion con el parametro del texto esta la utilizamos para decidir que accion realizar
+        const tag = { //Declaracion del objeto a enviar
             "tag" : infotag.value.tag,
             "insertionDate": infotag.value.insertionDate,
             "active": infotag.value.active = !infotag.value.active
         }
-        console.log(tag);
-        const ruta = encodeURI(`${API}/Ferromex/editartag`)
-        if(texto == "habilitar" || texto == "deshabilitar"){
-          axios.put(ruta,tag)
-          .then((res)=>{ console.log(res) 
-          actualizar.value = true;
-          emit("actualizartabla",actualizar.value)
-          notify({
+        const ruta = encodeURI(`${API}/Ferromex/editartag`) //Deeclaramos la ruta edl enpoint y la codificamos con encodeURI
+        if(texto == "habilitar" || texto == "deshabilitar"){ //si es texto es habilitar o deshabilitar debemos modificar el estatus del tag
+          axios.put(ruta,tag) //Llamamos Axios enviandole la ruta y el obejto del tag 
+          .then(()=>{        //En caso de que sea exitosa entra aqui 
+          emit("actualizartabla",true) //Actualizamos los resultados de la tabla
+          notify({                //Enviamos una notificacion de que el estatus se modifico de manera correcta 
             title:'Tag Modificado',
             text:'El estatus del tag cambio correctamente' ,
-            type: 'success'
+            type: 'success'//Declaramos el tipo de notificacion que buscamos
           });
           })
-          .catch((err) =>{
-            console.log(err.request.responseText)
-            notify({
-            title:'Upps ocurrio un error ' + err.request.status,
-            text: err.request.responseText,
-            type: 'error'
+          .catch((err) =>{// si hay error entra aqui
+            notify({ //Enviamos una notificacion
+            title:'Upps ocurrio un error ' + err.request.status, //mostramos el numero del error en el titulo
+            text: err.request.responseText, //Mostramos el error ocurrido
+            type: 'error' //Declaramos el tipo de notificacion que buscamos
             });
-            emit("actualizartabla",true)
+            emit("actualizartabla",true) //Actualizamos los resultados de la tabla
           })
         }else if(texto == "eliminar"){
-          axios.delete(`${API}/Ferromex/eliminartag/${infotag.value.tag}`)
-          .then((res)=>{ console.log(res)
-          actualizar.value = true; 
-          emit("actualizartabla",actualizar.value)
-          notify({
+          axios.delete(`${API}/Ferromex/eliminartag/${infotag.value.tag}`)//Mandamos a llamar el end point para eliminar un tag
+          .then(()=>{ 
+          emit("actualizartabla",true) //Actualizamos la tabla 
+          notify({ //Notiificamos que el tag fue elimiado
             title:'Tag Eliminado',
             text:'El tag se elimino de forma correcta' ,
             type: 'error'
           });
           })
           .catch((err) =>{ 
-            console.log(err.request.responseText)
-            notify({
-            title:'Upps ocurrio un error ' + err.request.status,
-            text: err.request.responseText,
-            type: 'error'
+            notify({//Enviamos una notificacion
+            title:'Upps ocurrio un error ' + err.request.status, //mostramos el numero del error en el titulo
+            text: err.request.responseText, //Mostramos el error ocurrido
+            type: 'error' //Declaramos el tipo de notificacion que buscamos
             });
-            emit("actualizartabla",true)
+            emit("actualizartabla",true)//Actualizamos los resultados de la tabla
             })
         }
-        showModalAdvertencia.value = !showModalAdvertencia.value
+        showModalAdvertencia.value = !showModalAdvertencia.value //Cerramos el modal 
         select.value = ""
       }
       function opticones_select_acciones(item){//Lista de opciones que se muestran en el menú de acciones
-      let options = [
+      let filtroOpciones = [] //Declaramos el arreglo de que contendran las opciones
+      let options = [ //Declaramos el arreglo que contiene las acciones posibles 
           {  value: '0', name: 'Activo'},//0
           {  value: '1', name: 'Inactivo'},//1
           {  value: '2', name: 'Eliminar'},//2
       ]
-      let filtroOpciones = []
-          if(item.active == true)
-            filtroOpciones.push(options[1])
-            filtroOpciones.push(options[2])
-          if(item.active ==  false){
-            filtroOpciones.push(options[0])
-            filtroOpciones.push(options[2])
+          if(item.active == true){ //Si el estatus del tag es activo entonces 
+            filtroOpciones = []
+            filtroOpciones.push(options[1])//Agregamos la opcion de deshabilitar
+            filtroOpciones.push(options[2])//Agregamos la opcion de Eliminar
+          }
+          if(item.active ==  false){//Si el estatus del tag es inactivo
+            filtroOpciones = []
+            filtroOpciones.push(options[0])//Agregamos la opcion de habilitar
+            filtroOpciones.push(options[2])//Agregamos la opcion de eliminar
           }
       return filtroOpciones  //Regresamos la lista de acciones filtrada
     }
      function acciones_mapper(item){//Asignación de funciones de la lista de opciones que hay en el menú de acciones
-     console.log(select.value);
-     console.log(item);
-     showModalAdvertencia.value = !showModalAdvertencia.value
-      if(select.value == '0'){
-        texto.value = "habilitar"
-        infotag.value = item
+     showModalAdvertencia.value = !showModalAdvertencia.value //Abrimos nuestro modal de advertencia
+      if(select.value == '0'){ //Apartir del value del multiselect asignamos un valor al texto 
+        texto.value = "habilitar"//Si es 0 el texto sera habilitar
+        infotag.value = item //Asignamos la informacion del tag a nuestra varible reactiva de vue
       }if(select.value == '1'){
-        texto.value = "deshabilitar"
-        infotag.value = item
+        texto.value = "deshabilitar"//Si es 1 el texto sera deshabilitar
+        infotag.value = item//Asignamos la informacion del tag a nuestra varible reactiva de vue
       }if(select.value == '2'){
-       texto.value = "eliminar"
-       infotag.value = item
+       texto.value = "eliminar"//Si es 1 el texto sera eliminar
+       infotag.value = item//Asignamos la informacion del tag a nuestra varible reactiva de vue
       }
-      select.value = ""
+      select.value = ""//Limpiamos el multiselect
     }
       return{
       infotag,
@@ -216,13 +172,8 @@ export default {
       accion,
       showModalAdvertencia,
       texto,
-      accionesTags,
-      accionestags,
-      options,
       select,
-      selectestatus,
-      cerralmodalpadre,
-      opcionestag,
+      cerralmodalpadre
       }
     
   },
