@@ -30,7 +30,7 @@ export default{
     }
     function obtenerInfo() {//Función que obtine los datos del usuario
       let info = Servicio.obtenerInfoUser()//Literal que almacena la información del token
-      nombre.value = info.name  //asignamos el nombre del usuario en la constante para mostarlo
+      nombre.value = info.nombreCompleto  //asignamos el nombre del usuario en la constante para mostarlo
     }
     onMounted(obtenerInfo) //Montamos la función obtenerInfo para poder tener la respuesta cuando se monta el componente
 

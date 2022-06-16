@@ -21,8 +21,8 @@
       <div class="flex-none my-auto text-white font-md p-2">
         Cuerpo:
         <select v-model="cuerpo" class="text-gray-800 w-16 rounded">
-          <option value="uno">Cuerpo A</option>
-          <option value="dos">Cuerpo B</option>
+          <option value="A">Cuerpo A</option>
+          <option value="B">Cuerpo B</option>
         </select>
       </div>
       <div class="flex-none my-auto text-white font-md p-2 ml-39 md:ml-10">
@@ -122,7 +122,8 @@ export default {
       let tagRuta = ' '
       let carrilRuta = ' '
       let cuerpoRuta = ' '
-      const ruta = (encodeURI(`${API}/ferromex/registroInformacion/${paginaActual.value}/${numRespuesta.value}/${fechaRuta}/${tagRuta}/${carrilRuta}/${cuerpoRuta}`))//Constante almacena la ruta encriptada para hacer la petición al API
+      const ruta = (encodeURI(`${API}/ferromex/registroInformacion/1/${numRespuesta.value}/${fechaRuta}/${tagRuta}/${carrilRuta}/${cuerpoRuta}`))//Constante almacena la ruta encriptada para hacer la petición al API
+      console.log(ruta);
       axios.get(ruta)//Hacemos la petición https al API con la ruta encriptada anteriormente
       .then((result) => {//Si el endpoint tiene una respuesta correcta
         cruces.value = result.data.cruces//Asignamos el valor de los resultados del endpoint para mostrarlos en la tabla
@@ -157,6 +158,7 @@ export default {
         const ruta = (encodeURI(`${API}/ferromex/registroInformacion/${paginaActual.value}/${numRespuesta.value}/${fecha}/${tag}/${carril}/${cuerpo}`))//Constante que almacena la ruta encriptada para hacer la petición al API
         axios.get(ruta)//Realizamos la petición http al API
         .then((result) => {//Si el endpoint tiene una respuesta correcta
+        console.log(result);
           cruces.value = result.data.cruces//Asignamos los valores del resultado a la constrante que se va a mostrar en la tabla
           totalPaginas.value = result.data.paginas_totales//Asignamos el valor de las páginas totales para saber el limite de páginas en el componente de paginación
           paginaActual.value = result.data.pagina_actual//Asignamos el valor de la página actual para enviarlo al componente de paginación
