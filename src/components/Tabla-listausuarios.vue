@@ -3,10 +3,13 @@
     <table class="tftable">
       <tr class="h-10">
         <th>
-          <label class="rounded-full px-20 bg-gray-200 ring-2 ring-gray-500 p-2 text-black 2xl:px-28">Nombre de Usuario</label>
+          <label class="rounded-full px-20 bg-gray-200 ring-2 ring-gray-500 p-2 text-black 2xl:px-28">Usuario</label>
         </th>
         <th>
-          <label class="rounded-full px-20 bg-gray-200 ring-2 ring-gray-500 p-2 text-black 2xl:px-28">Nombre</label>
+          <label class="rounded-full px-20 bg-gray-200 ring-2 ring-gray-500 p-2 text-black 2xl:px-28">Nombre Completo</label>
+        </th>
+        <th>
+          <label class="rounded-full px-20 bg-gray-200 ring-2 ring-gray-500 p-2 text-black 2xl:px-28">Rol</label>
         </th>
         <th>
           <label class="rounded-full px-20 bg-gray-200 ring-2 ring-gray-500 p-2 text-black 2xl:px-28">Estatus</label>
@@ -18,6 +21,7 @@
       <tr v-for="(usuario, index) in dataUsuarios" :key="index">
         <td :class="{'text-gray-400': !usuario.estatus}">{{ usuario.nombreUsuario }}</td>
         <td :class="{'text-gray-400': !usuario.estatus}">{{ usuario.nombreCompleto }}</td>
+        <td :class="{'text-gray-400': !usuario.estatus}">{{ usuario.rol }}</td>
         <td :class="{'text-gray-400': !usuario.estatus}">
           <span v-if="usuario.estatus == true">Activo</span>
           <span v-else>Inactivo</span>
@@ -85,11 +89,12 @@
     <div>
       <p class="text-gray-900 font-bold text-xl -mt-8 mb-8 text-center">Estas seguro de cambiar la contraseña del usuario {{ seleccionado.nombre + ' ' + seleccionado.apellidos }}</p>
       <div class="mt-10 mb-4 grid grid-cols-2">
-        <button @click="confirmar(seleccionado)" class="rounded-lg w-32 botonIconOk">Aceptar</button>
+        <button @click="confirmar(seleccionado)" class="rounded-lg w-32 botonIconOk">Confirmar</button>
         <button @click="modalConfirmacion = false" class="rounded-lg w-32 botonIconCancelar">Cancelar</button>
       </div>
     </div>
   </Modal>
+  <!-- FIN MODAL-->
   <!-- MODAL EDITAR USUARIO -->
   <Modal :show="modalEditar" @cerrarmodal="modalEditar = false">
     <div>
@@ -104,7 +109,7 @@
           <p>Todos los campos son obligatorios</p>
       </span>
       <div class="mt-10 text-center mx-auto mb-4">
-        <button class="rounded-lg w-18 bg-ferromex text-white p-10" @click="editarUsuario(usuario)">Editar Usuario</button>
+        <button class="rounded-lg w-18 bg-ferromex text-white p-10" @click="editarUsuario(usuario)">Guardar</button>
       </div>
     </div>
   </Modal>
@@ -131,7 +136,7 @@
         </span>
       </div>
       <div class="mt-10 text-center mx-auto mb-4">
-        <button @click="cambiarRol(usuario)" class="rounded-lg w-18 bg-ferromex text-white p-10">Cambiar Rol</button>
+        <button @click="cambiarRol(usuario)" class="rounded-lg w-18 bg-ferromex text-white p-10">Guardar</button>
       </div>
     </div>
   </Modal>
@@ -194,7 +199,6 @@ export default {
         "usuarioId": usuario.usuarioId, //id del usuario, viene desde el option mapper
         "password": pass.value //nueva password que se ingresó en el formulario
       }
-      console.log(data);
       if(data.password.length >= 6){
         let mayusculas = 'ABCDEFGHYJKLMNÑOPQRSTUVWXYZ'//Literal que almacena todas las letras en mayusculas
         let contador = []
