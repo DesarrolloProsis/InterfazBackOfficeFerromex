@@ -98,150 +98,141 @@ export default {
     Modal
   },
   setup() {
-    const cruces = ref([])
-    const token = ref("")
-    const formato = ref('')
-    const tramo = ref('')
-    const plaza = ref('')
-    const page = ref(1)
-    const hoy = ref('')
-    const totalPaginas = ref(0)
-    const currentPage = ref(1)
-    const hasMorePages = ref(true)
-    const modalLoading = ref(true)
-    const numRespuesta = ref(9)
-    const showModal = ref(false)
-    const numerotagagregar = ref('')
-    const options = ref(['Activo','Inactivo'])
-    const actualizar = ref(false)
-    const validarTag = ref(false)
-    const validarTagTexto = ref(false)
-    const header = reactive({
+    const cruces = ref([]) //Variable para llenar la tabla de tags
+    const page = ref(1) //Variable que maneja la paginacion para que se le indique desde donde iniciar
+    const hoy = ref('') //Variable que se utiliza para dar a los inputs date el maximo dia a seleccionar que es el dia de hoy 
+    const totalPaginas = ref(0) //Variable en donde almacenaremos el total de paginas para la paginacion 
+    const currentPage = ref(1) //Variable que indica la pagina actual 
+    const hasMorePages = ref(true) //Varible que ocupa la paginacion para indicarle qu epuede avanzar entre pagina
+    const modalLoading = ref(false) //Variable que muestra el sppiner de carga
+    const numRespuesta = ref(9) //Variable de numero de resultados que espera la paginacion
+    const showModal = ref(false) //Varible del modal de agregar tag
+    const numerotagagregar = ref('') //Variable del input tag a agregar
+    const options = ref(['Activo','Inactivo']) //Declaracion de las opciones del select de options 
+    const actualizar = ref(false) //variable apra actualizar la tabla
+    const validarTag = ref(false) //Variable que maneja la validacion del input del tag
+    const validarTagTexto = ref(false) //Varible que maneja el texto a mostrar de la validacion del tag
+    const header = reactive({ // Variable que controla el header de la tabla para la busqueda de tags
       tag: "",
       estatus: undefined,
       fecha: ""
     })
+    //DEclaracion del metodo onMounted que se ocuapa para montar los resultados de los tags
     onMounted(()=>{
-        hoy.value = new Date().toISOString().split("T")[0];
-        cargatags()
+        hoy.value = new Date().toISOString().split("T")[0]; //Asignamos el valor de la fecha del dia de hoy
+        cargatags() //Cargamos todos los tags actuales hasta la fecha
     })
-    //Funcion para la primera carga del modal
-    async function cargatags(){
-      modalLoading.value = true
-      cruces.value = []
-      let tagruta = " "
-        let estatusruta = " "
-        let fecharuta = " "
-        const ruta = encodeURI(`${API}/Ferromex/mantenimientotags/${page.value}/${numRespuesta.value}/${tagruta}/${estatusruta}/${fecharuta}`)
-        console.log(ruta);
-        axios.get(ruta)
+    //Funcion para la primera carga de todos los modales 
+    async function cargatags(){ //Abrimos la funcion
+      modalLoading.value = true //Abrimos el Spinner
+      cruces.value = [] //Declaramos en vacio el arreglo que tendra todos los tags
+      let tagruta = " "//Declaramos la variable con un espacio vacio para que el urlencode lo detecte y genere un %20
+        let estatusruta = " "//Declaramos la variable con un espacio vacio para que el urlencode lo detecte y genere un %20
+        let fecharuta = " "//Declaramos la variable con un espacio vacio para que el urlencode lo detecte y genere un %20
+        const ruta = encodeURI(`${API}/Ferromex/mantenimientotags/${page.value}/${numRespuesta.value}/${tagruta}/${estatusruta}/${fecharuta}`)//Declaramos la ruta a consummir
+        axios.get(ruta)//Mandamos a llamar la ruta a consumir
         .then((result)=>{
-        console.log(result)
-        if(result.status == 200){
-          modalLoading.value = false
-          totalPaginas.value = result.data.paginas_totales
-          console.log(totalPaginas.value)
-          currentPage.value = result.data.pagina_actual
-          console.log(totalPaginas.value)
-          result.data.tags.forEach((e)=>{
+        if(result.status == 200){ //En caso de que la respuesta sea correcta
+          modalLoading.value = false//Quitamos el spinner
+          totalPaginas.value = result.data.paginas_totales //Asignamos el numero total de paginas
+          currentPage.value = result.data.pagina_actual //Asignamos la pagina actual
+          result.data.tags.forEach((e)=>{ //Creamos el objeto del tag
             let obj = {
               tag: e.tag,
               insertionDate : e.insertionDate,
               active: e.active
             }
-            cruces.value.push(obj)
+            cruces.value.push(obj)//Agregamos el tag a nuestro arreglo de los tags para que se pueda consumir la informacion
           })
        }else{
-          modalLoading.value = false
-          notify({
+          modalLoading.value = false //Quitamos el spinner
+          notify({ //Arrojamos una notificacion de que no hay registros en caso de ser falso
             title:'Sin Información',
             text:'No hay registro de tags actualmente' ,
             type: 'warn'
           });
         }
         }).catch((error) =>
-        {console.log(error)}
-        )
+        {
+          notify({//Enviamos una notificacion
+          title:'Upps ocurrio un error ' + error.request.status, //mostramos el numero del error en el titulo
+          text: error.request.responseText, //Mostramos el error ocurrido
+          type: 'error' //Declaramos el tipo de notificacion que buscamos
+          });
+        })
     }
     //Funcion para limipiar la validacion del input del tag
     function limpiarvalidacion() {
-      validarTag.value = false
-      validarTagTexto.value = ''
+      validarTag.value = false //Volvemos falsa la bandera que lleva el control del tag
+      validarTagTexto.value = '' //Limpiamos el texto a mostrar de la validacion 
     }
     //Emit para saber si se cierra el modal
     const cerralmodalpadre = (modal) => {
-      console.log(modal)
-      showModal.value = modal
-      numerotagagregar.value = ''
-      console.log(showModal.value)
+      showModal.value = modal //Cerramos el modal de agrgar tag
+      numerotagagregar.value = '' //Limpiamos el input de agregar tag
     }
-    //Función que busca las transacciones en la plaza, con o sin filtros
+    //Función que busca los tags
     function search(tag, estatus, fecha){
-      modalLoading.value = true
-      cruces.value = []
-      console.log(estatus)
-      if(tag == ""){
+      modalLoading.value = true //Abrimos el spinner
+      cruces.value = [] // Declaramos el arreglo en vacio
+      if(tag == ""){ //Validamos si el campo llega vacio le damos un espacio en blanco 
         tag = " "
       }
-      if(estatus == undefined){
+      if(estatus == undefined){ //Validamos si el campo llega vacio le damos un espacio en blanco
         estatus = " "
       }
-      if(fecha == ""){
+      if(fecha == ""){ //Validamos si el campo llega vacio le damos un espacio en blanco
         fecha = " "
       }
-      console.log(tag,estatus,fecha)
-      if(tag == ' ' && estatus == ' ' && fecha == ' '){
-        modalLoading.value = false
-        cargatags()
-        notify({
+      if(tag == ' ' && estatus == ' ' && fecha == ' '){ //En caso de que todos los campos lleguen vacios
+        modalLoading.value = false // Cerramoes el spinner
+        cargatags() //Cargamos todos los tags
+        notify({ //Enviamos una notificacion en la que especificamos que no podemos hacer una busqueda sin parametros
           title:'Sin Información',
           text:'Se debe llenar por lo menos un filtro para realizar una busqueda',
           type: 'warn'
         });
-      }else{
-        let estatusurl = ""
-        let fechaurl = fecha
-        if(fecha != " "){
-          fechaurl = new Date(fecha).toISOString()
+      }else{ //En caso de que eso sea falso 
+        let estatusurl = "" //Declaramos varibles que iran en la url final
+        let fechaurl = fecha //Declaramos varibles que iran en la url final
+        if(fecha != " "){ //si la fecha es diferente a un espacio en blanco 
+          fechaurl = new Date(fecha).toISOString() //Le damos formato para que lo reciba el back
         }
-        if(estatus == "Activo"){
-          estatusurl = "true"
-        }else if(estatus == "Inactivo"){
-          estatusurl = "false"
-        }else if(estatus == " "){
-          estatusurl = " "
+        if(estatus == "Activo"){ // Si el estatus viene como activo
+          estatusurl = "true" //En la varible de la url la enviamos como true
+        }else if(estatus == "Inactivo"){ // Si el estatus viene como inactivo
+          estatusurl = "false" //En la varible de la url la enviamos como false
+        }else if(estatus == " "){ // Si el estatus viene como vacio
+          estatusurl = " " //En la varible de la url la enviamos como espacio en blanco
         }
-        const ruta = encodeURI(`${API}/ferromex/mantenimientotags/${page.value}/${numRespuesta.value}/${tag}/${estatusurl}/${fechaurl}`)
-        console.log(ruta)
-        modalLoading.value = false
-        axios.get(ruta)
+        const ruta = encodeURI(`${API}/ferromex/mantenimientotags/${page.value}/${numRespuesta.value}/${tag}/${estatusurl}/${fechaurl}`) //Ciframos la url para mandarla en el axios
+        modalLoading.value = false //Cerramos el spiiner
+        axios.get(ruta) //Mandamos a llamar el axios
         .then((result)=>{
-          console.log(result);
-            console.log(result.data);
-            if(result.status == 200){
-              modalLoading.value = false
-              totalPaginas.value = result.data.paginas_totales
-              currentPage.value = result.data.pagina_actual
-              result.data.tags.forEach((e)=>{
+            if(result.status == 200){ //Si recibimos un estatus 200 
+              modalLoading.value = false //Quitamos spiiner
+              totalPaginas.value = result.data.paginas_totales  //asignamos valor al numero total de paginas
+              currentPage.value = result.data.pagina_actual //Asignamos valor a la pagina actual
+              result.data.tags.forEach((e)=>{ //Creamos el objeto tag
                 let obj = {
                   tag: e.tag,
                   insertionDate : e.insertionDate,
                   active: e.active
                 }
-                cruces.value.push(obj)
+                cruces.value.push(obj)//Metemos el objeto tag a la lista 
               })
-            if(cruces.value.length == 0){
-              notify({
+            if(cruces.value.length == 0){//Si el tamaño del arreglo que no contiene los tags es igual a cero
+              notify({ //Notificamos que no existen casos ni coincidencias
               title:'Sin Información',
               text:'No existen registros con los criterios de tu busqueda' ,
               type: 'warn'
             });
             }
-            }else{
-              modalLoading.value = false
-              notify({
+            }else{ //Si esto es falso
+              modalLoading.value = false //Cerramos Spinner
+              notify({ //NOtificamos que no encontramos Tags
                 title:'Sin Información',
-                text:'No se encontraron transacciones',
+                text:'No se encontraron tags',
                 type: 'warn'
               });
             }
@@ -250,146 +241,147 @@ export default {
     }
   //Función que limpia los input de busqueda y regresa las transacciones de la plaza sin filtros
     function limpiar(){
-      modalLoading.value = true
-      if(header.tag == " " && header.estatus == undefined && header.fecha == " "){
-         notify({
+      modalLoading.value = true// Abrimos spinner
+      if(header.tag == " " && header.estatus == undefined && header.fecha == " "){//si los datos vienen como inician
+         notify({ //Notificamos que no se puede buscar si los parametros estan vacios
             title:'Sin Información',
-            text:'No puedes limpiar los parametro estan vacios' ,
+            text:'No puedes limpiar los parametros si estan vacios' ,
             type: 'warn'
          });
       }else{
-        cruces.value = []
-        header.tag = ""
-        header.estatus = undefined
-        header.fecha = ""
-        let tagruta = " "
-        let estatusruta = " "
-        let fecharuta = " "
-        const ruta = encodeURI(`${API}/Ferromex/mantenimientotags/${page.value}/${numRespuesta.value}/${tagruta}/${estatusruta}/${fecharuta}`)
-        axios.get(ruta)
+        cruces.value = [] //Limpiamos el arreglo que contendra los datos
+        header.tag = "" //Inicializamos la variable a su valor original
+        header.estatus = undefined //Inicializamos la variable a su valor original
+        header.fecha = "" //Inicializamos la variable a su valor original
+        let tagruta = " " //Usamos una varible para que podamos poner el espacio en blanco
+        let estatusruta = " " //Usamos una varible para que podamos poner el espacio en blanco
+        let fecharuta = " " //Usamos una varible para que podamos poner el espacio en blanco
+        const ruta = encodeURI(`${API}/Ferromex/mantenimientotags/${page.value}/${numRespuesta.value}/${tagruta}/${estatusruta}/${fecharuta}`) //Codificamos la ruta que llevara el axios
+        axios.get(ruta) //Disparamos la ruta
         .then((result)=>{
-          console.log(result)
-        if(result.status == 200){
-          modalLoading.value = false
-          totalPaginas.value = result.data.paginas_totales
-          console.log(totalPaginas.value)
-          currentPage.value = result.data.pagina_actual
-          console.log(totalPaginas.value)
-          result.data.tags.forEach((e)=>{
+        if(result.status == 200){ //Si recibimos un estatus 200 
+          modalLoading.value = false //Quitamos spiiner
+          totalPaginas.value = result.data.paginas_totales //Asignamos el numero total de paginas
+          currentPage.value = result.data.pagina_actual //Asignamos la pagina actual
+          result.data.tags.forEach((e)=>{ //Creamos el objeto tag
             let obj = {
               tag: e.tag,
               insertionDate : e.insertionDate,
               active: e.active
             }
-            cruces.value.push(obj)
+            cruces.value.push(obj)//Metemos el objeto tag a la lista 
           })
        }else{
-          modalLoading.value = false
-          notify({
+          modalLoading.value = false //Cerramos Spinner
+          notify({ //Notificamos que no encontramos Tags
             title:'Sin Información',
             text:'No hay registro de tags actualmente' ,
             type: 'warn'
           });
         }
-        }).catch((error)=>{console.log(error)})
-        console.log(ruta);
+        }).catch((error)=>{
+          notify({//Enviamos una notificacion
+          title:'Upps ocurrio un error ' + error.request.status, //mostramos el numero del error en el titulo
+          text: error.request.responseText, //Mostramos el error ocurrido
+          type: 'error' //Declaramos el tipo de notificacion que buscamos
+          });
+        })
       }
     }
+    //Funcion para agregar tag 
     function agregarTag(tag){
-        console.log(tag)
-        if(tag == ""){
-          validarTag.value = true
-          validarTagTexto.value = 'El campo del tag no puede ir vacio'
-        }else{
-          const tiempoTranscurrido = Date.now();
-          const hoy = new Date(tiempoTranscurrido).toISOString();
-          console.log(hoy)
-          const tagcompleto = {
-            "tag": tag.toUpperCase(),
-            "insertionDate": hoy,
-            "active": true
+        if(tag == ""){ //Comprobamos si el tag viene vacio
+          validarTag.value = true //Si es asi declaramos en true nuestra bandera para mostrar el span 
+          validarTagTexto.value = 'El campo del tag no puede ir vacio' //Incluimos el texto del span o por que se esta dando el error
+        }else{ // Si es falso procederemos a dar de alta el tag
+          const tiempoTranscurrido = Date.now(); //Conseguimos la fecha y hora del dia de hoy
+          const hoy = new Date(tiempoTranscurrido).toISOString(); //Damos formato iso 86001
+          const tagcompleto = { // Creamos objeto para enviar el tag completo 
+            "tag": tag.toUpperCase(), //volvemos a mayusculas todo el contenido de este texto
+            "insertionDate": hoy, //Asignamos la fecha y hora ya con su formato
+            "active": true //Mandamos por default el valor de activo
           }
-          const ruta = encodeURI(`${API}/Ferromex/agregartag`)
-          axios.post(ruta,tagcompleto)
-          .then((res) =>{
-            console.log(res)
-            notify({
+          const ruta = encodeURI(`${API}/Ferromex/agregartag`) // codificamos la ruta para que tenga el formato URL
+          axios.post(ruta,tagcompleto) //Mandamos a llamar el endpoint
+          .then(() =>{
+            notify({//Notificamos que se agrego de manera correcta el tag
               title:'TAG AGREGADO EXITOSAMENTE',
               text:'El tag se agrego de forma correcta' ,
               type: 'success'
             });
-            numerotagagregar.value = ''
-            cargatags(header.tag,header.estatus,header.fecha )
-          }).catch((err) =>{
-            console.log(err)
+            numerotagagregar.value = '' //Limpiamos el input
+            cargatags(header.tag,header.estatus,header.fecha )//Mandamos a llamar a la funcion de la carga de todos los tags
+          }).catch((error) =>{
+            notify({//Enviamos una notificacion
+            title:'Upps ocurrio un error ' + error.request.status, //mostramos el numero del error en el titulo
+            text: error.request.responseText, //Mostramos el error ocurrido
+            type: 'error' //Declaramos el tipo de notificacion que buscamos
+            });
           })
-          showModal.value = false
+          showModal.value = false //Cerramos el modal
         }
     }
     // //Función para cambiar de página
     function showMore(page){
-      cruces.value = []
-      if(header.fecha == '' && header.tag == '' && header.estatus == undefined){
-        let tagruta = " "
-        let estatusruta = " "
-        let fecharuta = " "
-        const ruta = encodeURI(`${API}/Ferromex/mantenimientotags/${page}/${numRespuesta.value}/${tagruta}/${estatusruta}/${fecharuta}`)
-        axios.get(ruta)
+      cruces.value = [] //Limpiamos el arreglo de los tags
+      if(header.fecha == '' && header.tag == '' && header.estatus == undefined){  //Si los campos vienen predeterminados
+        let tagruta = " " //Asignamos el valor de un espacio blanco para la ruta a consumir
+        let estatusruta = " " //Asignamos el valor de un espacio blanco para la ruta a consumir
+        let fecharuta = " " //Asignamos el valor de un espacio blanco para la ruta a consumir
+        const ruta = encodeURI(`${API}/Ferromex/mantenimientotags/${page}/${numRespuesta.value}/${tagruta}/${estatusruta}/${fecharuta}`) //Codificamos la ruta 
+        axios.get(ruta) //Llamamos el end point 
         .then((result)=>{
-          if(result.status == 200){
-            modalLoading.value = false
-              totalPaginas.value = result.data.paginas_totales
-              currentPage.value = result.data.pagina_actual
-              result.data.tags.forEach((e)=>{
+          if(result.status == 200){ //Si obtenemos una respuesta positiva
+            modalLoading.value = false //Quitamos spinner
+              totalPaginas.value = result.data.paginas_totales //Asignamos el numero total de paginas
+              currentPage.value = result.data.pagina_actual //Asignamos la pagina actual
+              result.data.tags.forEach((e)=>{ //Creamos el objeto tag
                 let obj = {
                   tag: e.tag,
                   insertionDate : e.insertionDate,
                   active: e.active
                 }
-                cruces.value.push(obj)
+                cruces.value.push(obj) //Metemos el objeto tag a la lista 
           })
           }
         })
       }
       else{
-        let estatusurl = ""
-        let fechaurl = header.fecha
-        let tagurl = ""
-        if(header.fecha != ""){
-          fechaurl = new Date(header.fecha).toISOString()
-        }else if(header.fecha == ""){
+        let estatusurl = "" //Declaramos varibles que iran en la url final
+        let fechaurl = header.fecha //Declaramos varibles que iran en la url final
+        let tagurl = "" //Declaramos varibles que iran en la url final
+        if(header.fecha != ""){ //si la fecha es diferente a un espacio en blanco 
+          fechaurl = new Date(header.fecha).toISOString() //Le damos formato para que lo reciba el back
+        }else if(header.fecha == ""){ 
           fechaurl = " "
         }
-        if(header.estatus == "Activo"){
-          estatusurl = "true"
-        }else if(header.estatus == "Inactivo"){
-          estatusurl = "false"
-        }else if(header.estatus == undefined){
-          estatusurl = " "
+        if(header.estatus == "Activo"){ // Si el estatus viene como activo
+          estatusurl = "true"//En la varible de la url la enviamos como true
+        }else if(header.estatus == "Inactivo"){ // Si el estatus viene como inactivo
+          estatusurl = "false" //En la varible de la url la enviamos como false
+        }else if(header.estatus == undefined){// Si el estatus viene como indefinido
+          estatusurl = " " //En la varible de la url la enviamos con el espacio en blanco
         }
-        if(header.tag == ""){
-          tagurl = " "
-        }else if(header.tag != ""){
-          tagurl = header.tag
+        if(header.tag == ""){ // Si el tag viene como vacio
+          tagurl = " " //Asignamos un valor en blanco
+        }else if(header.tag != ""){ // Si el tag es diferente al vacio 
+          tagurl = header.tag // Es igual al parametro que le asignamos 
         }
-       const ruta = encodeURI(`${API}/ferromex/mantenimientotags/${page}/${numRespuesta.value}/${tagurl}/${estatusurl}/${fechaurl}`)
-        console.log(ruta)
-        modalLoading.value = false
-        axios.get(ruta)
+       const ruta = encodeURI(`${API}/ferromex/mantenimientotags/${page}/${numRespuesta.value}/${tagurl}/${estatusurl}/${fechaurl}`) //Codificamos la url para el end point
+        modalLoading.value = false //cerramos el spinner
+        axios.get(ruta) //Mandamos a llamar el End point
         .then((result)=>{
-          console.log(result);
-            console.log(result.data);
             if(result.status == 200){
-              modalLoading.value = false
-              totalPaginas.value = result.data.paginas_totales
-              currentPage.value = result.data.pagina_actual
-              result.data.tags.forEach((e)=>{
+              modalLoading.value = false //Quitmaos spinner
+              totalPaginas.value = result.data.paginas_totales //Asignamos el numero total de paginas
+              currentPage.value = result.data.pagina_actual //Asignamos la pagina actual
+              result.data.tags.forEach((e)=>{ //Creamos el objeto tag
                 let obj = {
                   tag: e.tag,
                   insertionDate : e.insertionDate,
                   active: e.active
                 }
-                cruces.value.push(obj)
+                cruces.value.push(obj) //Metemos el objeto tag a la lista 
               })
           }
         })
@@ -397,43 +389,40 @@ export default {
     }
     //Funcion para actualizar datos de la tabla()
     function actualizarLista(ac) {
-      actualizar.value = ac
-      console.log(actualizar.value);
-      if(actualizar.value){
-        cargatags()
+      actualizar.value = ac //REsivimos parametro del emit
+      if(actualizar.value){ // si es verdadero
+        cargatags() //Lamamos a la funcionde cargar tags
       }
     }                 
     // //Función que manda a llamar al servicio para descargar el archivo en el formato seleccionado
     function downloadApi(tag,estatus,fecha) {
-      if(tag == ""){
-        tag = " "
+      if(tag == ""){//Si el parametro lo recibimos vacio
+        tag = " " //Damos el valor en un espacio en blanco
       }
-      if(estatus == undefined){
-        estatus = " "
+      if(estatus == undefined){//Si el parametro lo recibimos indefinido
+        estatus = " "//Damos el valor en un espacio en blanco
       }
-      if(fecha == ""){
-        fecha = " "
+      if(fecha == ""){//Si el parametro lo recibimos fecha
+        fecha = " "//Damos el valor en un espacio en blanco
       }
-      console.log(tag,estatus,fecha)
       if(tag == ' ' && estatus == ' ' && fecha == ' '){
-        const ruta = encodeURI(`${API}/ferromex/Download/pdf/mantenimientotags/${tag}/${estatus}/${fecha}`)
-        ServiceFiles.xml_hhtp_request(ruta, 'reportemantenimientotags.pdf')
-      }else{
-        let estatusurl = ""
-        let fechaurl = fecha
-        if(fecha != " "){
-          fechaurl = new Date(fecha).toISOString()
+        const ruta = encodeURI(`${API}/ferromex/Download/pdf/mantenimientotags/${tag}/${estatus}/${fecha}`)//Ruta codificado
+        ServiceFiles.xml_hhtp_request(ruta, 'reportemantenimientotags.pdf')//Mandamos a llamar el servicio 
+      }else{ //En caso de ser falso
+        let estatusurl = "" //Declaramos variables para la url final
+        let fechaurl = fecha //Declaramos variables para la url final
+        if(fecha != " "){ //si la fecha es diferente a un espacio en blanco 
+          fechaurl = new Date(fecha).toISOString() //Damos formato iso 86001
         }
-        if(estatus == "Activo"){
-          estatusurl = "true"
-        }else if(estatus == "Inactivo"){
-          estatusurl = "false"
-        }else if(estatus == " "){
-          estatusurl = " "
+        if(estatus == "Activo"){ // Si el estatus viene como activo
+          estatusurl = "true" //La variable final viene en true
+        }else if(estatus == "Inactivo"){// Si el estatus viene como Inactivo
+          estatusurl = "false" //La variable final viene en false
+        }else if(estatus == " "){// Si el estatus viene como vacio
+          estatusurl = " "//La varible final lleva un espacio en blaco
         }
-        const ruta = encodeURI(`${API}/ferromex/Download/pdf/mantenimientotags/${tag}/${estatusurl}/${fechaurl}`)
-        console.log(ruta)
-        ServiceFiles.xml_hhtp_request(ruta, 'reportemantenimientotags.pdf')
+        const ruta = encodeURI(`${API}/ferromex/Download/pdf/mantenimientotags/${tag}/${estatusurl}/${fechaurl}`)//Ruta codificado
+        ServiceFiles.xml_hhtp_request(ruta, 'reportemantenimientotags.pdf')//Mandamos a llamar el servicio 
       }
     }
 
@@ -454,10 +443,6 @@ export default {
       options,
       hoy, 
       cruces, 
-      token,  
-      formato, 
-      tramo, 
-      plaza, 
       page, 
       totalPaginas, 
       currentPage, 
