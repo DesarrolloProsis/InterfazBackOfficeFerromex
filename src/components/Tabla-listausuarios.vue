@@ -75,11 +75,21 @@
         </div>
       </div>
       <div class="mt-10 text-center mx-auto mb-4">
-        <button @click="cambiarPass(seleccionado)" class="rounded-lg w-18 bg-ferromex text-white p-10">Cambiar Contraseña</button>
+        <button @click="cambiarPass()" class="rounded-lg w-18 bg-ferromex text-white p-10">Cambiar Contraseña</button>
       </div>
     </div>
   </Modal>
   <!-- FIN MODAL-->
+  <!-- MODAL COMFIRMAR -->
+  <Modal :show="modalConfirmacion" @cerrarmodal="modalConfirmacion = false">
+    <div>
+      <p class="text-gray-900 font-bold text-xl -mt-8 mb-8 text-center">Estas seguro de cambiar la contraseña del usuario {{ seleccionado.nombre + ' ' + seleccionado.apellidos }}</p>
+      <div class="mt-10 mb-4 grid grid-cols-2">
+        <button @click="confirmar(seleccionado)" class="rounded-lg w-32 botonIconOk">Aceptar</button>
+        <button @click="modalConfirmacion = false" class="rounded-lg w-32 botonIconCancelar">Cancelar</button>
+      </div>
+    </div>
+  </Modal>
   <!-- MODAL EDITAR USUARIO -->
   <Modal :show="modalEditar" @cerrarmodal="modalEditar = false">
     <div>
@@ -166,6 +176,7 @@ export default {
     const mayuscula = ref(true)//Constante que almacena la respuesta de la validación si es que hya o no mayusculas para la contraseña
     const coinciden = ref(true)//Constante que alamcena la bandera para saber si las contraseñas coinciden
     const passConfirm = ref('')//Constante que almacena la confirmación de la contraseña, tiene que ser identica que la insertada
+    const modalConfirmacion = ref(false)
     const modal_Rol = async () => {//Constante que abre el modal para cambiar el rol, y trae todos los roles existentes
       modalRol.value = true
       axios.get(`${API}/Identity/roles/%20/%20/%20/%20`)//Llamada al endpoint que trae los roles existentes
@@ -178,13 +189,51 @@ export default {
         modalLoading.value = false //cerramos el spinner de carga
       })
     }
-    
-    function cambiarPass(usuario) {//Función que hace el cambio de contraseña del usuario seleccionado
+    function confirmar (usuario){//Función que se ejecuta cuando le damos clic al botón de Aceptar en el modal de cambiar la contraseña
       let data = { //literal que almacena el id del usuario y la nueva contraseña ingresada en el formulario
         "usuarioId": usuario.usuarioId, //id del usuario, viene desde el option mapper
         "password": pass.value //nueva password que se ingresó en el formulario
       }
-      if(data.password.trim().length == 0 || data.password == '')//Si la contraseña tiene espacios en blanco y está vacia
+      console.log(data);
+      if(data.password.length >= 6){
+        let mayusculas = 'ABCDEFGHYJKLMNÑOPQRSTUVWXYZ'//Literal que almacena todas las letras en mayusculas
+        let contador = []
+        for(let i = 0; i< data.password.length; i++){//Recorremos toda la palabra insertada en el password y si no encuentra alguna mayuscula no nos dejará insertar
+          if (mayusculas.indexOf(data.password.charAt(i),0)!=-1)
+            contador.push(true)
+          else
+            mayuscula.value = false 
+        }
+        if(contador.includes(true))
+          mayuscula.value = true
+        if(mayuscula.value ==  true && passConfirm.value === pass.value){//Si hay mínimo una mayuscula en la 
+          axios.put(`${API}/Identity/changePassword`, data)
+          .then(() => {
+            modalPass.value = false
+            emit('refrescarTabla', true)//Se realiza el emit al componente padre, para refrescar la tabla con los cambios realizados
+            notify({//Notifiación que se le muestra al usuario si se hizo el cmabio correcto
+              title:'Cambio Exitoso',
+              text:`Se cambió la contraseña al usuario ${usuario.nombre + ' ' + usuario.apellidos}`,
+              type: 'success'
+            });
+            axios.defaults.headers.common['Authorization'] = '' //Enviamos el token en la cabecera llamada Authorization porque todos los endpoints lo piden
+            router.push('/')//Redirigimos al Login
+          })
+          .catch((error) => {
+            notify({//Notifiación que se le muestra al usuario si no se hace el cambio
+              title:'Cambio Exitoso',
+              text:`No se pudo cambiar la contraseña al usuario ${usuario.nombre + ' ' + usuario.apellidos}`,
+              type: 'error'
+            });
+            console.log(error.request.response);
+          })
+        }
+      }else{
+        mayuscula. value = false//Si existe una mayuscula en la contraseña
+      }
+    }
+    function cambiarPass() {//Función que hace el cambio de contraseña del usuario seleccionado
+      if(pass.value == '' && passConfirm.value == '')//Si la contraseña tiene espacios en blanco y está vacia
       {
         notify({//notificación de que el usuario se inserto correctamente
           title:'Nuevo Usuario',//titulo de la notificaci{on}
@@ -194,42 +243,7 @@ export default {
           type: 'warn'//el tipo de notificación, si es success el color será verde
         });
       }else{
-        if(data.password.length >= 6){
-          let mayusculas = 'ABCDEFGHYJKLMNÑOPQRSTUVWXYZ'//Literal que almacena todas las letras en mayusculas
-          let contador = []
-          for(let i = 0; i< data.password.length; i++){//Recorremos toda la palabra insertada en el password y si no encuentra alguna mayuscula no nos dejará insertar
-            if (mayusculas.indexOf(data.password.charAt(i),0)!=-1)
-              contador.push(true)
-            else
-              mayuscula.value = false 
-          }
-          if(contador.includes(true))
-            mayuscula.value = true
-          if(mayuscula.value ==  true && passConfirm.value === pass.value){//Si hay mínimo una mayuscula en la 
-            axios.put(`${API}/Identity/changePassword`, data)
-            .then(() => {
-              modalPass.value = false
-              emit('refrescarTabla', true)//Se realiza el emit al componente padre, para refrescar la tabla con los cambios realizados
-              notify({//Notifiación que se le muestra al usuario si se hizo el cmabio correcto
-                title:'Cambio Exitoso',
-                text:`Se cambió la contraseña al usuario ${usuario.nombre + ' ' + usuario.apellidos}`,
-                type: 'success'
-              });
-              axios.defaults.headers.common['Authorization'] = '' //Enviamos el token en la cabecera llamada Authorization porque todos los endpoints lo piden
-              router.push('/')//Redirigimos al Login
-            })
-            .catch((error) => {
-              notify({//Notifiación que se le muestra al usuario si no se hace el cambio
-                title:'Cambio Exitoso',
-                text:`No se pudo cambiar la contraseña al usuario ${usuario.nombre + ' ' + usuario.apellidos}`,
-                type: 'error'
-              });
-              console.log(error.request.response);
-            })
-          }
-        }else{
-          mayuscula. value = false//Si existe una mayuscula en la contraseña
-        }
+        modalConfirmacion.value = true
       }
     }
     function editarUsuario(usuario){//Función que hace la edioción del usuario, en cuanto a nombre y apellido
@@ -371,7 +385,7 @@ export default {
           }
       return filtroOpciones  //Regresamos la lista de acciones filtrada
     }
-    return{ cambiarRol, cambiarEstatus, editarUsuario, cambiarPass, modal_Rol, acciones_mapper, opticones_select_acciones, coinciden, passConfirm, tipoInputConfirm, mayuscula, tipoInput, infoUser, modalEditar, modalPass, modalRol, modalLoading, seleccionado, accion, validacion, usuario, roles, pass, status, errorMessage }
+    return{ cambiarRol, cambiarEstatus, editarUsuario, cambiarPass, modal_Rol, acciones_mapper, opticones_select_acciones, confirmar, modalConfirmacion, coinciden, passConfirm, tipoInputConfirm, mayuscula, tipoInput, infoUser, modalEditar, modalPass, modalRol, modalLoading, seleccionado, accion, validacion, usuario, roles, pass, status, errorMessage }
   }
 }
 </script>
