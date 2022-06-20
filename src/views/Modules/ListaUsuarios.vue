@@ -116,8 +116,11 @@ export default {
       modalAgregar.value = true //Habilitamos el spinner de pantalla de carga
       axios.get(`${API}/Identity/roles/%20/%20/%20/%20`)//Llamada al endpoint que trae los roles existentes
       .then((result) => {//Si el endpoint tiene una respuesta correcta
-        for(let i=0; i<result.data.roles.length; i++){ //recorremos la respuesta, y cada que recorremos sumamos un 1 para el siguiente rol
-          roles.value.push({'value':result.data.roles[i].nombreRol, 'label':result.data.roles[i].nombreRol})//asignamos los roles existentes a la variable roles, para mostrarlos en el multiselect
+        let res = []//Creamos una literal para almacenar la respuesta del endpoint
+        res = result.data.roles//Asignamos la respuesta del endpoint a la literal creada
+        let filtro = res.filter(res => res.estatus == true)//filtramos sobre los resultados existentes, para solo obtener los que están activos
+        for(let i=0; i<filtro.length; i++){ //recorremos la respuesta, y cada que recorremos sumamos un 1 para el siguiente rol
+          roles.value.push({'value':filtro[i].nombreRol, 'label':filtro[i].nombreRol})//asignamos los roles existentes a la variable roles, para mostrarlos en el multiselect
         }
       }).catch((error)=>{//si el endpoint tiene un error
         console.log(error.request.response);//Mostramos en consola el error  que nos da el endpoint

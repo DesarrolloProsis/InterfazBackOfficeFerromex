@@ -1,7 +1,7 @@
 <template>
     <Navbar/>
-    <h1 class="title font-bold font-titulo my-8 2xl:my-24">Cruces</h1>
-    <div class="container mx-auto px-auto px-48 pt-10">
+    <h1 class="title font-bold font-titulo my-8">Cruces</h1>
+    <div class="container mx-auto px-auto px-48 my-32 pt-10">
         <div class="flex flex-wrap">
             <button class=" p-7 -mt-12 w-1/2" @click="abrirmodalcrucestotales()">
                     <div class="rounded-lg  animacion flex flex-col bg-ferromex border-2 border-gray-900" >

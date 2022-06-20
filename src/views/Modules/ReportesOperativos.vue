@@ -1,7 +1,7 @@
 <template>
     <Navbar/>
-    <h1 class="title font-bold font-titulo 2xl:my-28">Reportes Operativos</h1>
-    <div class="container mx-auto px-auto px-48 pt-10">
+    <h1 class="title font-bold font-titulo">Reportes Operativos</h1>
+    <div class="container mx-auto px-auto px-48 pt-10 my-32">
         <div class="flex flex-wrap">
             <router-link to="/inicio/ReportesCajero" class="p-7 -mt-12 w-1/2">
                     <div class="rounded-lg  animacion flex flex-col bg-ferromex border-2 border-gray-900" >

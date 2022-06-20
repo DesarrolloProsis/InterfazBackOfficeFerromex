@@ -1,7 +1,7 @@
 <template>
     <Navbar/>
-    <h1 class="title font-bold font-titulo 2xl:my-36">Generación de Reportes</h1>
-    <div class="container mx-auto px-auto px-48 pt-10 2xl:-my-20">
+    <h1 class="title font-bold font-titulo">Generación de Reportes</h1>
+    <div class="container mx-auto px-auto px-48 pt-10 my-32">
         <div class="flex flex-wrap ">
             <ModuloGeneracionReportes
                 v-for="(modulo, index) in modulos"
@@ -18,7 +18,7 @@
                             <img class="img" src="@/assets/Menu/almacenamiento-de-base-de-datos.png" />
                         </div>
                         <div class="text-center py-5 font-titulo font-bold text-white ">
-                            <h1>Concentrados Ferromex</h1>
+                            <h1>Auditoria Ferromex</h1>
                         </div>
                     </div>
             </button>
@@ -77,13 +77,13 @@ export default {
     setup() {
         const modulos = ref([  {
                     img_src: "Menu/capacidad-de-almacenamiento.png",
-                    nombre: "Reportes Operativos",
+                    nombre: "Operativos",
                     ruta: "/inicio/Reportes-Operativos",
                     color: "red"
                 },
                 {
                     img_src: "Menu/monitoreo-servicios.png",
-                    nombre: "Cruces Ferromex",
+                    nombre: "Cruces",
                     ruta: "/inicio/Cruces",
                     color: "red"
                 }])

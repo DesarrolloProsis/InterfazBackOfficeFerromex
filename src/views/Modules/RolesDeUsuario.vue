@@ -132,7 +132,8 @@ export default {
             }
             axios.post(`${API}/Ferromex/addRoleModules`, data) //llamada al endpoint que inserta los modulos al rol correspondiente
             .then((result)=>{
-              if(result.status == 204)//Validamos que la respuesta sea correcta
+              console.log(result);
+              if(result.status == 200)//Validamos que la respuesta sea correcta
               {
                 modalLoading.value = false//Desactivamos el spinner
                 notify({ type: 'success', title:'Rol creado', text: `Se creo correctamente el rol ${newRol.nombre}`});//Mostramos notificación de que se creo correctamente el rol
@@ -143,7 +144,7 @@ export default {
             }).catch((error) => {//Si el enpoint tiene algun error
               console.log(error.request.response);//Imprimimos el error en consola
               modalLoading.value = false//Desactivamos el spinner
-              notify({ type: 'warning', title:'Rol no creado', text: `No se pudo insertar los modulos al rol ${newRol.nombre}`});//Mostramos nositificación de que no se creo el rol
+              notify({ type: 'warn', title:'Rol no creado', text: `No se pudo insertar los modulos al rol ${newRol.nombre}`});//Mostramos nositificación de que no se creo el rol
               newRol.vistas = []; newRol.nombre = "";//limpiamos los input del modal para agregar roles
               cerralmodalpadre()//Llamamos a la función que cierra el modal
               todos()//Llamamos a la función que trae todos los resultados actualizados
@@ -152,7 +153,7 @@ export default {
         }).catch((error) => {
           console.log(error.request.response);//Imprimimos el error en consola
           modalLoading.value = false//Desactivamos el spinner
-          notify({ type: 'warning', title:'Rol no creado', text: `No se pudo crear el rol ${newRol.nombre}`});//Mostramos nositificación de que no se creo el rol
+          notify({ type: 'warn', title:'Rol no creado', text: `No se pudo crear el rol ${newRol.nombre}`});//Mostramos nositificación de que no se creo el rol
           newRol.vistas = []; newRol.nombre = "";//limpiamos los input del modal para agregar roles
           cerralmodalpadre()//Llamamos a la función que cierra el modal
           todos()//Llamamos a la función que trae todos los resultados actualizados
