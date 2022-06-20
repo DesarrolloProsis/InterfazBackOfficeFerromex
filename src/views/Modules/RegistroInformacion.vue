@@ -186,7 +186,7 @@ export default {
     }
     function cambiarPagina (page){//Función que nos permite realizar el cambio de pagina mediante el componente de paginación
       modalLoading.value = true
-      let fechaVacia = ''
+      let fechaVacia = header.fecha
       if(header.fecha == '')//Hacemos la validaciones necesarias para poder agregar el espacio vacio es que no se ha escrito o seleccionado un dato en los filtros
         fechaVacia = ' '
       if(header.tag == '')
