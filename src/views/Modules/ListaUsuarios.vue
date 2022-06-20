@@ -244,6 +244,19 @@ export default {
             })
             .catch(error => {
               console.log(error.request.response);
+              modalAgregar.value = false//cerramos el spinner de la pantalla de carga
+                usuario.pass = '',//limpiamos el valor de password del formulario de agregar usuario
+                usuario.nombre = '',//limpiamos el valor de nombre del formulario de agregar usuario
+                usuario.apellidos = '',//limpiamos el valor de apellido o apellidos del formulario de agregar usuario
+                usuario.rol = ''//limpiamos el valor de rol del formulario de agregar usuario
+                notify({//notificación de que el usuario se inserto correctamente
+                  title:'Error al crear',//titulo de la notificaci{on}
+                  text:`No se creo correctamente el nuevo usuario`,//texto de la notificación 
+                  duration: 3000,//duración de la notificación
+                  closeonclick:true,//si le damos click se cierra la notificación
+                  type: 'error'//el tipo de notificación, si es success el color será verde
+                });
+                todos()//LLamamos a la función para refrescar la tabla
             })
           }
         }else{
