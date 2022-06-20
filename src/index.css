@@ -11,12 +11,12 @@
     @apply transform -translate-y-1 scale-110;
 }
 .btn-buscar {
-    @apply bg-red-300 tracking-wide text-white font-titulo font-bold rounded border-b-2 border-red-800 shadow-md py-2 px-6 inline-flex items-center text-center;
+    @apply bg-white tracking-wide text-black font-titulo font-bold rounded border-b-2 border-red-300 shadow-md py-2 px-6 inline-flex items-center text-center;
 }
-.btn-buscar :hover{
-    @apply border-red-600 bg-red-400 text-white transition duration-500;
+.btn-buscar:hover{
+    @apply border-red-300 bg-white text-black transition duration-500;
 }
-.btn-buscar :focus{
+.btn-buscar:focus{
     @apply outline-none;
 }
 .botonIconCancelar{
