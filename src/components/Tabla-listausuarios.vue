@@ -40,23 +40,39 @@
     </table>
   </div>
   <!--MODAL DE ACTUALIZAR CONTRASEÑA -->
-  <Modal :show="modalPass" @cerrarmodal="modalPass = false, pass = ''">
+  <Modal :show="modalPass" @cerrarmodal="modalPass = false, pass = '', passConfirm = '', mayuscula = true">
     <div>
       <p class="text-gray-900 font-bold text-xl -mt-8 mb-8 text-center">Cambiar Contraseña a {{ seleccionado.nombre + ' ' + seleccionado.apellidos }}</p>
-      <div class="grid grid-cols-2 mt-2">
-        <p class="mx-auto">Nueva Contraseña:</p>
+      <div class="mt-2">
+        <div class="grid grid-cols-2">
+          <p class="mx-auto">Nueva Contraseña:</p>
+          <div class="w-full inline-flex relative flex-row-reverse">
+            <input v-model="pass" class="border border-gray-300 rounded-lg mx-16 w-full " :type="tipoInput" :class="{'border-red-600': !mayuscula}" @input="mayuscula = true">
+            <span @click="tipoInput == 'password' ? tipoInput = 'text' : tipoInput = 'password'" class="absolute mx-16 mt-1 curor-pointer">
+              <fa v-if="tipoInput == 'password'" icon="eye" class="text-gray-600 w-5 h-5" />
+              <fa v-else  icon="eye-slash" class="text-gray-600 w-5 h-5" />
+            </span>
+          </div>
+          <span></span>
+          <span v-if="!mayuscula" class="text-xs text-red-300 mx-auto">
+            <p>Se necesita mínimo una mayuscula</p>
+            <p>Se necesita mínimo 6 caracteres</p>
+          </span>
+        </div>
+        <div class="grid grid-cols-2">
+        <p class="mx-auto">Confirmar Contraseña:</p>
         <div class="w-full inline-flex relative flex-row-reverse">
-          <input v-model="pass" class="border border-gray-300 rounded-lg mx-16 w-full " :type="tipoInput" :class="{'border-red-600': !mayuscula}" @input="mayuscula = true">
-          <span @click="tipoInput == 'password' ? tipoInput = 'text' : tipoInput = 'password'" class="absolute mx-16 mt-1 curor-pointer">
-            <fa v-if="tipoInput == 'password'" icon="eye" class="text-gray-600 w-5 h-5" />
+          <input v-model="passConfirm" class="border border-gray-300 rounded-lg mx-16 w-full " :type="tipoInputConfirm" :class="{'border-red-600': passConfirm != pass}">
+          <span @click="tipoInputConfirm == 'password' ? tipoInputConfirm = 'text' : tipoInputConfirm = 'password'" class="absolute mx-16 mt-1 curor-pointer">
+            <fa v-if="tipoInputConfirm == 'password'" icon="eye" class="text-gray-600 w-5 h-5" />
             <fa v-else  icon="eye-slash" class="text-gray-600 w-5 h-5" />
           </span>
         </div>
         <span></span>
-        <span v-if="!mayuscula" class="text-xs text-red-300 mx-auto">
-          <p>Se necesita mínimo una mayuscula</p>
-          <p>Se necesita mínimo 6 caracteres</p>
+        <span v-if="passConfirm != pass" class="text-xs text-red-300 mx-auto">
+          <p>La contraseña no coincide</p>
         </span>
+        </div>
       </div>
       <div class="mt-10 text-center mx-auto mb-4">
         <button @click="cambiarPass(seleccionado)" class="rounded-lg w-18 bg-ferromex text-white p-10">Cambiar Contraseña</button>
@@ -122,6 +138,7 @@ import { notify } from "@kyvg/vue3-notification";//muestra las notificaciones en
 import Servicio from '../Servicios/Token-Services';//Servicio que importa la información del usuario
 import axios from "axios";
 import Modal from "../components/Modal.vue"
+import router from '../router';
 
 export default {
   name: "TablaListaUsuarios",
@@ -145,7 +162,10 @@ export default {
     const errorMessage = ref('')//Constante que almacena el mensaje de error que se da al hacer una petición
     const infoUser = Servicio.obtenerInfoUser()//Constante que trae toda la información del usuario que inicio sesión
     const tipoInput = ref('password')//Constante que almacena el tipo de input para poder ver la contraseña dentro del modal de cambiar contraseña
+    const tipoInputConfirm = ref('password')//Constante que almacena el tipo de input para poder ver la contraseña dentro del modal de cambiar contraseña
     const mayuscula = ref(true)//Constante que almacena la respuesta de la validación si es que hya o no mayusculas para la contraseña
+    const coinciden = ref(true)//Constante que alamcena la bandera para saber si las contraseñas coinciden
+    const passConfirm = ref('')//Constante que almacena la confirmación de la contraseña, tiene que ser identica que la insertada
     const modal_Rol = async () => {//Constante que abre el modal para cambiar el rol, y trae todos los roles existentes
       modalRol.value = true
       axios.get(`${API}/Identity/roles/%20/%20/%20/%20`)//Llamada al endpoint que trae los roles existentes
@@ -158,6 +178,7 @@ export default {
         modalLoading.value = false //cerramos el spinner de carga
       })
     }
+    
     function cambiarPass(usuario) {//Función que hace el cambio de contraseña del usuario seleccionado
       let data = { //literal que almacena el id del usuario y la nueva contraseña ingresada en el formulario
         "usuarioId": usuario.usuarioId, //id del usuario, viene desde el option mapper
@@ -184,7 +205,7 @@ export default {
           }
           if(contador.includes(true))
             mayuscula.value = true
-          if(mayuscula.value ==  true){//Si hay mínimo una mayuscula en la 
+          if(mayuscula.value ==  true && passConfirm.value === pass.value){//Si hay mínimo una mayuscula en la 
             axios.put(`${API}/Identity/changePassword`, data)
             .then(() => {
               modalPass.value = false
@@ -194,6 +215,8 @@ export default {
                 text:`Se cambió la contraseña al usuario ${usuario.nombre + ' ' + usuario.apellidos}`,
                 type: 'success'
               });
+              axios.defaults.headers.common['Authorization'] = '' //Enviamos el token en la cabecera llamada Authorization porque todos los endpoints lo piden
+              router.push('/')//Redirigimos al Login
             })
             .catch((error) => {
               notify({//Notifiación que se le muestra al usuario si no se hace el cambio
@@ -348,7 +371,7 @@ export default {
           }
       return filtroOpciones  //Regresamos la lista de acciones filtrada
     }
-    return{ cambiarRol, cambiarEstatus, editarUsuario, cambiarPass, modal_Rol, acciones_mapper, opticones_select_acciones, mayuscula, tipoInput, infoUser, modalEditar, modalPass, modalRol, modalLoading, seleccionado, accion, validacion, usuario, roles, pass, status, errorMessage }
+    return{ cambiarRol, cambiarEstatus, editarUsuario, cambiarPass, modal_Rol, acciones_mapper, opticones_select_acciones, coinciden, passConfirm, tipoInputConfirm, mayuscula, tipoInput, infoUser, modalEditar, modalPass, modalRol, modalLoading, seleccionado, accion, validacion, usuario, roles, pass, status, errorMessage }
   }
 }
 </script>
