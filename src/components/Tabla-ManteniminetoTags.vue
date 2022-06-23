@@ -21,10 +21,8 @@
         <td v-else :class="{'text-gray-400':!cruces.active}">Desactivado</td>
         <td :class="{'text-gray-400':!cruces.active}" >{{moment.utc(cruces.insertionDate).local().format("YYYY-MM-DD HH:mm:ss a")}}</td>
         <td>
-          <Multiselect v-model="select" 
-           placeholder="Seleccione una Acción"
-           @close="acciones_mapper(cruces)" 
-           :options="opticones_select_acciones(cruces)"
+          <div>
+            <Multiselect v-model="select" placeholder="Seleccione una Acción" @close="acciones_mapper(cruces)"  :options="opticones_select_acciones(cruces)"
            >
               <template v-slot:singleLabel="{ value }">
                 <div class="multiselect-single-label">
@@ -35,6 +33,7 @@
                 <img height="22" style="margin: 0 6px 0 0;">{{ option.name }}
               </template>
             </Multiselect>
+          </div>
         </td>
       </tr>
       
@@ -152,14 +151,16 @@ export default {
       return filtroOpciones  //Regresamos la lista de acciones filtrada
     }
      function acciones_mapper(item){//Asignación de funciones de la lista de opciones que hay en el menú de acciones
-     showModalAdvertencia.value = !showModalAdvertencia.value //Abrimos nuestro modal de advertencia
       if(select.value == '0'){ //Apartir del value del multiselect asignamos un valor al texto 
+        showModalAdvertencia.value = !showModalAdvertencia.value //Abrimos nuestro modal de advertencia
         texto.value = "habilitar"//Si es 0 el texto sera habilitar
         infotag.value = item //Asignamos la informacion del tag a nuestra varible reactiva de vue
       }if(select.value == '1'){
+        showModalAdvertencia.value = !showModalAdvertencia.value //Abrimos nuestro modal de advertencia
         texto.value = "deshabilitar"//Si es 1 el texto sera deshabilitar
         infotag.value = item//Asignamos la informacion del tag a nuestra varible reactiva de vue
       }if(select.value == '2'){
+       showModalAdvertencia.value = !showModalAdvertencia.value //Abrimos nuestro modal de advertencia
        texto.value = "eliminar"//Si es 1 el texto sera eliminar
        infotag.value = item//Asignamos la informacion del tag a nuestra varible reactiva de vue
       }
