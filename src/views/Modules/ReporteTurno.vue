@@ -21,7 +21,7 @@
             <label for="">Mazanillo</label>
         </div>
         <div>
-            <select class="input" v-model="turno"  placeholder="XXXXX">
+            <select class="input" v-model="cajero.turno"  placeholder="XXXXX">
               <option value="undefined" disabled>Seleccione un turno</option>
               <option value="1">Turno 1</option>
               <option value="2">Turno 2</option>
@@ -29,12 +29,12 @@
             </select>
         </div>
         <div>
-            <input type="date" class="input" v-model="fecha" :max="hoy">
+            <input type="date" class="input" v-model="cajero.fecha" :max="hoy">
         </div>
     </div>
   </div>
   <div class="flex w-full justify-center p-14 2xl:p-20">
-      <button class="border w-40 bg-ferromex text-white" @click="generareporte(turno,fecha)">Generar Reporte</button>
+      <button class="border w-40 bg-ferromex text-white" @click="generareporte(cajero.turno,cajero.fecha)">Generar Reporte</button>
   </div>
 </div>
 </div>
@@ -72,7 +72,10 @@ setup(){
      });
     }else{
     //Generamos la ruta que hara la llamada a la generacion de los reportes
-    ServiceFiles.xml_hhtp_request(`${API}/Ferromex/Download/pdf/reporteOperativo/reporteTurno/${idturno}/${fechareporte}`, 'reporteturno.pdf')
+    ServiceFiles.xml_hhtp_request(`${API}/Ferromex/Download/pdf/reporteOperativo/reporteTurno/concentrado/${idturno}/${fechareporte}`, 'reporteturnoconcentrado.pdf')
+    ServiceFiles.xml_hhtp_request(`${API}/Ferromex/Download/pdf/reporteOperativo/reporteTurno/transacciones/${idturno}/${fechareporte}`, 'reporteturnotransacciones.pdf')
+    cajero.turno = undefined;
+    cajero.fecha = "";
   }
   }
 return {generareporte,cajero,hoy}

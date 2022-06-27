@@ -142,7 +142,7 @@ export default {
                     type: 'error'
                 });
             }else{
-                const ruta = encodeURI(`${API}/ferromex/Download/pdf/mantenimientotags/${urldias}/${urlmeses}/${urlsemana}`)
+                const ruta = encodeURI(`${API}/Ferromex/Download/pdf/concentradosferromex/${urldias}/${urlmeses}/${urlsemana}`)
                 console.log(ruta)
                 ServiceFiles.xml_hhtp_request(ruta, 'reporteconcentradoferromex.pdf')
                 cerramodalconcentradoferromex(false)

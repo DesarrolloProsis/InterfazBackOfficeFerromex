@@ -421,7 +421,7 @@ export default {
         }else if(estatus == " "){// Si el estatus viene como vacio
           estatusurl = " "//La varible final lleva un espacio en blaco
         }
-        const ruta = encodeURI(`${API}/ferromex/Download/pdf/mantenimientotags/${tag}/${estatusurl}/${fechaurl}`)//Ruta codificado
+        const ruta = encodeURI(`${API}/Ferromex/Download/pdf/mantenimientotags/${tag}/${estatusurl}/${fechaurl}`)//Ruta codificado
         ServiceFiles.xml_hhtp_request(ruta, 'reportemantenimientotags.pdf')//Mandamos a llamar el servicio 
       }
     }

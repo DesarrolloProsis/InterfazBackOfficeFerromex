@@ -53,7 +53,7 @@ export default {
         modulos.value.push({'nombre':proxy[i].nameModule, 'imagen':proxy[i].image, 'ruta':proxy[i].route}) 
       }
       modalLoading.value = false //cerramos el spinner
-      })
+      }).catch((err)=>{console.log(err);})
     }
 
     onMounted(obtenerModulos)//Se monta la función para que desde un incio realice la obtención de los datos

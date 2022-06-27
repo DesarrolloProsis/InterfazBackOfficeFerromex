@@ -232,7 +232,7 @@ export default {
                     type: 'error'
                 });
             }else{
-                const ruta = encodeURI(`${API}/ferromex/Download/pdf/mantenimientotags/${urldias}/${urlmeses}/${urlsemana}`)
+                const ruta = encodeURI(`${API}/Ferromex/Download/pdf/crucestotales/reporteCruces/${urldias}/${urlmeses}/${urlsemana}`)
                 console.log(ruta)
                 ServiceFiles.xml_hhtp_request(ruta, 'reportetotal.pdf')
                 cerralmodalcrucestotales(false)
@@ -264,9 +264,10 @@ export default {
                     type: 'error'
                 });
             }else{
-                const ruta = encodeURI(`${API}/ferromex/Download/pdf/mantenimientotags/${urldias}/${urlmeses}/${urlsemana}`)
-                console.log(ruta)
-                ServiceFiles.xml_hhtp_request(ruta, 'reportecrucesferromex.pdf')
+                const rutadescuentolletalle = encodeURI(`${API}/Ferromex/Download/pdf/crucesferromex/descuentodetallesamarre/${urldias}/${urlmeses}/${urlsemana}`)
+                const rutadescuentoamerreresumen = encodeURI(`${API}/Ferromex/Download/pdf/crucesferromex/descuentoamarreresumen/${urldias}/${urlmeses}/${urlsemana}`)
+                ServiceFiles.xml_hhtp_request(rutadescuentolletalle, 'reportecrucesferromexdescuentodetallesamarre.pdf')
+                ServiceFiles.xml_hhtp_request(rutadescuentoamerreresumen, 'reportecrucesferromexdescuentoamarreresumen.pdf')
                 cerramodalcruceferromex(false)
             }
         }

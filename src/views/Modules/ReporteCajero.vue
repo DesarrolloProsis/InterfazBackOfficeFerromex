@@ -24,10 +24,10 @@
             <label for="">Mazanillo</label>
         </div>
         <div>
-            <input type="text" placeholder="XXXXX" class="input" v-model="numerocajero"/>
+            <input type="text" placeholder="XXXXX" class="input" v-model="cajero.numerocajero"/>
         </div>
         <div>
-            <select class="input" v-model="turno"  placeholder="XXXXX">
+            <select class="input" v-model="cajero.turno"  placeholder="XXXXX">
               <option value="undefined" disabled>Seleccione un turno</option>
               <option value="1">Turno 1</option>
               <option value="2">Turno 2</option>
@@ -35,12 +35,12 @@
             </select>
         </div>
         <div>
-            <input type="date" class="input" v-model="fecha" :max="hoy">
+            <input type="date" class="input" v-model="cajero.fecha" :max="hoy">
         </div>
     </div>
   </div>
   <div class="flex w-full justify-center p-14 2xl:p-20">
-      <button class="border w-40 bg-ferromex text-white" @click="generareporte(numerocajero,turno,fecha)">Generar Reporte</button>
+      <button class="border w-40 bg-ferromex text-white" @click="generareporte(cajero.numerocajero,cajero.turno,cajero.fecha)">Generar Reporte</button>
   </div>
 </div>
 </div>
@@ -68,16 +68,25 @@
           <label class="text-black px-4 2xl:px-10">Acciones</label>
         </th>
       </tr>
-      <tr class="text-center w-full text-sm">
-        <td >1</td>
-        <td >04/13/2022 16:59:16</td>
-        <td >04/13/2022 16:59:16</td>
-        <td >B04</td>
-        <td >B0430098</td>
+      <template v-if="bolsas.value.length">
+         <tr class="text-center w-full text-sm" v-for="(bolsa, index) in bolsas.value" :key="index">
+        <td>{{bolsa.idBolsa}}</td>
+        <td>{{moment.utc(bolsa.fechaInicio).local().format("YYYY-MM-DD HH:mm:ss a")}}</td>
+        <td>{{moment.utc(bolsa.fechaFin).local().format("YYYY-MM-DD HH:mm:ss a")}}</td>
+        <td>{{bolsa.carrilBolsa}}</td>
+        <td>{{bolsa.bolsa}}</td>
         <td>
           <button class="rounded-lg w-18 bg-ferromex text-white p-10" @click="generarbolsa()">Generar</button>
         </td>
-      </tr>
+       </tr>
+      </template>
+      <template v-else>
+      <tr>
+        <td class="w-full text-center text-red-500 m-10" colspan="9">                                    
+        <div class="mt-8 mb-8">Sin Informacion</div>
+        </td>
+        </tr> 
+    </template>
     </table>
             </div>
     </Modal> 
@@ -93,12 +102,16 @@ import axios from "axios";
 import { notify } from "@kyvg/vue3-notification";
 import { reactive, ref,onMounted } from 'vue'
 import ServiceFiles from '../../Servicios/Files-Service'
+import moment from 'moment'
 export default {
 components: {
         Navbar,
         Footer,
          Modal,
     },
+created: function () {
+    this.moment = moment;
+},
 setup(){
   const showModal = ref(false)
   const cajero = reactive({
@@ -107,7 +120,7 @@ setup(){
     fecha: "" 
   })
   const hoy = ref('')
-  const bolsas = ref([])
+  const bolsas = reactive([])
   const vnocajero = ref(false)
   const vturno = ref(false)
   const vfecha = ref(false)
@@ -115,6 +128,7 @@ setup(){
         hoy.value = new Date().toISOString().split("T")[0];
   })
   function generareporte(nocajero,idturno,fechareporte){
+    console.log(nocajero,idturno,fechareporte);
     if(nocajero == undefined && idturno == undefined && fechareporte == undefined){
      notify({
             title:'Sin parametros',
@@ -126,7 +140,11 @@ setup(){
     const ruta = encodeURI(`${API}/Ferromex/reportecajero/bolsascajero/${nocajero}/${idturno}/${fechareporte}`)
     axios.get(ruta)
     //En el then se deben llenar las las bolsas pertenecientes
-    .then((res)=>{console.log(res)})
+    .then((res)=>{
+      console.log(res)
+      bolsas.value = res.data.content;
+      console.log(bolsas.value)
+    })
     //Capturamos error por si lo hay por parte de la peticion
     .catch((error)=>{console.log(error)})
     showModal.value = !showModal.value
