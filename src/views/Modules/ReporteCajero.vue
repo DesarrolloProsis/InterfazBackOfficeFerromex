@@ -76,7 +76,7 @@
         <td>{{bolsa.carrilBolsa}}</td>
         <td>{{bolsa.bolsa}}</td>
         <td>
-          <button class="rounded-lg w-18 bg-ferromex text-white p-10" @click="generarbolsa()">Generar</button>
+          <button class="rounded-lg w-18 bg-ferromex text-white p-10" @click="generarbolsa(bolsa.idBolsa)">Generar</button>
         </td>
        </tr>
       </template>
@@ -156,8 +156,9 @@ setup(){
       showModal.value = modal
       bolsas.value = []
     }
-    function generarbolsa(){
-      ServiceFiles.xml_hhtp_request(`${API}/Ferromex/Download/pdf/reporteOperativo/reporteTurno/${cajero.numerocajero}/${cajero.turno}`, 'reporteturno.pdf')
+    function generarbolsa(idbolsa){
+      ServiceFiles.xml_hhtp_request(`${API}/Ferromex/Download/pdf/reporteOperativo/reporteCajero/concentrado/${idbolsa}`, 'reporteturnoconcentrado.pdf');
+      ServiceFiles.xml_hhtp_request(`${API}/Ferromex/Download/pdf/reporteOperativo/reporteCajero/transacciones/${idbolsa}`, 'reporteturnotransacciones.pdf');
     }
 return {showModal,generareporte,cerralmodalpadre,generarbolsa,cajero,bolsas,hoy,vnocajero,vturno,vfecha}
 }
