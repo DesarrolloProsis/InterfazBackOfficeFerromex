@@ -15,15 +15,14 @@
           <label class="rounded-full px-20 bg-gray-200 ring-2 ring-gray-500 p-2 text-black 2xl:px-28">Acciones</label>
           </th>
       </tr>
-      <tr v-for="(cruces, index) in dataCruces" :key="index"  class="text-black">
+        <tr v-for="(cruces, index) in dataCruces" :key="index"  class="text-black">
         <td :class="{'text-gray-400':!cruces.active}">{{cruces.tag}}</td>
         <td v-if = "cruces.active == true">Activo</td>
         <td v-else :class="{'text-gray-400':!cruces.active}">Desactivado</td>
         <td :class="{'text-gray-400':!cruces.active}" >{{moment.utc(cruces.insertionDate).local().format("YYYY-MM-DD HH:mm:ss a")}}</td>
-        <td>
-          <div>
-            <Multiselect v-model="select" placeholder="Seleccione una Acción" @close="acciones_mapper(cruces)"  :options="opticones_select_acciones(cruces)"
-           >
+        <td class="w-66">
+          <div class="w-66 mx-auto">
+            <Multiselect v-model="select" placeholder="Seleccione una Acción" @close="acciones_mapper(cruces)"  :options="opticones_select_acciones(cruces)">
               <template v-slot:singleLabel="{ value }">
                 <div class="multiselect-single-label">
                   <img height="26" style="margin: 0 6px 0 0;"> {{ value.name }}
@@ -36,20 +35,18 @@
           </div>
         </td>
       </tr>
-      
     </table>
   </div>
   <Modal :show="showModalAdvertencia" @cerrarmodal="cerralmodalpadre">
-        <div class="w-full flex justify-center mt-4">
-          <fa icon="triangle-exclamation" class="h-20 text-yellow-400"/>
+    <div>
+        <div class="w-full flex items-center justify-center">
+          <fa icon="circle-exclamation" class="h-20 text-yellow-400" />
+          <p class="text-gray-900 font-medium text-lg ml-2 text-justify">Estas a punto de <label :class="{'text-green-600':texto == 'habilitar','text-yellow-600' :texto === 'deshabilitar','text-red-600' :texto === 'eliminar',  }">{{texto}}</label> el tag "{{infotag.tag}}" estas seguro</p>
         </div>
-        <h1 class="text-5xl font-bold font-titulo text-center ">Advertencia</h1>  
-        <div class="w-full flex justify-center mt-4 text-xl font-medium text-center">
-          <p class="">Estas a punto de <label :class="{'text-green-400':texto == 'habilitar','text-yellow-400' :texto === 'deshabilitar','text-red-600' :texto === 'eliminar',  }">{{texto}}</label> el tag "{{infotag.tag}}" estas seguro?</p>
-        </div>
-        <div class="w-full flex justify-center space-x-28 mt-6 mb-6">
-          <button class="botonIconOk animacion" @click="accion(texto)">Aceptar</button>
-        </div>    
+        <div class="mt-10 mb-4 w-full flex justify-center">
+          <button class="rounded-lg w-32 botonIconOk" @click="accion(texto)">Confirmar</button>
+        </div> 
+    </div>   
   </Modal>
 </template>
 <script>
@@ -180,12 +177,59 @@ export default {
   },
 };
 </script>
+<style src="@vueform/multiselect/themes/default.css"></style>
 <style scoped>
+.bg-ferromex {
+  background-color: #BB2028;
+  padding: 10px 5px;
+}
+.modal-container{
+    position: fixed;
+    width: 100%;
+    height: 100vh;
+    z-index: 1000;
+    background: rgba(0, 0, 0, 0.5);
+}
+.btn {
+  padding: 5px;
+  border-radius: 5px;
+  margin-top: 10px;
+}
+.btn-active {
+  background-color: green;
+  color: white;
+}
+.btn-inactive {
+  background-color: grey;
+  color: white;
+}
+.button {
+  padding: 5px 10px;
+  border-radius: 10px;
+  min-width: 100px;
+}
+.button:focus {
+  outline: 0;
+}
+.btn-actualizar {
+  background-color: #f7ac55;
+  color: #6e0400;
+}
+.btn-seleccionar {
+  background-color: #4dffea;
+  color: #025c51;
+}
+.btn-activo {
+  background-color: #00b158;
+  color: #000071;
+}
+.btn-inactivo {
+  background-color: #ff3131;
+  color: #6f0404;
+}
 .responsive-table {
-  overflow-x: auto;
-  overflow-y: auto;
-  max-height: 600px;
-  
+  padding-top: 20px;
+  max-height: 640px;
 }
 .tftable {
   font-size: 12px;
@@ -200,12 +244,10 @@ export default {
   border-top-width: 2px;
   padding: 8px;
   border-style: solid;
-  border-color: white;
   border-bottom-color: #a1a1a1;
   border-left-color: white;
   border-right-color: white;
-  background: white;
   text-align: center;
+  
 }
-
 </style>

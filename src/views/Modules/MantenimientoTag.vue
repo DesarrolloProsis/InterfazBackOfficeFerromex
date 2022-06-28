@@ -49,8 +49,8 @@
     </div>
   </div>
   <TablaMantenimientoTag :dataCruces="cruces" @actualizartabla="actualizarLista"/>
+  <Paginacion :total-pages="totalPaginas" :total="100" :current-page="currentPage" :has-more-pages="hasMorePages" @pagechanged="showMore"/> 
   </div>
-  <Paginacion :total-pages="totalPaginas" :total="100" :current-page="currentPage" :has-more-pages="hasMorePages" @pagechanged="showMore"/>  
   <Spinner :modalLoading="modalLoading"/>
   <Modal :show="showModal" @cerrarmodal="cerralmodalpadre">
         <h1 class="text-4xl font-bold font-titulo text-center mt-4">Agregar Tag</h1>

@@ -87,13 +87,12 @@
   <!-- MODAL COMFIRMAR -->
   <Modal :show="modalConfirmacion" @cerrarmodal="modalConfirmacion = false">
     <div>
-      <div class="w-full flex justify-center mb-12">
-          <fa icon="triangle-exclamation" class="h-12 text-yellow-400"/>
-          <p class="text-gray-900 font-bold text-xl mt-2 text-center">Estas seguro de cambiar la contraseña del usuario {{ seleccionado.nombre + ' ' + seleccionado.apellidos }}</p>
+      <div class="w-full flex items-center justify-center ">
+          <fa icon="circle-exclamation" class="h-20 text-yellow-400"/>
+          <p class="text-gray-900 font-medium text-lg mt-2 ml-6 text-center">Estas seguro de cambiar la contraseña del usuario {{ seleccionado.nombre.toUpperCase() + ' ' + seleccionado.apellidos.toUpperCase() }}</p>
       </div>
-      <div class="mt-10 mb-4 grid grid-cols-2">
+      <div class="mt-10 mb-4 w-full flex justify-center">
         <button @click="confirmar(seleccionado)" class="rounded-lg w-32 botonIconOk">Confirmar</button>
-        <button @click="modalConfirmacion = false" class="rounded-lg w-32 botonIconCancelar">Cancelar</button>
       </div>
     </div>
   </Modal>
