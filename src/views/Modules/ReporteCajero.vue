@@ -159,6 +159,11 @@ setup(){
     function generarbolsa(idbolsa){
       ServiceFiles.xml_hhtp_request(`${API}/Ferromex/Download/pdf/reporteOperativo/reporteCajero/concentrado/${idbolsa}`, 'reporteturnoconcentrado.pdf');
       ServiceFiles.xml_hhtp_request(`${API}/Ferromex/Download/pdf/reporteOperativo/reporteCajero/transacciones/${idbolsa}`, 'reporteturnotransacciones.pdf');
+      showModal.value = !showModal.value;
+      cajero.numerocajero = "";
+      cajero.turno = undefined,
+      cajero.fecha = "";
+      bolsas.value = []; 
     }
 return {showModal,generareporte,cerralmodalpadre,generarbolsa,cajero,bolsas,hoy,vnocajero,vturno,vfecha}
 }

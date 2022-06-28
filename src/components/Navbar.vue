@@ -6,7 +6,7 @@
       Ferromex 
       </router-link>
     </div>
-    <span class="text-white mt-2">Bienvenido {{ nombre }}</span>
+    <span class="text-white mt-2">Bienvenido {{ nombre.toUpperCase() }}</span>
     <div class="flex-none -mt-2 animacion">
       <router-link class="" to="/" tag="div">
         <button class="" @click="logout()">
