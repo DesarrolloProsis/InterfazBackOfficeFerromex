@@ -234,7 +234,7 @@ export default {
             }else{
                 const ruta = encodeURI(`${API}/Ferromex/Download/pdf/crucestotales/reporteCruces/${urldias}/${urlmeses}/${urlsemana}`)
                 console.log(ruta)
-                ServiceFiles.xml_hhtp_request(ruta, 'reportetotal.pdf')
+                ServiceFiles.xml_hhtp_request(ruta, 'TransaccionesFerromexDetalle.pdf')
                 cerralmodalcrucestotales(false)
             }
         }
@@ -266,8 +266,8 @@ export default {
             }else{
                 const rutadescuentolletalle = encodeURI(`${API}/Ferromex/Download/pdf/crucesferromex/descuentodetallesamarre/${urldias}/${urlmeses}/${urlsemana}`)
                 const rutadescuentoamerreresumen = encodeURI(`${API}/Ferromex/Download/pdf/crucesferromex/descuentoamarreresumen/${urldias}/${urlmeses}/${urlsemana}`)
-                ServiceFiles.xml_hhtp_request(rutadescuentolletalle, 'reportecrucesferromexdescuentodetallesamarre.pdf')
-                ServiceFiles.xml_hhtp_request(rutadescuentoamerreresumen, 'reportecrucesferromexdescuentoamarreresumen.pdf')
+                ServiceFiles.xml_hhtp_request(rutadescuentolletalle, 'DescuentosDetalleAmarre.pdf')
+                ServiceFiles.xml_hhtp_request(rutadescuentoamerreresumen, 'DescuentosDetalleResumen.pdf')
                 cerramodalcruceferromex(false)
             }
         }

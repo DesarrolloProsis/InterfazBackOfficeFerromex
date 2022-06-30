@@ -24,10 +24,10 @@
             <label for="">Mazanillo</label>
         </div>
         <div>
-            <input type="text" placeholder="XXXXX" class="input" v-model="cajero.numerocajero"/>
+            <input type="text" placeholder="XXXXX" class="input" v-model="numerocajero"/>
         </div>
         <div>
-            <select class="input" v-model="cajero.turno"  placeholder="XXXXX">
+            <select class="input" v-model="turno"  placeholder="XXXXX">
               <option value="undefined" disabled>Seleccione un turno</option>
               <option value="1">Turno 1</option>
               <option value="2">Turno 2</option>
@@ -35,12 +35,12 @@
             </select>
         </div>
         <div>
-            <input type="date" class="input" v-model="cajero.fecha" :max="hoy">
+            <input type="date" class="input" v-model="fecha" :max="hoy">
         </div>
     </div>
   </div>
   <div class="flex w-full justify-center p-14 2xl:p-20">
-      <button class="border w-40 bg-ferromex text-white" @click="generareporte(cajero.numerocajero,cajero.turno,cajero.fecha)">Generar Reporte</button>
+      <button class="border w-40 bg-ferromex text-white" @click="generareporte(numerocajero,turno,fecha)">Generar Reporte</button>
   </div>
 </div>
 </div>
@@ -68,8 +68,8 @@
           <label class="text-black px-4 2xl:px-10">Acciones</label>
         </th>
       </tr>
-      <template v-if="bolsas.value.length">
-         <tr class="text-center w-full text-sm" v-for="(bolsa, index) in bolsas.value" :key="index">
+      <template v-if="bolsas.length">
+         <tr class="text-center w-full text-sm" v-for="(bolsa, index) in bolsas" :key="index">
         <td>{{bolsa.idBolsa}}</td>
         <td>{{moment.utc(bolsa.fechaInicio).local().format("YYYY-MM-DD HH:mm:ss a")}}</td>
         <td>{{moment.utc(bolsa.fechaFin).local().format("YYYY-MM-DD HH:mm:ss a")}}</td>
@@ -100,7 +100,7 @@ import Footer from "../../components/Footer";
 import Modal from "../../components/Modal.vue"
 import axios from "axios";
 import { notify } from "@kyvg/vue3-notification";
-import { reactive, ref,onMounted } from 'vue'
+import { reactive, ref,onMounted, toRefs } from 'vue'
 import ServiceFiles from '../../Servicios/Files-Service'
 import moment from 'moment'
 export default {
@@ -120,7 +120,7 @@ setup(){
     fecha: "" 
   })
   const hoy = ref('')
-  const bolsas = reactive([])
+  const bolsas = ref([])
   const vnocajero = ref(false)
   const vturno = ref(false)
   const vfecha = ref(false)
@@ -129,7 +129,7 @@ setup(){
   })
   function generareporte(nocajero,idturno,fechareporte){
     console.log(nocajero,idturno,fechareporte);
-    if(nocajero == undefined && idturno == undefined && fechareporte == undefined){
+    if(nocajero == "" && idturno == undefined && fechareporte == ""){
      notify({
             title:'Sin parametros',
             text:'Para generar las bolsas requieres llenar todos los campos' ,
@@ -142,12 +142,13 @@ setup(){
     //En el then se deben llenar las las bolsas pertenecientes
     .then((res)=>{
       console.log(res)
+      showModal.value = true
       bolsas.value = res.data.content;
       console.log(bolsas.value)
     })
     //Capturamos error por si lo hay por parte de la peticion
     .catch((error)=>{console.log(error)})
-    showModal.value = !showModal.value
+    
     }
     
   }
@@ -157,15 +158,15 @@ setup(){
       bolsas.value = []
     }
     function generarbolsa(idbolsa){
-      ServiceFiles.xml_hhtp_request(`${API}/Ferromex/Download/pdf/reporteOperativo/reporteCajero/concentrado/${idbolsa}`, 'reporteturnoconcentrado.pdf');
-      ServiceFiles.xml_hhtp_request(`${API}/Ferromex/Download/pdf/reporteOperativo/reporteCajero/transacciones/${idbolsa}`, 'reporteturnotransacciones.pdf');
-      showModal.value = !showModal.value;
-      cajero.numerocajero = "";
-      cajero.turno = undefined,
-      cajero.fecha = "";
-      bolsas.value = []; 
+      ServiceFiles.xml_hhtp_request(`${API}/Ferromex/Download/pdf/reporteOperativo/reporteCajero/concentrado/${idbolsa}`, 'CajeroContrado.pdf');
+      ServiceFiles.xml_hhtp_request(`${API}/Ferromex/Download/pdf/reporteOperativo/reporteCajero/transacciones/${idbolsa}`, 'TransaccionesCajero.pdf');
+      bolsas.value = [];
+      showModal.value = false
+      cajero.numerocajero = ""
+      cajero.turno = undefined
+      cajero.fecha = ""  
     }
-return {showModal,generareporte,cerralmodalpadre,generarbolsa,cajero,bolsas,hoy,vnocajero,vturno,vfecha}
+return {showModal,generareporte,cerralmodalpadre,generarbolsa,bolsas,hoy,vnocajero,vturno,vfecha,...toRefs(cajero)}
 }
 }
 </script>

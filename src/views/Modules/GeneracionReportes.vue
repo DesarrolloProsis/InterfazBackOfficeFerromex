@@ -26,7 +26,7 @@
     </div>
     <Footer/>
     <Modal :show="showModal" @cerrarmodal="cerramodalconcentradoferromex">
-        <h1 class="text-4xl font-bold font-titulo text-center mt-4">Concentrado Ferromex</h1>
+        <h1 class="text-4xl font-bold font-titulo text-center mt-4">Auditoria Ferromex</h1>
             <div class="flex w-full justify-center gap-20 mt-10">
                 <div class="flex flex-col gap-10">
                     <div>
@@ -144,7 +144,7 @@ export default {
             }else{
                 const ruta = encodeURI(`${API}/Ferromex/Download/pdf/concentradosferromex/${urldias}/${urlmeses}/${urlsemana}`)
                 console.log(ruta)
-                ServiceFiles.xml_hhtp_request(ruta, 'reporteconcentradoferromex.pdf')
+                ServiceFiles.xml_hhtp_request(ruta, 'ResumenIngresosFerromex.pdf')
                 cerramodalconcentradoferromex(false)
             }
        }

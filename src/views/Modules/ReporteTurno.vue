@@ -72,8 +72,8 @@ setup(){
      });
     }else{
     //Generamos la ruta que hara la llamada a la generacion de los reportes
-    ServiceFiles.xml_hhtp_request(`${API}/Ferromex/Download/pdf/reporteOperativo/reporteTurno/concentrado/${idturno}/${fechareporte}`, 'reporteturnoconcentrado.pdf')
-    ServiceFiles.xml_hhtp_request(`${API}/Ferromex/Download/pdf/reporteOperativo/reporteTurno/transacciones/${idturno}/${fechareporte}`, 'reporteturnotransacciones.pdf')
+    ServiceFiles.xml_hhtp_request(`${API}/Ferromex/Download/pdf/reporteOperativo/reporteTurno/concentrado/${idturno}/${fechareporte}`, 'ConcentradoTurno.pdf')
+    ServiceFiles.xml_hhtp_request(`${API}/Ferromex/Download/pdf/reporteOperativo/reporteTurno/transacciones/${idturno}/${fechareporte}`, 'TransaccionesTurno.pdf')
     cajero.turno = undefined;
     cajero.fecha = "";
   }
