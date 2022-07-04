@@ -150,10 +150,9 @@
 const API = process.env.VUE_APP_URL_API_PRODUCCION//Constante que almacena la cadena de conexión a la API
 import Spinner from '../components/Spinner.vue'//Componente spinner para las pantallas de carga
 import Multiselect from '@vueform/multiselect'//Componente multiselect para el menú de acciones
-import { ref } from 'vue'//permite hacer referencia al tipo de dato que será la constante y asi volverla reactivaz
+import { ref,inject } from 'vue'//permite hacer referencia al tipo de dato que será la constante y asi volverla reactivaz
 import { notify } from "@kyvg/vue3-notification";//muestra las notificaciones en las vistas
 import Servicio from '../Servicios/Token-Services';//Servicio que importa la información del usuario
-import axios from "axios";
 import Modal from "../components/Modal.vue"
 import router from '../router';
 
@@ -165,6 +164,7 @@ export default {
   components:{ Multiselect, Spinner, Modal },
   emits: ["refrescarTabla"],
     setup(props, {emit}) {
+    const axios = inject('axios')
     const modalEditar = ref(false)//Constante que va a abrir el modal que permite editar el usuario
     const modalPass = ref(false)//Modal que va a abrir el modal que permite cambiar la contraseña del usuario
     const modalRol = ref(false)//Constancia que va a abrir el modal que permite cambiar el rol del usuario

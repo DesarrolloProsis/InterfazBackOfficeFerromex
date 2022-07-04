@@ -31,9 +31,8 @@
 <script>
 const API = process.env.VUE_APP_URL_API_PRODUCCION//constante global que  contiene la cadena de conexión al API
 import Footer from "../components/Footer-login.vue";//Importamos el componente Footer que es exclusivo para el login
-import axios from "axios";//Importamos axios para poder hacer peticiones http al API
 import serviceToken from '../Servicios/Token-Services'//Importamos el Servicio que nos va a permitir obtener, decodificar y utilizar el token
-import { ref } from 'vue'//Importmos ref que nos permite que se devuelba un objeto reactivo y mutable, accedemos al valor ocupando .value
+import { ref,inject } from 'vue'//Importmos ref que nos permite que se devuelba un objeto reactivo y mutable, accedemos al valor ocupando .value
 import router from '../router';//Importamos el router de vue para poder navejar hacia rutas existentes
 import Spinner from "../components/Spinner.vue"//Importamos el componente de la pantalla de carga
 export default {
@@ -42,6 +41,7 @@ export default {
     Spinner
   },
   setup(){//Hook que se encarga de ser el constructor del componente
+    const axios = inject('axios')
     const user = ref('')//Constante que almacena el valor del usuario insertado en el input
     const pass = ref('')//Constante que almacena el valor del password insetado en el input
     const message = ref('')//Constante que almacena el posible mensaje de error

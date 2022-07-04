@@ -68,9 +68,8 @@
 <script>
 import Servicio from '../Servicios/Token-Services'; //Importamos el Servicio de Toke, para obtener información del usuario con base en el token
 import Multiselect from '@vueform/multiselect' //Importamos el componente Multiselect para utilizarlo en la columna Acciones o en el modal de asignar módulos
-import axios from 'axios';
 import Modal from '../components/Modal.vue'
-import { ref } from 'vue'
+import { ref,inject } from 'vue'
 import { notify } from "@kyvg/vue3-notification"; //Componente para generar notificaciones
 const API = process.env.VUE_APP_URL_API_PRODUCCION //Constante que nos almacena la cadena de conexión a la API
 export default {
@@ -81,6 +80,7 @@ export default {
     Modal,//Componente Modal
   },
   setup(){
+    const axios = inject('axios')
     const modalModulos = ref(false)//Constante que permite abrir o cerrar el modal de módulos asignados     
     const perfilSelected = ref({})//Cnstante que almacena los valores del rol seleccionado
     const value = ref('')//Constante almacena el valor de la opción seleccionada en el multiselect de Acciones

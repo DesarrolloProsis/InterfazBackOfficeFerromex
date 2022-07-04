@@ -80,12 +80,11 @@ const API = process.env.VUE_APP_URL_API_PRODUCCION
 import TablaMantenimientoTag from "../../components/Tabla-ManteniminetoTags.vue";
 import Navbar from "../../components/Navbar.vue";
 import Footer from "../../components/Footer";
-import axios from "axios";
 import ServiceFiles from '../../Servicios/Files-Service'
 import Paginacion from "../../components/Paginacion.vue"
 import { notify } from "@kyvg/vue3-notification";
 import Spinner from '../../components/Spinner.vue'
-import { ref,reactive,toRefs,onMounted } from 'vue'
+import { ref,reactive,toRefs,onMounted,inject } from 'vue'
 import Modal from "../../components/Modal.vue"
 export default {
   name: "BusquedaCruces",
@@ -98,6 +97,7 @@ export default {
     Modal
   },
   setup() {
+    const axios = inject('axios')
     const cruces = ref([]) //Variable para llenar la tabla de tags
     const page = ref(1) //Variable que maneja la paginacion para que se le indique desde donde iniciar
     const hoy = ref('') //Variable que se utiliza para dar a los inputs date el maximo dia a seleccionar que es el dia de hoy 
