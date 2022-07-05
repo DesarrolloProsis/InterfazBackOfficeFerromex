@@ -1,7 +1,8 @@
-import saveAs from "file-saver";
+//import saveAs from "file-saver";
 import ServiceToken from '../Servicios/Token-Services'
 
-function xml_hhtp_request(urlToFile,nameFile){        
+
+function xml_hhtp_request(urlToFile,){        
     var oReq = new XMLHttpRequest();  
     oReq.open("GET", urlToFile, true);    
     oReq.responseType = "blob";  
@@ -11,8 +12,10 @@ function xml_hhtp_request(urlToFile,nameFile){
     oReq.onload = function () {
       var file = new Blob([oReq.response], {
         type: "application/pdf",
-      });       
-      saveAs(file, nameFile);  
+      });
+      var pdfFileURL = URL.createObjectURL(file);
+      return pdfFileURL
+      //saveAs(file, nameFile);  
     };            
 }
 export default {

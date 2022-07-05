@@ -47,14 +47,13 @@ export default {
     const message = ref('')//Constante que almacena el posible mensaje de error
     const modalLoading = ref(false)//Contante que funciona como bandera para activar o desactivar el spinner de pantalla de carga
     const tipoInput = ref('password')//Constante que indica el tipo de input para mostra u ocultar la contraseña
-
     function login() {//Función que genera el inicio de sesión
       let data = {//Literal que almacena el json que se enviará para iniciar sesión
         "grant_type": 'password',//Configuración que permite enviar las credenciales al servidor, si son valida nos regresa el token
         "username": this.user, //parametro que almacena el usuario insertado en el input
         "password": this.pass, //parametro que almacena el password insertado en el input
         "client_id": '', //identificador de publico de la aplicación
-        "cliente_secret":''//es una contraseña que generamos con el servidor OAuth
+        "client_secret":''//es una contraseña que generamos con el servidor OAuth
       }
       if(data.username != '' && data.password != ''){//validación para que el username y el password no esté vacio
         modalLoading.value = true//Activamos la bandera que abre el spinner de la pantalla de carga
