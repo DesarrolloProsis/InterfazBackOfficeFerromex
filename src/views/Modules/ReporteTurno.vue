@@ -1,6 +1,6 @@
 <template>
 <Navbar/>
-<div class="grid grid-cols-2 justify-items-center p-16 2xl:p-40">
+<div class="grid justify-items-center p-16 2xl:p-40">
 <div class="bg-white w-96 h-96 rounded-lg shadow-md 2xl:w-80 2xl:h-74">
     <h1 class="text-4xl font-bold font-titulo text-center p-2 2xl:text-6xl 2xl:p-4">Reporte Turno</h1>
   <div class="flex w-full justify-center mt-4 gap-8 2xl:gap-20 2xl:mt-10">
@@ -37,9 +37,7 @@
       <button class="border w-40 bg-ferromex text-white" @click="generareporte(cajero.turno,cajero.fecha)">Generar Reporte</button>
   </div>
 </div>
-<div class="bg-white w-96 h-96 rounded-lg shadow-md 2xl:w-80 2xl:h-74">
-  <RenderPDF :rutaarchivo="rutapdf"></RenderPDF>
-</div>
+
 </div>
  
 <Footer/>
@@ -49,15 +47,13 @@
 const API = process.env.VUE_APP_URL_API_PRODUCCION
 import Navbar from "../../components/Navbar.vue";
 import Footer from "../../components/Footer";
-import RenderPDF from "../../components/RenderPDF.vue"
 import { notify } from "@kyvg/vue3-notification";
-import { reactive, ref,onMounted } from 'vue'
-import ServiceToken from '../../Servicios/Token-Services'
+import { reactive, ref,onMounted } from 'vue';
+import ServiceFiles from "../../Servicios/Files-Service";
 export default {
 components: {
         Navbar,
-        Footer,
-        RenderPDF
+        Footer
     },
 setup(){
 
@@ -79,25 +75,8 @@ setup(){
      });
     }else{
     //Generamos la ruta que hara la llamada a la generacion de los reportes
-    //ServiceFiles.xml_hhtp_request(`${API}/Ferromex/Download/pdf/reporteOperativo/reporteTurno/concentrado/${idturno}/${fechareporte}`)
-    var oReq = new XMLHttpRequest();  
-    oReq.open("GET",`${API}/Ferromex/Download/pdf/reporteOperativo/reporteTurno/concentrado/${idturno}/${fechareporte}` , true);    
-    oReq.responseType = "blob";  
-    let token =  ServiceToken.obtenerToken() //ServiceToken.getCookie('Token')    
-    oReq.setRequestHeader('Authorization', 'Bearer ' + token);   
-    oReq.send();              
-    oReq.onload = function () {
-      var file = new Blob([oReq.response], {
-        type: "application/pdf",
-      });
-      var pdfFileURL = URL.createObjectURL(file);
-      rutapdf.value = pdfFileURL
-      //window.open(pdfFileURL)
-      window.open(pdfFileURL, '_blank' )
-    
-      //saveAs(file, nameFile);  
-    };   
-    //ServiceFiles.xml_hhtp_request(`${API}/Ferromex/Download/pdf/reporteOperativo/reporteTurno/transacciones/${idturno}/${fechareporte}`, 'TransaccionesTurno.pdf')
+    ServiceFiles.xml_hhtp_request(`${API}/Ferromex/Download/pdf/reporteOperativo/reporteTurno/concentrado/${idturno}/${fechareporte}`)
+    ServiceFiles.xml_hhtp_request(`${API}/Ferromex/Download/pdf/reporteOperativo/reporteTurno/transacciones/${idturno}/${fechareporte}`, 'TransaccionesTurno.pdf')
     cajero.turno = undefined;
     cajero.fecha = "";
   }
