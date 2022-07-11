@@ -18,11 +18,11 @@
 </template>
 <script>
 import Servicio from '../Servicios/Token-Services';//Se importa el servicio que nos permite tener la información del token
-import { onMounted,ref } from 'vue'//se importa onMounted para que haga una devolución de una llamada que se hará al montar el componente
-import axios from "axios";
+import { onMounted,ref,inject } from 'vue'//se importa onMounted para que haga una devolución de una llamada que se hará al montar el componente
 import router from '../router';
 export default{
   setup(){
+    const axios = inject('axios')
     const nombre = ref('')//Constante que alamacena el nombre de usuario
     function logout (){//Función que cierra la sesión y elimina el token generadp
       axios.defaults.headers.common['Authorization'] = '' //Enviamos el token en la cabecera llamada Authorization porque todos los endpoints lo piden

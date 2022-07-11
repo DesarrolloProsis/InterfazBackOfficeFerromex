@@ -78,10 +78,9 @@ import Paginacion from "../../components/Paginacion.vue" //Importamos el compone
 import Spinner from '../../components/Spinner.vue' //Importamos el componente del spinner para las pantallas de carga
 import Navbar from "../../components/Navbar.vue";//Importamos el componente navbar para la navegación
 import Footer from "../../components/Footer";//Importamos el componente Footer
-import axios from 'axios';//Importamos axios, para poder hacer llamadas a endpoint 
 import Multiselect from '@vueform/multiselect'//Importamos el componente multiselect para la selección de modulos a asignar
 import { notify } from "@kyvg/vue3-notification";//Importamos el componente notify para mostrar las notifiaciones al usuario
-import { onMounted, reactive, ref, toRefs } from 'vue';
+import { onMounted, reactive, ref, toRefs, inject } from 'vue';
 import Modal from "../../components/Modal.vue"
 const API = process.env.VUE_APP_URL_API_PRODUCCION
 export default {
@@ -95,8 +94,7 @@ export default {
     Modal
   },
   setup(){
-    
-    
+    const axios = inject('axios')
     const roles = ref([])//Constante que almacena el listado de roles que existen
     const userModal = ref(false) //Constante que permite abrir el modal para agregar un nuevo Rol
     const options = ref(['Activo', 'Inactivo'])//Constante que almacena las opciones de estatus que pueden seleccionar en el header

@@ -93,8 +93,7 @@ import { notify } from "@kyvg/vue3-notification";//Componente que realiuza las n
 import Spinner from '../../components/Spinner.vue'//Componente que contiene el spinner para las pantallas de cargas
 import Paginacion from "../../components/Paginacion.vue"//Componente que contiene la paginación
 import Modal from "../../components/Modal.vue"//Importamos el componente modal
-import axios from "axios";
-import { onMounted, reactive, ref, toRefs } from 'vue'
+import { onMounted, reactive,inject, ref, toRefs } from 'vue'
 export default {
   components: {
     TablaListaUsuarios,
@@ -106,6 +105,7 @@ export default {
     Modal
   },
   setup() {
+    const axios = inject('axios')
     const usuarios = ref([])//Constante que almacena el array de todos los usuarios que se han registrado con toda la información
     const options = ref(['Activo', 'Inactivo'])//Constante que almacena las opciones de estatus que pueden seleccionar en el header
     const modalAgregar = ref(false)//Constante que abre el modal para agregar el usuario

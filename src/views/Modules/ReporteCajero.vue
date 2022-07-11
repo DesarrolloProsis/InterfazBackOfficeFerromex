@@ -98,9 +98,8 @@ const API = process.env.VUE_APP_URL_API_PRODUCCION
 import Navbar from "../../components/Navbar.vue";
 import Footer from "../../components/Footer";
 import Modal from "../../components/Modal.vue"
-import axios from "axios";
 import { notify } from "@kyvg/vue3-notification";
-import { reactive, ref,onMounted, toRefs } from 'vue'
+import { reactive, ref,onMounted, toRefs,inject } from 'vue'
 import ServiceFiles from '../../Servicios/Files-Service'
 import moment from 'moment'
 export default {
@@ -113,6 +112,7 @@ created: function () {
     this.moment = moment;
 },
 setup(){
+  const axios = inject('axios')
   const showModal = ref(false)
   const cajero = reactive({
     numerocajero: "",

@@ -67,15 +67,14 @@ import Paginacion from "../../components/Paginacion.vue"//Componente que tiene l
 import Navbar from "../../components/Navbar.vue";//Importamos el componente navbar
 import Footer from "../../components/Footer";//Importamos el componente Footer
 import { notify } from "@kyvg/vue3-notification";//Componente para poder hacer las notificaciones
-import { onMounted, ref, reactive, toRefs, onUnmounted } from 'vue'//Importamos componente de vue que nos van a permitir montar funciones par acargas iniciales, hooks para constantes que se vuelvan reactivas
-import axios from "axios";
+import { onMounted, ref, reactive, toRefs, onUnmounted,inject } from 'vue'//Importamos componente de vue que nos van a permitir montar funciones par acargas iniciales, hooks para constantes que se vuelvan reactivas
 import moment from 'moment'
 import Spinner from '../../components/Spinner.vue'
 export default {
   name: "RegistroInformacion",
   components: { TablaInformacionTelepeaje, Navbar, Footer, Paginacion, Spinner},
   setup() {
-
+    const axios = inject('axios')
     const modalLoading = ref(false) //Constante que permite abrir el spinner de las pantalla de carga
     const cruces = ref([])//Constante que almacena los cruces para mostrar en la tabla
     const tiempo = ref('') //Constante que almacena el tiempo seleccionado para actualizar la tabla

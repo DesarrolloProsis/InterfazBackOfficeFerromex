@@ -52,10 +52,9 @@
 <script>
 const API = process.env.VUE_APP_URL_API_PRODUCCION
 import moment from 'moment'
-import { ref } from 'vue'
+import { ref,inject } from 'vue'
 import Modal from "../components/Modal.vue"
 import Multiselect from '@vueform/multiselect'//Importamos el componente multiselect para la selección de modulos a asignar
-import axios from 'axios'
 import { notify } from "@kyvg/vue3-notification";
 export default {
   name: "TablaBusquedaCruces",
@@ -70,6 +69,7 @@ export default {
   },
   setup(props ,{ emit }){
     //Declaracion de variable
+      const axios = inject('axios')
       const showModalAdvertencia = ref(false)//Variable que manipula el modal de advertencia
       const texto = ref('') //Variable que contiene el texto del modal
       const select = ref('') // Variable que contiene el valor del multiselect

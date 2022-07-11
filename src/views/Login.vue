@@ -31,9 +31,8 @@
 <script>
 const API = process.env.VUE_APP_URL_API_PRODUCCION//constante global que  contiene la cadena de conexión al API
 import Footer from "../components/Footer-login.vue";//Importamos el componente Footer que es exclusivo para el login
-import axios from "axios";//Importamos axios para poder hacer peticiones http al API
 import serviceToken from '../Servicios/Token-Services'//Importamos el Servicio que nos va a permitir obtener, decodificar y utilizar el token
-import { ref } from 'vue'//Importmos ref que nos permite que se devuelba un objeto reactivo y mutable, accedemos al valor ocupando .value
+import { ref,inject } from 'vue'//Importmos ref que nos permite que se devuelba un objeto reactivo y mutable, accedemos al valor ocupando .value
 import router from '../router';//Importamos el router de vue para poder navejar hacia rutas existentes
 import Spinner from "../components/Spinner.vue"//Importamos el componente de la pantalla de carga
 export default {
@@ -42,19 +41,19 @@ export default {
     Spinner
   },
   setup(){//Hook que se encarga de ser el constructor del componente
+    const axios = inject('axios')
     const user = ref('')//Constante que almacena el valor del usuario insertado en el input
     const pass = ref('')//Constante que almacena el valor del password insetado en el input
     const message = ref('')//Constante que almacena el posible mensaje de error
     const modalLoading = ref(false)//Contante que funciona como bandera para activar o desactivar el spinner de pantalla de carga
     const tipoInput = ref('password')//Constante que indica el tipo de input para mostra u ocultar la contraseña
-
     function login() {//Función que genera el inicio de sesión
       let data = {//Literal que almacena el json que se enviará para iniciar sesión
         "grant_type": 'password',//Configuración que permite enviar las credenciales al servidor, si son valida nos regresa el token
         "username": this.user, //parametro que almacena el usuario insertado en el input
         "password": this.pass, //parametro que almacena el password insertado en el input
         "client_id": '', //identificador de publico de la aplicación
-        "cliente_secret":''//es una contraseña que generamos con el servidor OAuth
+        "client_secret":''//es una contraseña que generamos con el servidor OAuth
       }
       if(data.username != '' && data.password != ''){//validación para que el username y el password no esté vacio
         modalLoading.value = true//Activamos la bandera que abre el spinner de la pantalla de carga

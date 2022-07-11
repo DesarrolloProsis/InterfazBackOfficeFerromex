@@ -23,8 +23,7 @@ import Spinner from '../components/Spinner.vue' //Importamos el componente spinn
 import ModulosComp from "../components/Moldulo-menu"; //Importamos el componente de Menú para poder poner cada uno de los modulos que tiene el rol
 import Servicio from '../Servicios/Token-Services'; //Importamos el Servicio de Toke, para obtener información del usuario con base en el token
 import Footer from "../components/Footer";//Importamos el footer para mostrar en la vista
-import { onMounted,ref } from 'vue' //Importamos onMounted para recibir una respuesta de una llamada cuando se monta el modulo, y ref para hacer referencia al tipo de dato que estamos utilizando y volvemos reactiva la constante
-import axios from "axios";
+import { onMounted,ref,inject } from 'vue' //Importamos onMounted para recibir una respuesta de una llamada cuando se monta el modulo, y ref para hacer referencia al tipo de dato que estamos utilizando y volvemos reactiva la constante
 export default {
   components: {
     Navbar,
@@ -33,6 +32,7 @@ export default {
     Spinner
   },
   setup(){
+    const axios = inject('axios')
     const modulos = ref([]) //Constante que va a almacenar el array de modulos que se van a mostrar
     const decoded = Servicio.obtenerInfoUser() //variable que obtiene la información del usuario
     const modalLoading = ref(false) //constante que habilita el spinner
