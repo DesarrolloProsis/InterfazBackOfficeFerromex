@@ -10,17 +10,17 @@
 .animacion:hover{
     @apply transform -translate-y-1 scale-110;
 }
-.botonIconBuscar{
-    @apply bg-white tracking-wide text-gray-800 font-titulo font-bold rounded border-b-2 border-blue-800 shadow-md py-2 px-6 inline-flex items-center;
+.btn-buscar {
+    @apply bg-white tracking-wide text-black font-titulo font-bold rounded border-b-2 border-red-300 shadow-md py-2 px-6 inline-flex items-center text-center;
 }
-.botonIconBuscar:hover{
-    @apply border-blue-600 bg-blue-400 text-white transition duration-500;
+.btn-buscar:hover{
+    @apply border-red-300 bg-white text-black transition duration-500;
 }
-.botonIconBuscar:focus{
+.btn-buscar:focus{
     @apply outline-none;
 }
 .botonIconCancelar{
-    @apply bg-white tracking-wide text-gray-800 font-titulo font-bold rounded border-b-2 border-red-500 shadow-md py-2 px-6 inline-flex items-center ml-4 mr-4;
+    @apply bg-white tracking-wide text-gray-800 font-titulo font-bold rounded border-b-2 border-red-500 shadow-md py-2 px-8 inline-flex items-center mx-auto;
 }
 .botonIconCancelar:hover{
     @apply border-red-800 bg-red-500 text-white transition duration-500;
@@ -29,7 +29,7 @@
     @apply outline-none;
 }
 .botonIconOk{
-    @apply bg-white tracking-wide text-gray-800 font-titulo font-bold rounded border-b-2 border-green-500 shadow-md py-2 px-6 inline-flex items-center ml-4 mr-4;
+    @apply bg-white tracking-wide text-gray-800 font-titulo font-bold rounded border-b-2 border-green-500 shadow-md py-2 px-7 inline-flex items-center mx-auto;
 }
 .botonIconOk:hover{
     @apply border-green-800 bg-green-400 text-white transition duration-500;
@@ -37,8 +37,26 @@
 .botonIconOk:focus{
     @apply outline-none;
 }
+.botonIconBuscar{
+    @apply bg-white tracking-wide text-gray-800 font-titulo font-bold rounded border-b-2 border-blue-500 shadow-md py-2 px-6 inline-flex items-center ml-4 mr-4;
+}
+.botonIconBuscar:hover{
+    @apply border-blue-800 bg-blue-400 text-white transition duration-500;
+}
+.botonIconBuscar:focus{
+    @apply outline-none;
+}
 .active {
     @apply border-t border-b border-l border-blue-100 px-3 py-2 bg-blue-100 no-underline text-blue-500 text-sm;
+}
+.ferromex-color{
+    background-color: #BB2028;
+}
+.input{
+    @apply border border-gray-500 rounded w-44
+}
+body{
+    @apply bg-gray-100
 }
 @tailwind components;
 @tailwind utilities;

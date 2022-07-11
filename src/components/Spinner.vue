@@ -1,5 +1,5 @@
 <template>
-<div class="inset-0 flex items-center" :class="{'modal-container': modalLoading}">
+<div class="mt-14 inset-0 flex items-center" :class="{'modal-container': modalLoading}">
     <div v-if="modalLoading" class="mx-auto">      
         <div class="loadingio-spinner-double-ring-t0xuu93cwm">
             <div class="ldio-20tj2v72mxrh">
@@ -45,7 +45,7 @@ export default {
     left: 71.96px;
     border-radius: 50%;
     border: 41.12px solid #000;
-    border-color: #2c5282 transparent #2c5282 transparent;
+    border-color: #BB2028 transparent #BB2028 transparent;
     animation: ldio-20tj2v72mxrh 1s linear infinite;
 }
 
@@ -57,7 +57,7 @@ export default {
     animation: ldio-20tj2v72mxrh 1s linear infinite reverse;
 }   
 .ldio-20tj2v72mxrh > div:nth-child(2) {
-    border-color: transparent #689cc5 transparent #689cc5
+    border-color: transparent #000000 transparent #000000
 }
 .ldio-20tj2v72mxrh > div:nth-child(3) { border-color: transparent }
 .ldio-20tj2v72mxrh > div:nth-child(3) div {
@@ -74,14 +74,14 @@ export default {
     height: 41.12px;
     top: -41.12px;
     left: 123.35999999999999px;
-    background: #2c5282;
+    background: #BB2028;
     border-radius: 50%;
-    box-shadow: 0 328.96px 0 0 #2c5282;
+    box-shadow: 0 328.96px 0 0 #BB2028;
 }
 .ldio-20tj2v72mxrh > div:nth-child(3) div:after {
     left: -41.12px;
     top: 123.35999999999999px;
-    box-shadow: 328.96px 0 0 0 #2c5282;
+    box-shadow: 328.96px 0 0 0 #BB2028;
 }
 
 .ldio-20tj2v72mxrh > div:nth-child(4) { border-color: transparent; }
@@ -99,14 +99,14 @@ export default {
     height: 41.12px;
     top: -41.12px;
     left: 77.1px;
-    background: #689cc5;
+    background: #000000;
     border-radius: 50%;
-    box-shadow: 0 236.44px 0 0 #689cc5;
+    box-shadow: 0 236.44px 0 0 #000000;
 }
 .ldio-20tj2v72mxrh > div:nth-child(4) div:after {
     left: -41.12px;
     top: 77.1px;
-    box-shadow: 236.44px 0 0 0 #689cc5;
+    box-shadow: 236.44px 0 0 0 #000000;
 }
 .loadingio-spinner-double-ring-t0xuu93cwm {
     width: 514px;

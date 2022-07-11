@@ -2,21 +2,19 @@ import { createRouter, createWebHistory } from "vue-router";
 //import axios from "axios";
 import Login from "@/views/Login.vue";
 import Menu from "@/views/Menu.vue";
-import MonitoreoServicios from "@/views/Modules/MonitoreoServicios.vue";
-import MonitoreoCarriles from "@/views/Modules/MonitoreoCarriles.vue";
-import BitacoraAlarmas from "@/views/Modules/BitacoraAlarmas.vue";
-import MonitoreoCruces from "@/views/Modules/MonitoreoCruces.vue";
-import EnvioTransacciones from "@/views/Modules/EnvioTransacciones.vue";
-import BusquedaTransacciones from "@/views/Modules/BusquedaTransacciones.vue";
-import BitacoraAccesos from "@/views/Modules/BitacoraAccesos.vue";
-import EstatusTags from "@/views/Modules/EstatusTags.vue";
-import Configuracion from "@/views/Modules/Configuracion.vue";
-import AdminPerfiles from "@/views/Modules/AdminPerfiles.vue";
+import RegistroDeInformacionDeTelepeaje from "@/views/Modules/RegistroInformacion.vue";
+import MantenimientoTag from "@/views/Modules/MantenimientoTag.vue";
+import GestiónUsuarios from "@/views/Modules/GestionUsuarios.vue";
+import RolesDeUsuario from "@/views/Modules/RolesDeUsuario.vue";
 import ListaUsuarios from "@/views/Modules/ListaUsuarios.vue";
-import Bitacoras from "@/views/Modules/Bitacoras.vue";
-import BitacoraAntifraude from "@/views/Modules/BitacoraAntifraude.vue";
-import BitacoraListas from "@/views/Modules/BitacoraListas.vue"
+import GeneracionReportes from "@/views/Modules/GeneracionReportes.vue";
+import ReportesOperativos from '@/views/Modules/ReportesOperativos.vue'
+import ReporteTurno from '../views/Modules/ReporteTurno.vue'
+import ReporteCajero from '../views/Modules/ReporteCajero.vue'
+import Cruces from '../views/Modules/Cruces.vue'
 import Servicio from '../Servicios/Token-Services'
+
+
 const routes = [{
     path: "/",
     name: "Login",
@@ -43,123 +41,87 @@ const routes = [{
     }
   },
   {
-    path: "/inicio/monitoreo-servicios",
-    name: "MonitoreoServicios",
-    component: MonitoreoServicios,
-    meta: {
-      requiresCookie: true,
-      nombre:"Monitoreo Servicios"
-    }
-  },
-  {
-    path: "/inicio/monitoreo-carriles",
-    name: "MonitoreoCarriles",
-    component: MonitoreoCarriles,
-    meta: {
-      requiresCookie: true,
-      nombre:"Monitoreo Carriles"
-    }
-  },
-  {
-    path: "/inicio/monitoreo-carriles/bitacora-alarmas",
-    name: "BitacoraAlarmas",
-    component: BitacoraAlarmas,
-    meta: {
-      requiresCookie: true,
-      nombre:"Monitoreo Carriles"
-    }
-  },
-  {
-    path: "/inicio/monitoreo-cruces",
-    name: "MonitoreoCruces",
-    component: MonitoreoCruces,
+    path: "/inicio/registro-informacion-telepeaje",
+    name: "RegistroDeInformacionDeTelepeaje",
+    component: RegistroDeInformacionDeTelepeaje,
     meta: {
       requiresCookie: true,
       nombre:"Monitoreo Cruces"
     }
   },
   {
-    path: "/inicio/envio-transacciones",
-    name: "MonitoreoTransacciones",
-    component: EnvioTransacciones,
+    path: "/inicio/mantenimiento-tag",
+    name: "MantenimientodeTag`s",
+    component: MantenimientoTag,
     meta: {
       requiresCookie: true,
-      nombre:"Envio Transacciones"
+      nombre:"Mantenimiento de Tag`s"
     }
   },
   {
-    path: "/inicio/busqueda-transacciones",
-    name: "BusquedaTransacciones",
-    component: BusquedaTransacciones,
+    path: "/inicio/Reportes-Operativos",
+    name: "Reportes Operativos",
+    component: ReportesOperativos,
     meta: {
       requiresCookie: true,
-      nombre:"Busqueda Transacciones"
+      nombre:"Reportes Operativos"
     }
   },
   {
-    path: "/inicio/bitacora-accesos",
-    name: "Bitacora Accesos",
-    component: BitacoraAccesos,
+    path: "/inicio/ReportesTurno",
+    name: "Reporte Turno",
+    component: ReporteTurno,
     meta: {
       requiresCookie: true,
-      nombre:"Bitacora Accesos"
+      nombre:"Reporte Turno"
     }
   },
   {
-    path: "/inicio/bitacora-antifraude",
-    name: "Bitacora Antifraude",
-    component: BitacoraAntifraude,
+    path: "/inicio/ReportesCajero",
+    name: "Reporte Cajero",
+    component: ReporteCajero,
     meta: {
       requiresCookie: true,
-      nombre:"BitacoraAntifraude"
+      nombre:"Reporte Cajero"
     }
   },
   {
-    path: "/inicio/bitacora-listas",
-    name: "Bitacora Listas",
-    component: BitacoraListas,
+    path: "/inicio/Cruces",
+    name: "Cruces",
+    component: Cruces,
     meta: {
       requiresCookie: true,
-      nombre:"BitacoraListas"
+      nombre:"Cruces"
     }
   },
   {
-    path: "/inicio/estatus-tags",
-    name: "EstatusTags",
-    component: EstatusTags,
+    path: "/generacion-reportes",
+    name: "Generación de Reportes",
+    component: GeneracionReportes,
     meta: {
       requiresCookie: true,
-      nombre:"Estatus Tag"
+      nombre:"Generación de Reportes"
     }
   },
   {
-    path: "/bitacoras",
-    name: "Bitacoras",
-    component: Bitacoras,
+    path: "/gestion-usuarios",
+    name: "Gestión de usuarios",
+    component: GestiónUsuarios,
     meta: {
       requiresCookie: true,
-      nombre:"Bitacoras"
+      nombre:"Gestión de usuarios"
     }
   },
   {
-    path: "/configuracion",
-    name: "Configuracion",
-    component: Configuracion,
-    meta: {
-      requiresCookie: true,
-      nombre:"Configuracion"
-    }
-  },
-  {
-    path: "/configuracion/administracion-perfiles",
+    path: "/gestion-usuarios/administracion-perfiles",
     name: "AdministracionPerfilUsuario",
-    component: AdminPerfiles,
+    component: RolesDeUsuario,
     meta: {
       requiresCookie: true
     }
   },
   {
-    path: "/configuracion/lista-usuarios",
+    path: "/gestion-usuarios/lista-usuarios",
     name: "ListaUsuarios",
     component: ListaUsuarios,
     meta: {

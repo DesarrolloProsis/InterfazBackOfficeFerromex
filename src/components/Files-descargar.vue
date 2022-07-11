@@ -1,6 +1,6 @@
 <template>
   <div class="w-full mt-2">
-    <Multiselect v-model="formato" placeholder="Sleccione una Acción" @close="download_api" label="name" trackBy="name" :options="options" :searchable="true">
+    <Multiselect v-model="formato" placeholder="Seleccione una formato" @close="download_api" label="name" trackBy="name" :options="options" :searchable="true">
         <template v-slot:singleLabel="{ value }">
           <div class="multiselect-single-label">
             <img height="26" style="margin: 0 6px 0 0;" :src="value.icon"> {{ value.name }}

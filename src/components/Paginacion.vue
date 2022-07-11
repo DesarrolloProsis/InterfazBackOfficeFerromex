@@ -1,7 +1,7 @@
 <template>
 <div class="flex-1">
-    <div class="flex justify-center mb-32 -my-14">
-		<ul class="pagination bg-white p-2 shadow-sm rounded">
+    <div class="flex justify-center">
+		<ul class="pagination bg-gray-100 p-2 shadow-sm rounded">
 			<li class="pagination-item">
 				<span
 					class="rounded-l rounded-sm border border-gray-100 px-3 py-2 cursor-not-allowed no-underline text-gray-600 h-10"

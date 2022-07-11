@@ -1,9 +1,9 @@
 <template>
   <div class="w-full p-5 -mt-10 md:w-1/2">
     <router-link :to="ruta" tag="div">
-      <div class="bg-blue-100 rounded-lg animacion p-8 ">
+      <div class="ferromex-color rounded-xl animacion p-8 ">
         <img class="img" :src="require('@/assets/' + img_src)" />
-        <h1 class="text-center py-5 font-titulo font-bold">{{ nombre }}</h1>
+        <h1 class="text-center py-5 text-white text-2xl font-titulo font-bold">{{ nombre }}</h1>
       </div>
     </router-link>
   </div>
