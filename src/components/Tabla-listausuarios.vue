@@ -355,15 +355,19 @@ export default {
     function acciones_mapper(item){//Asignación de funciones de la lista de opciones que hay en el menú de acciones
       if(accion.value == 'Habilitar'){
         cambiarEstatus(item)//Llamamos a la función cambiarEstatus y le enviamos el parámetro del usuario que seleccionamos
-      }if(accion.value == 'Deshabilitar'){
+      }
+      if(accion.value == 'Deshabilitar'){
         cambiarEstatus(item)//Llamamos a la función cambiarEstatus y le enviamos el parámetro del usuario que seleccionamos
-      }if(accion.value == 'Cambiar Contraseña'){
+      }
+      if(accion.value == 'Cambiar Contraseña'){
         seleccionado.value = item;//Asignamos los valores del usuario seleccionado a la constante seleccionado
         modalPass.value = true;//abrimos el modal para cambiar el password
-      }if(accion.value == 'Editar Usuario'){
+      }
+      if(accion.value == 'Editar Usuario'){
         modalEditar.value = true//Abrimos el modal para editar el usuario
         usuario.value = item//Asignamos los parametros utiles para la edición
-      }if(accion.value == 'Cambiar Rol'){
+      }
+      if(accion.value == 'Cambiar Rol'){
         modal_Rol()//Llamamos a la función que abre el modal para cambiar el Rol
         usuario.value = item//Asignamos los parametros utiles para la edición
       }
@@ -386,7 +390,7 @@ export default {
               filtroOpciones.push(options[1])
               filtroOpciones.push(options[4])
             }
-            if(item.usuarioId == infoUser.sub)
+            if(infoUser.role == "AdminFerromex")
               filtroOpciones.push(options[2])
           }
       return filtroOpciones  //Regresamos la lista de acciones filtrada
