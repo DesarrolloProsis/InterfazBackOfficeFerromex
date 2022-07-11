@@ -53,13 +53,13 @@
           <label class="text-black px-4 2xl:px-10">#</label>
         </th>
         <th>
-          <label class="text-black px-4 2xl:px-16">Inicio</label>
+          <label class="text-black px-4 2xl:px-16">Fecha Inicio</label>
         </th>
         <th>
-          <label class="text-black px-4 2xl:px-10">Fin</label>
+          <label class="text-black px-4 2xl:px-10">Fecha Fin</label>
         </th>
         <th>
-          <label class="text-black px-4 2xl:px-10">Carril</label>
+          <label class="text-black px-4 2xl:px-10">ViA</label>
         </th>
         <th>
           <label class="text-black px-4 2xl:px-12">Bolsa</label>
@@ -76,7 +76,7 @@
         <td>{{bolsa.carrilBolsa}}</td>
         <td>{{bolsa.bolsa}}</td>
         <td>
-          <button class="rounded-lg w-18 bg-ferromex text-white p-10" @click="generarbolsa(bolsa.idBolsa)">Generar</button>
+          <button class="rounded-lg w-18 bg-ferromex text-white p-10" @click="generarbolsa(bolsa.idBolsa)">Generar </button>
         </td>
        </tr>
       </template>
