@@ -25,6 +25,14 @@
           <option value="B">Cuerpo B</option>
         </select>
       </div>
+      <div class="flex-none my-auto text-white font-md p-2">
+        Resultados:
+        <select v-model="numRespuesta" class="text-gray-800 w-16 rounded">
+          <option value="10">10</option>
+          <option value="30">30</option>
+          <option value="50">50</option>
+        </select>
+      </div>
       <div class="flex-none my-auto text-white font-md p-2 ml-39 md:ml-10">
         <button @click="buscar(fecha,tag,carril,cuerpo)" class="btn-buscar animacion">Buscar</button>
       </div>
@@ -126,6 +134,7 @@ export default {
       axios.get(ruta)//Hacemos la petición https al API con la ruta encriptada anteriormente
       .then((result) => {//Si el endpoint tiene una respuesta correcta
         cruces.value = result.data.cruces//Asignamos el valor de los resultados del endpoint para mostrarlos en la tabla
+        console.log(cruces.value)
         totalPaginas.value = result.data.paginas_totales//Asignamos el valor del número de páginas totales para la paginación
         paginaActual.value = result.data.pagina_actual//Asignamos el valor de la página actual, para saber en que página estamos en el componente de páginación
         modalLoading.value = false//Desactivamos la bandera que muestra el spinner de la pantalla de carga
@@ -158,6 +167,7 @@ export default {
         axios.get(ruta)//Realizamos la petición http al API
         .then((result) => {//Si el endpoint tiene una respuesta correcta
           cruces.value = result.data.cruces//Asignamos los valores del resultado a la constrante que se va a mostrar en la tabla
+          console.log(cruces.value)
           totalPaginas.value = result.data.paginas_totales//Asignamos el valor de las páginas totales para saber el limite de páginas en el componente de paginación
           paginaActual.value = result.data.pagina_actual//Asignamos el valor de la página actual para enviarlo al componente de paginación
           modalLoading.value = false
@@ -199,6 +209,7 @@ export default {
       axios.get(ruta)
       .then((result) => {//Si el endpoint contiene una respuesta correcta
         cruces.value = result.data.cruces//Asignamos el valor de los resultados del endpoint para mostrarlos en la tabla
+        console.log(cruces.value)
         totalPaginas.value = result.data.paginas_totales//Asignamos el valor de las páginas totales para saber el limite de páginas en el componente de paginación
         paginaActual.value = result.data.pagina_actual//Asignamos el valor de la página actual para enviarlo al componente de paginación
         modalLoading.value = false

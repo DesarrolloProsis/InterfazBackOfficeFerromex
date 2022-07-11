@@ -14,13 +14,21 @@
           <option v-for="(option ,index) in options" :key="index" :value="option">{{option}}</option>
         </select>
       </div>
+      <div class="flex-none my-auto text-white font-md p-2">
+        Resultados:
+        <select v-model="numRespuesta" class="text-gray-800 w-16 rounded">
+          <option value="10">10</option>
+          <option value="30">30</option>
+          <option value="50">50</option>
+        </select>
+      </div>
       <div class="flex-none my-auto text-white font-md p-2 ml-10">
         <button @click="buscar(nombre , estatus)" class="btn-buscar animacion">Buscar</button>
       </div>
       <div class="flex-none my-auto text-white font-md p-2 ml-10">
         <button @click="todos()" class="btn-buscar animacion">Todos</button>
       </div>
-      <div class="flex-none my-auto text-white font-md p-2 md:ml-32 2xl:ml-69">
+      <div class="flex-none my-auto text-white font-md p-2 md:ml-32 ">
         <button @click="abrir_modal_new_rol" class="btn-buscar animacion">Agregar Rol</button>
       </div>
     </div>
@@ -97,7 +105,7 @@ export default {
     const totalPaginas = ref(0) //variable que indica el número total de páginas por resultado
     const paginaActual = ref(1) //variable que indica la página en la que estás dentro de la paginación, en la primer carga siempre es la página 1
     const hasMorePages = ref(true) //variable para poder cambiar de páginas con los botones
-    const numRespuesta = ref(9)//Variable que indica el número de respuestas por página
+    const numRespuesta = ref(10)//Variable que indica el número de respuestas por página
     const newRol = reactive({ nombre: "", vistas: [] }) //constante reactiva que nos va a permitir generar un arreglo con los datos de los modulos a agregar al rol
     const header = reactive({ nombre: "", estatus: undefined })//Constante reactiva que almacena el nombre y estatus para realizar el filtro de busqueda
     const vacio = ref(false)//Constante que activa la bandera de validaciones sobre campos vacios en los modales
@@ -167,7 +175,7 @@ export default {
         nombre = ' '
       if(estatus == undefined)//Si no se ha seleccionado ningún estatus en el header, el valor de estatus será un espacio en blanco
         estatus = ' '
-      if(nombre == ' ' && estatus == ' ')//Si nombre y estatus es espacio en blanco, no se realizará ningúna busqueda, se quedará con la carga inicial
+      if(nombre == ' ' && estatus == ' ' && numRespuesta.value == 10)//Si nombre y estatus es espacio en blanco, no se realizará ningúna busqueda, se quedará con la carga inicial
       {
         notify({//Notificación en la que indicamos que no se ha insertado ningún dato para buscar
           title:'Sin Información',

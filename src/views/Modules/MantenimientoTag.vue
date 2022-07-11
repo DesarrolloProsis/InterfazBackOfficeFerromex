@@ -19,7 +19,15 @@
               </div>
               <div class="w-full inline-flex flex-2 justify-center">
                 <label for="tag" class="text-white my-auto">Fecha:</label>
-                  <input v-model="fecha" type="date" :max="hoy" class="my-auto p-1 bg-white flex border border-gray-200 rounded ml-2 h-6 w-40 "> 
+                  <input v-model="fecha" type="date" :max="hoy" class="my-auto p-1 bg-white flex border border-gray-200 rounded ml-2 h-6 w-40"> 
+              </div>
+            <div class="w-full inline-flex flex-2 justify-center">
+                <label for="tag" class="text-white my-auto">Resultados:</label>
+                <select v-model="numRespuesta" class="text-center my-auto bg-white flex border border-gray-200 rounded ml-2 h-6 w-20">
+                  <option value="10">10</option>
+                  <option value="30">30</option>
+                  <option value="50">50</option>
+                </select>
               </div>
               <div class="w-full flex-1">
                 <div class="h-full my-auto text-white font-md p-2 ">                      
@@ -105,7 +113,7 @@ export default {
     const currentPage = ref(1) //Variable que indica la pagina actual 
     const hasMorePages = ref(true) //Varible que ocupa la paginacion para indicarle qu epuede avanzar entre pagina
     const modalLoading = ref(false) //Variable que muestra el sppiner de carga
-    const numRespuesta = ref(9) //Variable de numero de resultados que espera la paginacion
+    const numRespuesta = ref(10) //Variable de numero de resultados que espera la paginacion
     const showModal = ref(false) //Varible del modal de agregar tag
     const numerotagagregar = ref('') //Variable del input tag a agregar
     const options = ref(['Activo','Inactivo']) //Declaracion de las opciones del select de options 
@@ -173,6 +181,7 @@ export default {
     }
     //Función que busca los tags
     function search(tag, estatus, fecha){
+      console.log(numRespuesta.value)
       modalLoading.value = true //Abrimos el spinner
       cruces.value = [] // Declaramos el arreglo en vacio
       if(tag == ""){ //Validamos si el campo llega vacio le damos un espacio en blanco 
@@ -184,7 +193,7 @@ export default {
       if(fecha == ""){ //Validamos si el campo llega vacio le damos un espacio en blanco
         fecha = " "
       }
-      if(tag == ' ' && estatus == ' ' && fecha == ' '){ //En caso de que todos los campos lleguen vacios
+      if(tag == ' ' && estatus == ' ' && fecha == ' ' && numRespuesta.value == "10"){ //En caso de que todos los campos lleguen vacios
         modalLoading.value = false // Cerramoes el spinner
         cargatags() //Cargamos todos los tags
         notify({ //Enviamos una notificacion en la que especificamos que no podemos hacer una busqueda sin parametros
@@ -256,6 +265,7 @@ export default {
         let tagruta = " " //Usamos una varible para que podamos poner el espacio en blanco
         let estatusruta = " " //Usamos una varible para que podamos poner el espacio en blanco
         let fecharuta = " " //Usamos una varible para que podamos poner el espacio en blanco
+        numRespuesta.value = 10;
         const ruta = encodeURI(`${API}/Ferromex/mantenimientotags/${page.value}/${numRespuesta.value}/${tagruta}/${estatusruta}/${fecharuta}`) //Codificamos la ruta que llevara el axios
         axios.get(ruta) //Disparamos la ruta
         .then((result)=>{
@@ -434,6 +444,7 @@ export default {
       limpiar,
       cargatags,
       showMore,
+      numRespuesta,
       actualizarLista,
       limpiarvalidacion, 
       actualizar,

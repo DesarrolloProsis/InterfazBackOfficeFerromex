@@ -16,7 +16,7 @@
         <label class="rounded-full px-20 bg-gray-200 ring-2 ring-gray-500 p-2 font-bold text-black">Carril</label>
       </th>
       <th class="">
-        <label class="rounded-full px-20 bg-gray-200 ring-2 ring-gray-500 p-2 font-bold text-black">Tarifa</label>
+        <label class="rounded-full px-20 bg-gray-200 ring-2 ring-gray-500 p-2 font-bold text-black">Clase</label>
       </th>
     </tr>
     <tr v-for="(cruce, index) in dataCruces" :key="index" class="bg-white">
@@ -24,7 +24,7 @@
       <td>{{ cruce.hora }}</td>
       <td>{{ cruce.tag }}</td>
       <td>{{ cruce.carril }}</td>
-      <td>{{ cruce.tarifa }}</td>
+      <td>{{ cruce.clase }}</td>
     </tr>
   </table>
 </div>

@@ -14,13 +14,21 @@
           <option v-for="(option ,index) in options" :key="index" :value="option">{{option}}</option>
         </select>
       </div>
+      <div class="flex-none my-auto text-white font-md p-2">
+        Resultados:
+        <select v-model="numRespuesta" class="text-gray-800 w-16 rounded">
+          <option value="10">10</option>
+          <option value="30">30</option>
+          <option value="50">50</option>
+        </select>
+      </div>
       <div class="flex-none my-auto text-white font-md p-2 ml-10">
         <button @click="buscar(nombre,estatus)" class="btn-buscar animacion">Buscar</button>
       </div>
       <div class="flex-none my-auto text-white font-md p-2 ml-6">
         <button @click="todos()" class="btn-buscar animacion">Todos</button>
       </div>
-      <div class="flex-none my-auto text-white font-md p-2 md:ml-32 2xl:ml-69">
+      <div class="flex-none my-auto text-white font-md p-2 md:ml-32">
         <button @click="abrirModal" class="btn-buscar animacion">Agregar Usuario</button>
       </div>
     </div>
@@ -107,7 +115,7 @@ export default {
     const totalPaginas = ref(0)//Constante que almacena el total de páginas que hay en la busqueda
     const paginaActual = ref(1)//Constante que almacena la página actual de la busqueda realizada
     const hasMorePages = ref(true)//Constante que nos indica si puede haber más páginas y si puede hacer un cambio de página
-    const numRespuesta = ref(9)//Constante que indica el número de respuestas que va a mostrar por página
+    const numRespuesta = ref(10)//Constante que indica el número de respuestas que va a mostrar por página
     const usuario = reactive ({})//constante reactiva que va a almacenar la información de un usuario nuevo
     const mayuscula = ref(true)//Constante que almacena la respuesta de la validación si es que hay o no mayusculas para la contraseña
     const corta = ref(true)//Constante que alamcena la respuesta de la validación si es que la contraseña es muy corta
@@ -153,7 +161,7 @@ export default {
         nombre = ' '//Añadimos un espacio en blanco
       if(estatus == undefined)//Hacemos la validación si es que el estatus está indefinido
         estatus = ' '//Añadimos un espacio en blanco
-      if(nombre == ' ' && estatus == ' '){//Validamos si ambos campos estan vacios
+      if(nombre == ' ' && estatus == ' ' && numRespuesta.value == 10){//Validamos si ambos campos estan vacios
         notify({//Notificación en la que indicamos que no se ha insertado ningún dato para buscar
           title:'Sin Información',
           text:'No hay datos para realizar la busqueda',
