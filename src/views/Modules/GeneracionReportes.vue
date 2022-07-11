@@ -83,7 +83,7 @@ export default {
                 },
                 {
                     img_src: "Menu/monitoreo-servicios.png",
-                    nombre: "Cruces",
+                    nombre: "Cruces Telepeaje",
                     ruta: "/inicio/Cruces",
                     color: "red"
                 }])
