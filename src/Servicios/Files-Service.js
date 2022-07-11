@@ -16,5 +16,5 @@ function xml_hhtp_request(urlToFile,nameFile){
     };            
 }
 export default {
-    xml_hhtp_request
+    xml_hhtp_request 
 }
