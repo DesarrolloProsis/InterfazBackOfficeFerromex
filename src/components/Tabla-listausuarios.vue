@@ -9,7 +9,7 @@
           <label class="rounded-full px-20 bg-gray-200 ring-2 ring-gray-500 p-2 text-black 2xl:px-28">Nombre Completo</label>
         </th>
         <th>
-          <label class="rounded-full px-20 bg-gray-200 ring-2 ring-gray-500 p-2 text-black 2xl:px-28">Rol</label>
+          <label class="rounded-full px-20 bg-gray-200 ring-2 ring-gray-500 p-2 text-black 2xl:px-28">Perfil</label>
         </th>
         <th>
           <label class="rounded-full px-20 bg-gray-200 ring-2 ring-gray-500 p-2 text-black 2xl:px-28">Estatus</label>
@@ -119,10 +119,10 @@
   <!-- MODAL CAMBIAR ROL -->
   <Modal :show="modalRol"  @cerrarmodal="modalRol = false, validacion = false, seleccionado.rol = ''">
     <div>
-      <p class="text-gray-900 font-bold text-2xl -mt-8 mb-8 text-center -mx-6">Cambiar Rol a {{ usuario.nombre +' '+ usuario.apellidos }}</p>
-      <p class="text-gray-900 font-bold text-2xl -mt-8 mb-8 text-center">con Rol {{ usuario.rol }}</p>
+      <p class="text-gray-900 font-bold text-2xl -mt-8 mb-8 text-center -mx-6">Cambiar Perfil a {{ usuario.nombre +' '+ usuario.apellidos }}</p>
+      <p class="text-gray-900 font-bold text-2xl -mt-8 mb-8 text-center">con Perfil {{ usuario.rol }}</p>
       <div class="grid grid-cols-2 mt-2">      
-        <p class="text-sm mb-1 font-semibold text-gray-700  text-center sm:-ml-6">Rol</p>
+        <p class="text-sm mb-1 font-semibold text-gray-700  text-center sm:-ml-6">Perfil</p>
         <Multiselect
           v-model="seleccionado.rol"
           placeholder="Seleccione un Rol"

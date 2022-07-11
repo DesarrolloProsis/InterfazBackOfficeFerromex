@@ -3,7 +3,7 @@
     <div class="flex-none">
       <router-link to="/inicio" class="inline-block pl-5 pt-1 text-white text-xl" tag="div">
       <img class="logo inline rounded-full" src="~@/assets/ferromex.jpg">
-      Ferromex 
+      Intermodal 
       </router-link>
     </div>
     <span class="text-white mt-2">Bienvenido {{ nombre.toUpperCase() }}</span>

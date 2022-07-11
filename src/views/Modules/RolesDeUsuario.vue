@@ -1,6 +1,6 @@
 <template>
   <Navbar/>
-  <h1 class="title font-titulo ml-24 font-bold">Roles de Usuario</h1>
+  <h1 class="title font-titulo ml-24 font-bold">Perfiles de Usuario</h1>
   <!-- Header Rol  -->
   <div class="container mx-auto px-0 pb-2 pt-4">    
     <div class="flex flex-wrap ferromex-color p-1 rounded-lg">
@@ -29,7 +29,7 @@
         <button @click="todos()" class="btn-buscar animacion">Todos</button>
       </div>
       <div class="flex-none my-auto text-white font-md p-2 md:ml-32 ">
-        <button @click="abrir_modal_new_rol" class="btn-buscar animacion">Agregar Rol</button>
+        <button @click="abrir_modal_new_rol" class="btn-buscar animacion">Agregar Perfil</button>
       </div>
     </div>
     <TablaRoles :infoRoles="roles"/>
@@ -40,9 +40,9 @@
   <!-- Modal Agregar Rol -->
   <Modal :show="userModal" @cerrarmodal="cerralmodalpadre">
     <div>
-      <p class="text-gray-900 font-bold text-2xl -mt-8 mb-8 text-center">Agregar Nuevo Rol</p>     
+      <p class="text-gray-900 font-bold text-2xl -mt-8 mb-8 text-center">Agregar Nuevo Perfil</p>     
       <div class="grid grid-cols-2 mt-2">
-        <p class="text-sm mb-1 font-semibold text-gray-700 text-center sm:-ml-6">Nombre Rol</p>
+        <p class="text-sm mb-1 font-semibold text-gray-700 text-center sm:-ml-6">Nombre Perfil</p>
         <input v-model="newRol.nombre" type="text" class="border mx-auto w-52 rounded-lg" :class="{'border border-red-400': vacio}" @input="vacio = false">
       </div>
       <div class="grid grid-cols-2 mt-2">

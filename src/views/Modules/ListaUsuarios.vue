@@ -64,10 +64,10 @@
         <span></span>
         <span></span>
         <span></span>
-        <p class="text-sm mb-1 font-semibold text-gray-700 mt-2 sm:-ml-6">Rol *</p>
+        <p class="text-sm mb-1 font-semibold text-gray-700 mt-2 sm:-ml-6">Perfil *</p>
         <Multiselect
           v-model="usuario.rol"
-          placeholder="Seleccione un Rol"
+          placeholder="Seleccione un perfil"
           :searchable="true"
           :options="roles"
           :close-on-select="true"

@@ -1,6 +1,6 @@
 <template>
     <Navbar/>
-    <h1 class="title font-bold font-titulo">Generación de Reportes</h1>
+    <h1 class="title font-bold font-titulo">Reportes Intermodal</h1>
     <div class="container mx-auto px-auto px-48 pt-10 my-32">
         <div class="flex flex-wrap ">
             <ModuloGeneracionReportes
@@ -18,7 +18,7 @@
                             <img class="img" src="@/assets/Menu/almacenamiento-de-base-de-datos.png" />
                         </div>
                         <div class="text-center py-5 font-titulo font-bold text-white ">
-                            <h1>Auditoria Ferromex</h1>
+                            <h1>Auditoria Intermodal</h1>
                         </div>
                     </div>
             </button>
@@ -26,7 +26,7 @@
     </div>
     <Footer/>
     <Modal :show="showModal" @cerrarmodal="cerramodalconcentradoferromex">
-        <h1 class="text-4xl font-bold font-titulo text-center mt-4">Auditoria Ferromex</h1>
+        <h1 class="text-4xl font-bold font-titulo text-center mt-4">Auditoria Intermodal</h1>
             <div class="flex w-full justify-center gap-20 mt-10">
                 <div class="flex flex-col gap-10">
                     <div>

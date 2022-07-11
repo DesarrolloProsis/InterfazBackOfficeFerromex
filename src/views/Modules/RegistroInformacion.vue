@@ -1,7 +1,7 @@
 <template>
   <Navbar/>
   <div class="container mx-auto">
-    <h1 class="title-center font-titulo font-bold pb-4">Registro de Información de Telepeaje</h1>
+    <h1 class="title-center font-titulo font-bold pb-4">Transacciones Intermodal</h1>
     <div class="flex flex-wrap ferromex-color p-1 rounded-lg">
       <div class="flex-none my-auto text-white font-md p-2 ml-20 md:ml-1">
         Fecha:<input v-model="fecha" type="date" class="rounded text-black ml-2 md:w-10 xl:w-44" />

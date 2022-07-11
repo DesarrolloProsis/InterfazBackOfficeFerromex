@@ -1,7 +1,7 @@
 <template>
   <Navbar/>
   <div class="container mx-auto px-0 mb-4">
-    <h1 class="title-center font-titulo font-bold pb-4 mb-2">Mantenimiento de Tag's</h1>
+    <h1 class="title-center font-titulo font-bold pb-4 mb-2">Gestión de Tags</h1>
   <div>
     <div class="-mt-4 mx-2 md:mx-0">
         <div class="flex flex-col  bg-ferromex rounded-lg border-gray-200 pb-0 mb-4">          

@@ -39,7 +39,7 @@
   <!-- Editar Rol -->
   <Modal :show="modalModulos" @cerrarmodal="modalModulos = false, vacio = false">
     <div>
-      <p class="text-gray-900 font-bold text-2xl -mt-8 mb-8 text-center">Actualizar Módulos del Rol {{ perfilSelected.nombreRol }}</p>
+      <p class="text-gray-900 font-bold text-2xl -mt-8 mb-8 text-center">Actualizar Módulos del Perfil {{ perfilSelected.nombreRol }}</p>
       <div class="grid grid-cols-2 mt-2" v-for="(modulos, index) in modulos" :key="index">
         <p class="text-center">{{ modulos.label }}</p>
         <p class="text-center">
