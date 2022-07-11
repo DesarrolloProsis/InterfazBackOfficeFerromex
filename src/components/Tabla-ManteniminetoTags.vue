@@ -138,12 +138,12 @@ export default {
           if(item.active == true){ //Si el estatus del tag es activo entonces 
             filtroOpciones = []
             filtroOpciones.push(options[1])//Agregamos la opcion de deshabilitar
-            filtroOpciones.push(options[2])//Agregamos la opcion de Eliminar
+            //filtroOpciones.push(options[2])//Agregamos la opcion de Eliminar
           }
           if(item.active ==  false){//Si el estatus del tag es inactivo
             filtroOpciones = []
             filtroOpciones.push(options[0])//Agregamos la opcion de habilitar
-            filtroOpciones.push(options[2])//Agregamos la opcion de eliminar
+            //filtroOpciones.push(options[2])//Agregamos la opcion de eliminar
           }
       return filtroOpciones  //Regresamos la lista de acciones filtrada
     }
