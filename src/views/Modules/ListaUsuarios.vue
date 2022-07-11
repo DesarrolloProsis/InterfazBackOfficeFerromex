@@ -243,8 +243,17 @@ export default {
               }
             })
             .catch(error => {
-              console.log(error.request.response);
-              modalAgregar.value = false//cerramos el spinner de la pantalla de carga
+              let descripcionerror = JSON.parse(error.request.response);
+              if(descripcionerror[0].code == "DuplicateUserName"){
+                notify({//notificación de que el usuario se inserto correctamente
+                  title:'Usuario Repetido',//titulo de la notificaci{on}
+                  text:`No se puede crear el usuario`,//texto de la notificación 
+                  duration: 3000,//duración de la notificación
+                  closeonclick:true,//si le damos click se cierra la notificación
+                  type: 'warn'//el tipo de notificación, si es success el color será verde
+                });
+              }else{
+                modalAgregar.value = false//cerramos el spinner de la pantalla de carga
                 usuario.pass = '',//limpiamos el valor de password del formulario de agregar usuario
                 usuario.nombre = '',//limpiamos el valor de nombre del formulario de agregar usuario
                 usuario.apellidos = '',//limpiamos el valor de apellido o apellidos del formulario de agregar usuario
@@ -257,6 +266,7 @@ export default {
                   type: 'error'//el tipo de notificación, si es success el color será verde
                 });
                 todos()//LLamamos a la función para refrescar la tabla
+              }
             })
           }
         }else{
