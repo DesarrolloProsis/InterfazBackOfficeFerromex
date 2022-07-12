@@ -9,11 +9,11 @@ function xml_hhtp_request(urlToFile){
     oReq.setRequestHeader('Authorization', 'Bearer ' + token);   
     oReq.send();              
     oReq.onload = function () {
-      var file = new Blob([oReq.response], {
+      var file = new Blob([oReq.response], { //Creamos el objeto Blob
         type: "application/pdf",
       });
-      var pdfFileURL = URL.createObjectURL(file);
-      window.open(pdfFileURL, '_blank' )
+      var pdfFileURL = URL.createObjectURL(file); //El archivo Blob lo guardamos en una URL temporal
+      window.open(pdfFileURL, '_blank' ) //Abrimos la uRL denuestor local host en una nueva pestaña
       //saveAs(file, nameFile);  
     };            
 }
