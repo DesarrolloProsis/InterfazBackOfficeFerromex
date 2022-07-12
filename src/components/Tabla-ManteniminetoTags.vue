@@ -41,7 +41,7 @@
     <div>
         <div class="w-full flex items-center justify-center">
           <fa icon="circle-exclamation" class="h-20 text-yellow-400" />
-          <p class="text-gray-900 font-medium text-lg ml-2 text-justify">Estas a punto de <label :class="{'text-green-600':texto == 'habilitar','text-yellow-600' :texto === 'deshabilitar','text-red-600' :texto === 'eliminar',  }">{{texto}}</label> el tag "{{infotag.tag}}" estas seguro</p>
+          <p class="text-gray-900 font-medium text-lg ml-2 text-justify">Estas a punto de <label :class="{'text-green-600':texto == 'activar','text-yellow-600' :texto === 'desactivar','text-red-600' :texto === 'eliminar',  }">{{texto}}</label> el tag "{{infotag.tag}}" estas seguro</p>
         </div>
         <div class="mt-10 mb-4 w-full flex justify-center">
           <button class="rounded-lg w-32 botonIconOk" @click="accion(texto)">Confirmar</button>
@@ -131,8 +131,8 @@ export default {
       function opticones_select_acciones(item){//Lista de opciones que se muestran en el menú de acciones
       let filtroOpciones = [] //Declaramos el arreglo de que contendran las opciones
       let options = [ //Declaramos el arreglo que contiene las acciones posibles 
-          {  value: '0', name: 'Activo'},//0
-          {  value: '1', name: 'Inactivo'},//1
+          {  value: '0', name: 'Activar'},//0
+          {  value: '1', name: 'Desactivar'},//1
           {  value: '2', name: 'Eliminar'},//2
       ]
           if(item.active == true){ //Si el estatus del tag es activo entonces 
@@ -150,11 +150,11 @@ export default {
      function acciones_mapper(item){//Asignación de funciones de la lista de opciones que hay en el menú de acciones
       if(select.value == '0'){ //Apartir del value del multiselect asignamos un valor al texto 
         showModalAdvertencia.value = !showModalAdvertencia.value //Abrimos nuestro modal de advertencia
-        texto.value = "habilitar"//Si es 0 el texto sera habilitar
+        texto.value = "activar"//Si es 0 el texto sera habilitar
         infotag.value = item //Asignamos la informacion del tag a nuestra varible reactiva de vue
       }if(select.value == '1'){
         showModalAdvertencia.value = !showModalAdvertencia.value //Abrimos nuestro modal de advertencia
-        texto.value = "deshabilitar"//Si es 1 el texto sera deshabilitar
+        texto.value = "desactivar"//Si es 1 el texto sera deshabilitar
         infotag.value = item//Asignamos la informacion del tag a nuestra varible reactiva de vue
       }if(select.value == '2'){
        showModalAdvertencia.value = !showModalAdvertencia.value //Abrimos nuestro modal de advertencia
