@@ -3,16 +3,37 @@
     <table class="tftable">
       <tr class="h-10">
         <th>
-          <label class="rounded-full px-20 bg-gray-200 ring-2 ring-gray-500 p-2 text-black 2xl:px-28">Perfil</label>
+          <label class="rounded-full px-10 bg-gray-200 ring-2 ring-gray-500 p-2 text-black 2xl:px-23">Usuario</label>
         </th>             
         <th>
-          <label class="rounded-full px-20 bg-gray-200 ring-2 ring-gray-500 p-2 text-black 2xl:px-28">Estatus</label>
+          <label class="rounded-full px-10 bg-gray-200 ring-2 ring-gray-500 p-2 text-black 2xl:px-23">Rol</label>
         </th>
         <th>
-          <label class="rounded-full px-20 bg-gray-200 ring-2 ring-gray-500 p-2 text-black 2xl:px-28">Acciones</label>
+          <label class="rounded-full px-10 bg-gray-200 ring-2 ring-gray-500 p-2 text-black 2xl:px-24">Fecha de Movimiento</label>
+        </th>
+        <th>
+          <label class="rounded-full px-10 bg-gray-200 ring-2 ring-gray-500 p-2 text-black 2xl:px-24">Módulo</label>
+        </th>
+        <th>
+          <label class=" rounded-full px-10 bg-gray-200 ring-2 ring-gray-500 p-2 text-black 2xl:px-23">Acción</label>
+        </th>
+        <th>
+          <label class=" rounded-full px-10 bg-gray-200 ring-2 ring-gray-500 p-2 text-black 2xl:px-24">Registro Original</label>
+        </th>
+        <th>
+          <label class=" rounded-full px-10 bg-gray-200 ring-2 ring-gray-500 p-2 text-black 2xl:px-24">Registro Editado</label>
         </th>
       </tr>
-      <tr v-for="(rol, index) in infoRoles" :key="index">
+      <tr>
+        <td>Daniel Diaz</td>
+        <td>Rol 1 </td>
+        <td>10/07/2022 01:40:29 p. m.</td>
+        <td>Perfiles de Usuario</td>
+        <td>Editar</td>
+        <td>Rol 2</td>
+        <td>Rol 2</td>
+      </tr>
+      <tr v-for="(rol, index) in infoRoles" :key="index" class="hidden">
         <td :class="{'text-gray-400': rol.estatus == false}">{{ rol.nombreRol }}</td>
         <td :class="{'text-gray-400': rol.estatus == false}">
           <span v-if="rol.estatus == true">Activo</span>
@@ -167,7 +188,7 @@ export default {
       }
     }
     function acciones_mapper(rol){//Opciones que se presentan en la columna de Acciones
-      if(value.value == 'Activar'){//Cuando seleccionamos la opción Habilitar
+      if(value.value == 'Activar'){//Cuando seleccionamos la opción Activar
         cambiarEstatus(rol)//Mandamos a llamar a la función para cambiar el estatus del Rol
       }
       if(value.value == 'Desactivar'){//Cuando seleccionamos la opción Desactivar
