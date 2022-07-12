@@ -16,7 +16,7 @@
         <td :class="{'text-gray-400': rol.estatus == false}">{{ rol.nombreRol }}</td>
         <td :class="{'text-gray-400': rol.estatus == false}">
           <span v-if="rol.estatus == true">Activo</span>
-          <span v-if="rol.estatus == false">Inactivo</span>
+          <span v-if="rol.estatus == false">Desactivado</span>
         </td>
         <td class="w-66">
           <div class="w-66 mx-auto">
@@ -167,10 +167,10 @@ export default {
       }
     }
     function acciones_mapper(rol){//Opciones que se presentan en la columna de Acciones
-      if(value.value == 'Habilitar'){//Cuando seleccionamos la opción Habilitar
+      if(value.value == 'Activar'){//Cuando seleccionamos la opción Activar
         cambiarEstatus(rol)//Mandamos a llamar a la función para cambiar el estatus del Rol
       }
-      if(value.value == 'Deshabilitar'){//Cuando seleccionamos la opción Deshabilitar
+      if(value.value == 'Desactivar'){//Cuando seleccionamos la opción Desactivar
         cambiarEstatus(rol)//Mandamos a llamar a la función para cambiar el estatus del Rol
       }
       if(this.value == 'Editar Modulos'){//Cuando seleccionamos la opción Editar Módulos
@@ -183,8 +183,8 @@ export default {
     }
     function opticones_select_acciones(rol){//Función que asigna las opciones dependiendo de el estatus del rol
       let options= [//literal que almacena un array de opciones que se presentan en la columna de Acciones, value corresponde al valor de la opción y name es el texto que se presentará en la columna de Acciones
-          {  value: 'Habilitar', name: 'Habilitar'},//0 
-          {  value: 'Deshabilitar', name: 'Deshabilitar'},//1
+          {  value: 'Activar', name: 'Activar'},//0 
+          {  value: 'Desactivar', name: 'Desactivar'},//1
           {  value: 'Editar Modulos', name: 'Editar Modulos'},//2
       ]
       let filtroOpciones = [] //Literal que nos da las opciones filtradas que se presentan en la columna de acciones 

@@ -24,7 +24,7 @@
         <td :class="{'text-gray-400': !usuario.estatus}">{{ usuario.rol }}</td>
         <td :class="{'text-gray-400': !usuario.estatus}">
           <span v-if="usuario.estatus == true">Activo</span>
-          <span v-else>Inactivo</span>
+          <span v-else>Desactivado</span>
         </td>
         <td>
           <div>
@@ -353,10 +353,10 @@ export default {
       }
     }
     function acciones_mapper(item){//Asignación de funciones de la lista de opciones que hay en el menú de acciones
-      if(accion.value == 'Habilitar'){
+      if(accion.value == 'Activar'){
         cambiarEstatus(item)//Llamamos a la función cambiarEstatus y le enviamos el parámetro del usuario que seleccionamos
       }
-      if(accion.value == 'Deshabilitar'){
+      if(accion.value == 'Desactivar'){
         cambiarEstatus(item)//Llamamos a la función cambiarEstatus y le enviamos el parámetro del usuario que seleccionamos
       }
       if(accion.value == 'Cambiar Contraseña'){
@@ -375,8 +375,8 @@ export default {
     }
     function opticones_select_acciones(item){//Lista de opciones que se muestran en el menú de acciones
       let options = [
-          {  value: 'Habilitar', name: 'Habilitar'},//0
-          {  value: 'Deshabilitar', name: 'Deshabilitar'},//1
+          {  value: 'Activar', name: 'Activar'},//0
+          {  value: 'Desactivar', name: 'Desactivar'},//1
           {  value: 'Cambiar Contraseña', name: 'Cambiar Contraseña'},//2
           {  value: 'Editar Usuario', name: 'Editar Usuario'},//3
           {  value: 'Cambiar Rol', name: 'Cambiar Rol'},//4

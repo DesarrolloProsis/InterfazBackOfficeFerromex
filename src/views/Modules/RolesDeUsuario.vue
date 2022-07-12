@@ -5,7 +5,7 @@
   <div class="container mx-auto px-0 pb-2 pt-4">    
     <div class="flex flex-wrap ferromex-color p-1 rounded-lg">
       <div class="flex-none my-auto text-white font-md p-2 ml-10">
-        Nombre:<input v-model="nombre" type="text" class="rounded text-black ml-2 md:w-20 2xl:w-44"/>
+        Perfil:<input v-model="nombre" type="text" class="rounded text-black ml-2 md:w-20 2xl:w-44"/>
       </div>
       <div class="flex-none my-auto text-white font-md p-2">
         Estatus:  

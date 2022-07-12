@@ -70,7 +70,7 @@
                 </div>
                 <div class="flex flex-col gap-10">
                     <div>
-                        <input type="text" class="border border-gray-500 rounded focus:border-blue-400 focus:outline-none" :class="{'border-red-600': validarTag}" v-model="numerotagagregar" @input="limpiarvalidacion()">
+                        <input type="text" class="border rounded focus:border-blue-400 focus:outline-none" :class="{'border-red-600': validarTag}" v-model="numerotagagregar" @input="limpiarvalidacion()">
                         <span v-if="validarTag" class="flex items-center font-medium tracking-wide text-red-500 text-xs mt-1 ml-1">
                          {{validarTagTexto}}
                         </span>
@@ -78,7 +78,7 @@
                 </div>
             </div>
             <div class="flex w-full justify-center mt-10 mb-8">
-                <button class="border w-40 bg-ferromex text-white" @click="agregarTag(numerotagagregar)">Agregar TAG</button>
+                <button class="rounded-lg w-18 bg-ferromex text-white p-10" @click="agregarTag(numerotagagregar)">Agregar TAG</button>
             </div>
   </Modal>
 <Footer/>
