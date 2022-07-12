@@ -1,6 +1,6 @@
 <template>
 <Navbar/>
-<div class="grid justify-items-center p-18 mt-6 2xl:p-42">
+<div class="grid justify-items-center p-18 mt-6 2xl:p-36">
 <div class="bg-white w-96 h-69 rounded-lg shadow-md 2xl:w-80 2xl:h-80">
   <h1 class="text-4xl font-bold font-titulo text-center p-2 2xl:text-6xl 2xl:p-4">Reporte Cajero</h1>
   <div class="flex w-full justify-center mt-4 gap-8 2xl:gap-20 2xl:mt-10">
