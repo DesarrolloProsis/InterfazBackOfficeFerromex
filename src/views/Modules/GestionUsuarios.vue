@@ -26,10 +26,10 @@ export default {
     ModuloConfiguracion,
   },
   setup() {
-    const modulos = ref([
+    const modulos = ref([ //Modulos de los perfiles
         {
           img_src: "Configuracion/lista-roles.png",
-          nombre: "Roles de Usuario",
+          nombre: "Perfiles de Usuario",
           ruta: "/gestion-usuarios/administracion-perfiles",
         },
         {

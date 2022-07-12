@@ -13,6 +13,7 @@ import ReporteTurno from '../views/Modules/ReporteTurno.vue'
 import ReporteCajero from '../views/Modules/ReporteCajero.vue'
 import Cruces from '../views/Modules/Cruces.vue'
 import Servicio from '../Servicios/Token-Services'
+import Parametros from '@/views/Modules/Parametros.vue'
 
 
 const routes = [{
@@ -124,6 +125,14 @@ const routes = [{
     path: "/gestion-usuarios/lista-usuarios",
     name: "ListaUsuarios",
     component: ListaUsuarios,
+    meta: {
+      requiresCookie: true
+    }
+  },
+  {
+    path: "/parametros",
+    name: "parametros",
+    component: Parametros,
     meta: {
       requiresCookie: true
     }

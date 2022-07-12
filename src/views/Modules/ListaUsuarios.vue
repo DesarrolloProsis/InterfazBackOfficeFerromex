@@ -141,6 +141,7 @@ export default {
       header.estatus = undefined//Damos el valor de undefined a la constante que almacena el estatus que seleccionamos en el header
       let nombreRuta = ' '//Creamos dos literal con un espacio en blanco para mandarla en la ruta
       let estatusRuta = ' '//Creamos dos literal con un espacio en blanco para mandarla en la ruta
+      numRespuesta.value = 10 //Filtramos por 10 valores por default
       const ruta = encodeURI(`${API}/Identity/user/1/${numRespuesta.value}/${nombreRuta}/${estatusRuta}`)
       axios.get(ruta)//Llamada al endpoint que trae los roles existentes
       .then((result) => {//Si el endpoint tiene una respuesta correcta
