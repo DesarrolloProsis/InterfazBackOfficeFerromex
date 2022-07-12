@@ -10,9 +10,9 @@
         TAG:<input v-model="tag" type="text" class="rounded text-black ml-2 md:w-10 xl:w-44" />
       </div>
       <div class="flex-none my-auto text-white font-md p-2">
-        Carril:
+        ViA:
         <select v-model="carril" class="flex-none text-black rounded" name="select" placeholder="Selecciona">
-          <option :value="undefined">Seleccione un Carril</option>
+          <option :value="undefined">Seleccione ViA</option>
           <option v-for="(carril ,index) in carriles" :key="index" :value="carril.id">
               {{ carril.Carril }}
           </option>

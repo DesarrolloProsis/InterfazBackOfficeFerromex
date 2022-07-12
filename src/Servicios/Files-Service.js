@@ -13,7 +13,8 @@ function xml_hhtp_request(urlToFile){
         type: "application/pdf",
       });
       var pdfFileURL = URL.createObjectURL(file);
-      window.open(pdfFileURL, '_blank' )       
+      //window.open(pdfFileURL, '_blank' )
+      window.navigator.msSaveOrOpenBlob(pdfFileURL, 'pdf1');       
       //saveAs(file, nameFile);  
     };            
 }

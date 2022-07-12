@@ -1,14 +1,17 @@
 <template>
   <Navbar></Navbar>
   <div class="">
-    <div class="mt-6 grid grid-cols-2 gap-4 place-items-center 2xl:mt-24 2xl:gap-10">
-    <ModulosComp
+    <div class="container mx-auto px-auto pt-32 my-32">
+      <div class="flex flex-wrap">
+        <ModulosComp
       v-for="(modulo, index) in modulos"
       :key="index"
       :imagen="modulo.imagen"
       :ruta="modulo.ruta"
       :nombre="modulo.nombre"
     ></ModulosComp>
+      </div>
+    
     <Spinner :modalLoading="modalLoading"/>
   </div>
   </div>
@@ -39,7 +42,7 @@ export default {
     function obtenerModulos(){ //Función que nos va a permitir obtener los modulos que va a ver el rol asignado al usuario que inicio sesión
       let rol = decoded.role // literal local que obtiene el rol del usuario
       modalLoading.value = true //habilitamos el spinner para esperar a que cargue los modulos que podrá ver el rol
-      axios.get(`${API}/Ferromex/modules?role=${rol}`) //enpoint que trae los modulos que puede ver el rol del usuario
+      axios.get(`${API}/Ferromex/modules?roleName=${rol}`) //enpoint que trae los modulos que puede ver el rol del usuario
       .then((result) => {
         let modules = result.data.content //literal que almacena el contenido o resuesta del endpoint
         let proxy = new Proxy(modules ,{ //literal que obtiene la información del evento proxy, que almacena la respuesta del endpoint

@@ -7,12 +7,20 @@
       </router-link>
     </div>
     <span class="text-white mt-2">Bienvenido {{ nombre.toUpperCase() }}</span>
-    <div class="flex-none -mt-2 animacion">
-      <router-link class="" to="/" tag="div">
+    
+    <div class="flex">
+      <div class="-mt-2 animacion">
+         <router-link class="" to="/parametros" tag="div">
+          <fa icon="gear" class="w-12 h-8 mt-3 mr-2 text-white"/>
+      </router-link>
+      </div>
+      <div class="-mt-2 animacion">
+        <router-link class="" to="/" tag="div">
         <button class="" @click="logout()">
-          <fa icon="arrow-right-from-bracket" class="w-10 h-8 mt-3 mr-2 text-white"/>
+          <fa icon="arrow-right-from-bracket" class="w-12 h-8 mt-3 mr-2 text-white"/>
         </button>
       </router-link>
+      </div>
     </div>
   </div>
 </template>

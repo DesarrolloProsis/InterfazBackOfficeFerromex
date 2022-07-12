@@ -1,5 +1,5 @@
 <template>
-<div class="responsive-table">
+<div class="responsive-table overflow-auto">
   <!-- <table class="tftable"> -->
   <table class="tftable">
     <tr class="h-10">
@@ -13,7 +13,7 @@
         <label class="rounded-full px-20 bg-gray-200 ring-2 ring-gray-500 p-2 font-bold text-black">Tag</label>
       </th>
       <th class="">
-        <label class="rounded-full px-20 bg-gray-200 ring-2 ring-gray-500 p-2 font-bold text-black">Carril</label>
+        <label class="rounded-full px-20 bg-gray-200 ring-2 ring-gray-500 p-2 font-bold text-black">ViA</label>
       </th>
       <th class="">
         <label class="rounded-full px-20 bg-gray-200 ring-2 ring-gray-500 p-2 font-bold text-black">Clase</label>

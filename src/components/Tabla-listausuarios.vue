@@ -1,5 +1,5 @@
 <template>
-  <div class="responsive-table">          
+  <div class="responsive-table overflow-auto">          
     <table class="tftable">
       <tr class="h-10">
         <th>
@@ -390,7 +390,7 @@ export default {
               filtroOpciones.push(options[1])
               filtroOpciones.push(options[4])
             }
-            if(infoUser.role == "AdminFerromex")
+            if(infoUser.role == "AdminFerromex") //Si el usuario solo es AdminFerromex solo el podra cambiar las contraseñas
               filtroOpciones.push(options[2])
           }
       return filtroOpciones  //Regresamos la lista de acciones filtrada
