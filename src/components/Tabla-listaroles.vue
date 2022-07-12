@@ -16,7 +16,7 @@
         <td :class="{'text-gray-400': rol.estatus == false}">{{ rol.nombreRol }}</td>
         <td :class="{'text-gray-400': rol.estatus == false}">
           <span v-if="rol.estatus == true">Activo</span>
-          <span v-if="rol.estatus == false">Inactivo</span>
+          <span v-if="rol.estatus == false">Desactivado</span>
         </td>
         <td class="w-66">
           <div class="w-66 mx-auto">
