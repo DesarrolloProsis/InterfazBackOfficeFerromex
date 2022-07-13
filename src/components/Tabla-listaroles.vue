@@ -40,16 +40,20 @@
   <Modal :show="modalModulos" @cerrarmodal="modalModulos = false, vacio = false">
     <div>
       <p class="text-gray-900 font-bold text-2xl -mt-8 mb-8 text-center">Actualizar Módulos del Perfil {{ perfilSelected.nombreRol }}</p>
-      <div class="grid grid-cols-2 mt-2" v-for="(modulos, index) in modulos" :key="index">
-        <p class="text-center">{{ modulos.label }}</p>
-        <p class="text-center">
-          <button class="btn btn-active cursor-auto">Activo</button>
-        </p>
+      <div class="grid grid-cols-2 mt-2" v-for="(modulo, index) in modulosExistentes" :key="index">
+      <div class="mx-auto w-full">
+           <p class="text-center">{{ modulo.label }}</p>
       </div>
-      <div class="grid grid-cols-2 mt-6">      
+      <div class="mx-auto">
+         <div class="relative inline-block w-16 mr-2 align-middle select-none transition duration-200 ease-in">
+            <input type="checkbox" :value="modulo.value" v-model="asignarModulos" name="toggle" id="toggle" class="toggle-checkbox absolute w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer"/>
+            <label for="toggle" class="toggle-label block overflow-hidden h-6 rounded-full bg-gray-300 cursor-pointer"></label>
+          </div>
+      </div>
+      </div>
+      <!-- <div class="grid grid-cols-2 mt-6">      
         <p class="text-sm mb-1 font-semibold text-gray-700 text-center ">Modulos a Asignar</p>
         <Multiselect
-          v-model="asignarModulos"
           placeholder="Seleccione los modulos para este rol"
           mode="multiple"
           :searchable="true"
@@ -58,7 +62,7 @@
           class="w-52"
           :class="{'border border-red-400': vacio}"
         />
-      </div>
+      </div> -->
       <div class="mt-10 text-center mx-auto mb-4">
         <button @click="editarModulos(perfilSelected.nombreRol, asignarModulos)" class="rounded-lg w-18 bg-ferromex text-white p-10">Guardar</button>
       </div>
@@ -121,15 +125,24 @@ export default {
     }
     function traerModulos(rol){//Función que trae los modulos asignados a un rol en especifico
       modulosExistente()//Llamamos a la función que trae todos los roles, para llenar el multiselect
+      console.log(rol);
+      console.log(rol.nombreRol);
+      console.log(modulosExistentes.value);
       modulos.value = []
-      axios.get(`${API}/Ferromex/modules?role=${rol.nombreRol}`)//Endpoint que trae los módulos asignados a un rol en especificio, si no le mandamos ningún rol, trae todos los módulos
+      axios.get(`${API}/Ferromex/modules?roleName=${rol.nombreRol}`)//Endpoint que trae los módulos asignados a un rol en especificio, si no le mandamos ningún rol, trae todos los módulos
       .then((result)=>{//Si el endpoint tiene una respuesta correcta
+        console.log(result);
         for(let i=0; i<result.data.content.length; i++){ //recorremos la respuesta, y cada que recorremos sumamos un 1 para el siguiente rol
           modulos.value.push({'value':result.data.content[i].id, 'label':result.data.content[i].nameModule})//asignamos los roles existentes a la variable roles, para mostrarlos en el multiselect
         }
+        let idroles = modulos.value.map(function(x) {
+          return x.value;
+        });                                   
+        asignarModulos.value = idroles;
       })
     }
     function editarModulos(rol, modulos){//Función que permite agregar o quitar módulos a un rol en especifico, recibe el nombre del rol y un array con los módulos a asignar
+      console.log(modulos);
       if(modulos.length === 0){// Si no se ha seleccionado ningún módulo, no nos va a permitir actualizarlos
         vacio.value = true
         notify({//Notificación que se muestra cuando no se puede hacer el cambio de manera correcta
@@ -143,8 +156,10 @@ export default {
           'roleName': rol,
           'modules': modulos
         }
+        console.log(data);
         axios.post(`${API}/Ferromex/addRoleModules`, data)//Enpoint que asigna los módulos a un rol en especifico
-        .then(()=> {//Si el endpoint tiene una respuesta correcta
+        .then((resp)=> {//Si el endpoint tiene una respuesta correcta
+          console.log(resp);
           modalModulos.value = false //cerramos el modal de asignación de módulos
           notify({//Notifiación que se muestra cuando se realiza el cambio de una manera correcta
             title:'Cambio Exitoso',
@@ -174,7 +189,7 @@ export default {
         cambiarEstatus(rol)//Mandamos a llamar a la función para cambiar el estatus del Rol
       }
       if(this.value == 'Editar Modulos'){//Cuando seleccionamos la opción Editar Módulos
-        modulosExistentes.value = [{}] //Limpiamos el array que contiene todos los roles, para que no aparezcan los que seleccionamos antes
+        modulosExistentes.value = [] //Limpiamos el array que contiene todos los roles, para que no aparezcan los que seleccionamos antes
         traerModulos(rol)//Llamamos a la función que trae los módulos asignados al rol seleccionado
         perfilSelected.value = rol//asignamos los valores del rol seleccionado a la variable perfilSelected, para poder mostralos en el modal
         modalModulos.value = true//Abrimos el modal de los módulos asignados
@@ -273,4 +288,9 @@ export default {
   text-align: center;
   
 }
+</style>
+<style>
+/* CHECKBOX TOGGLE SWITCH */
+/* @apply rules for documentation, these do not work as inline style */
+
 </style>

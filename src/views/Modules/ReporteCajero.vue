@@ -157,9 +157,11 @@ setup(){
       showModal.value = modal
       bolsas.value = []
     }
+  //Funcion que genera los reportes
     function generarbolsa(idbolsa){
-      ServiceFiles.xml_hhtp_request(`${API}/Ferromex/Download/pdf/reporteOperativo/reporteCajero/concentrado/${idbolsa}`, 'CajeroContrado.pdf');
-      ServiceFiles.xml_hhtp_request(`${API}/Ferromex/Download/pdf/reporteOperativo/reporteCajero/transacciones/${idbolsa}`, 'TransaccionesCajero.pdf');
+      ServiceFiles.xml_hhtp_request(`${API}/Ferromex/Download/pdf/reporteOperativo/reporteCajero/concentrado/${idbolsa}`, 'CajeroContrado.pdf'); //Con el servicio importado mandamos la ruta y el nombre
+      ServiceFiles.xml_hhtp_request(`${API}/Ferromex/Download/pdf/reporteOperativo/reporteCajero/transacciones/${idbolsa}`, 'TransaccionesCajero.pdf');//Con el servicio importado mandamos la ruta y el nombre
+      //Devolvemos los valores a su valor por default
       bolsas.value = [];
       showModal.value = false
       cajero.numerocajero = ""
