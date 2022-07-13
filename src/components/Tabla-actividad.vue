@@ -3,10 +3,10 @@
     <table class="tftable">
       <tr class="h-10">
         <th>
-          <label class="rounded-full px-10 bg-gray-200 ring-2 ring-gray-500 p-2 text-black 2xl:px-23">Usuario</label>
+          <label class="rounded-full px-10 bg-gray-200 ring-2 ring-gray-500 p-2 text-black 2xl:px-23">Nombre</label>
         </th>             
         <th>
-          <label class="rounded-full px-10 bg-gray-200 ring-2 ring-gray-500 p-2 text-black 2xl:px-23">Rol</label>
+          <label class="rounded-full px-10 bg-gray-200 ring-2 ring-gray-500 p-2 text-black 2xl:px-23">Perfil</label>
         </th>
         <th>
           <label class="rounded-full px-10 bg-gray-200 ring-2 ring-gray-500 p-2 text-black 2xl:px-24">Fecha de Movimiento</label>
@@ -89,7 +89,7 @@
 <script>
 import Servicio from '../Servicios/Token-Services'; //Importamos el Servicio de Toke, para obtener información del usuario con base en el token
 import Multiselect from '@vueform/multiselect' //Importamos el componente Multiselect para utilizarlo en la columna Acciones o en el modal de asignar módulos
-import Modal from '../components/Modal.vue'
+import Modal from './Modal.vue'
 import { ref,inject } from 'vue'
 import { notify } from "@kyvg/vue3-notification"; //Componente para generar notificaciones
 const API = process.env.VUE_APP_URL_API_PRODUCCION //Constante que nos almacena la cadena de conexión a la API
