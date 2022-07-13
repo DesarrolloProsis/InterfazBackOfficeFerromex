@@ -135,10 +135,10 @@ export default {
         for(let i=0; i<result.data.content.length; i++){ //recorremos la respuesta, y cada que recorremos sumamos un 1 para el siguiente rol
           modulos.value.push({'value':result.data.content[i].id, 'label':result.data.content[i].nameModule})//asignamos los roles existentes a la variable roles, para mostrarlos en el multiselect
         }
-        let idroles = modulos.value.map(function(x) {
+        let idroles = modulos.value.map(function(x) {  //Creamos un nuevo arreglo solo con los id correspondientes
           return x.value;
         });                                   
-        asignarModulos.value = idroles;
+        asignarModulos.value = idroles; //Pasamos ese valor al vmodel correspondiente para que lo lea y si es asi sea marcadado en la casilla
       })
     }
     function editarModulos(rol, modulos){//Función que permite agregar o quitar módulos a un rol en especifico, recibe el nombre del rol y un array con los módulos a asignar
