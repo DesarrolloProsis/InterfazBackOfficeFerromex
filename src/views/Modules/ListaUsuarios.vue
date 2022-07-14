@@ -16,7 +16,7 @@
       </div>
       <div class="flex-none my-auto text-white font-md p-2">
         Resultados:
-        <select v-model="numRespuesta" class="text-gray-800 w-16 rounded">
+        <select v-model="numRespuesta" class="text-gray-800 w-16 rounded" @change="buscarchange(nombre,estatus)">
           <option value="10">10</option>
           <option value="30">30</option>
           <option value="50">50</option>
@@ -162,7 +162,7 @@ export default {
         nombre = ' '//Añadimos un espacio en blanco
       if(estatus == undefined)//Hacemos la validación si es que el estatus está indefinido
         estatus = ' '//Añadimos un espacio en blanco
-      if(nombre == ' ' && estatus == ' ' && numRespuesta.value == 10){//Validamos si ambos campos estan vacios
+      if(nombre == ' ' && estatus == ' '){//Validamos si ambos campos estan vacios
         notify({//Notificación en la que indicamos que no se ha insertado ningún dato para buscar
           title:'Sin Información',
           text:'No hay datos para realizar la busqueda',
@@ -185,6 +185,29 @@ export default {
           modalLoading.value = false //cerramos el spinner de carga
         })
       }
+    }
+    function buscarchange (nombre, estatus){//Función que realiza la busqueda de acuerdo a los parámetros ingresados en los header
+      modalLoading.value = true//Abrimos el spinner de la pantalla de carga
+      if(nombre == ''){ //Hacemos la validación si es que el nombre estaá vacios
+         nombre = ' '//Añadimos un espacio en blanco
+      }
+      if(estatus == undefined){ //Hacemos la validación si es que el estatus está indefinido
+        estatus = ' '//Añadimos un espacio en blanco
+      }
+      modalLoading.value = true//Abrimos el spinner de pantalla de carga
+      const ruta = encodeURI(`${API}/Identity/user/${paginaActual.value}/${numRespuesta.value}/${nombre}/${estatus}`)
+      axios.get(ruta)//Llamada al endpoint que trae los roles existentes
+        .then((result) => {//Si el endpoint tiene una respuesta correcta
+        if(result.status == 200){//valida que el estatus de la respuesta sea 200 para saber que es una respuesta correcta y con contenido
+          totalPaginas.value = result.data.paginas_totales
+          paginaActual.value = result.data.pagina_actual
+          modalLoading.value = false//Cerramos el spinner de carga
+          usuarios.value = result.data.usuarios //asignamos los resultados que nos trajo el endpoint a la constante roles
+          }
+        }).catch((error)=>{//Si el endpoint tiene un error en la respuesta
+          console.log(error.request.response);//Mostramos en consola el error  que nos da el endpoint
+          modalLoading.value = false //cerramos el spinner de carga
+        })
     }
     function cambiarPagina (page){//Función que permite hacer el cambio de páginas con las nuevas respuestas
       if(header.nombre == '')//Si el nombre está vacio
@@ -294,7 +317,28 @@ export default {
     }
     onMounted(todos)//Montamos la función todos para que en la primer carga traiga todos los usuarios existentes
 
-  return { abrirModal, todos, guardar, buscar, cambiarPagina, cerrarModal, usuario, usuarios, options, ...toRefs(header), mayuscula, tipoInput, corta, modalAgregar, roles, modalLoading, paginaActual, hasMorePages, numRespuesta, totalPaginas }
+  return { abrirModal, 
+  todos, 
+  guardar, 
+  buscar, 
+  cambiarPagina, 
+  cerrarModal, 
+  usuario, 
+  usuarios, 
+  options, 
+  ...toRefs(header),
+  mayuscula, 
+  tipoInput, 
+  corta, 
+  modalAgregar, 
+  roles, 
+  modalLoading, 
+  paginaActual, 
+  hasMorePages, 
+  numRespuesta, 
+  totalPaginas,
+  buscarchange
+  }
   },
 }
 </script>

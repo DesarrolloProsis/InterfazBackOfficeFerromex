@@ -23,7 +23,7 @@
               </div>
             <div class="w-full inline-flex flex-2 justify-center">
                 <label for="tag" class="text-white my-auto">Resultados:</label>
-                <select v-model="numRespuesta" class="text-center my-auto bg-white flex border border-gray-200 rounded ml-2 h-6 w-20">
+                <select v-model="numRespuesta" class="text-center my-auto bg-white flex border border-gray-200 rounded ml-2 h-6 w-20" @change="searchchange(tag, estatus, fecha)">
                   <option value="10">10</option>
                   <option value="30">30</option>
                   <option value="50">50</option>
@@ -193,7 +193,7 @@ export default {
       if(fecha == ""){ //Validamos si el campo llega vacio le damos un espacio en blanco
         fecha = " "
       }
-      if(tag == ' ' && estatus == ' ' && fecha == ' ' && numRespuesta.value == "10"){ //En caso de que todos los campos lleguen vacios
+      if(tag == ' ' && estatus == ' ' && fecha == ' '){ //En caso de que todos los campos lleguen vacios
         modalLoading.value = false // Cerramoes el spinner
         cargatags() //Cargamos todos los tags
         notify({ //Enviamos una notificacion en la que especificamos que no podemos hacer una busqueda sin parametros
@@ -247,6 +247,66 @@ export default {
             }
           })
       }
+    }
+    function searchchange(tag, estatus, fecha){
+      modalLoading.value = true //Abrimos el spinner
+      cruces.value = [] // Declaramos el arreglo en vacio
+      if(tag == ""){ //Validamos si el campo llega vacio le damos un espacio en blanco 
+        tag = " "
+      }
+      if(estatus == undefined){ //Validamos si el campo llega vacio le damos un espacio en blanco
+        estatus = " "
+      }
+      if(fecha == ""){ //Validamos si el campo llega vacio le damos un espacio en blanco
+        fecha = " "
+      }
+      let estatusurl = "" //Declaramos varibles que iran en la url final
+      let fechaurl = fecha //Declaramos varibles que iran en la url final
+      if(fecha != " "){ //si la fecha es diferente a un espacio en blanco 
+        fechaurl = new Date(fecha).toISOString() //Le damos formato para que lo reciba el back
+      }
+      if(estatus == "Activo"){ // Si el estatus viene como activo
+        estatusurl = "true" //En la varible de la url la enviamos como true
+      }else if(estatus == "Inactivo"){ // Si el estatus viene como inactivo
+        estatusurl = "false" //En la varible de la url la enviamos como false
+      }else if(estatus == " "){ // Si el estatus viene como vacio
+        estatusurl = " " //En la varible de la url la enviamos como espacio en blanco
+      }
+      const ruta = encodeURI(`${API}/ferromex/mantenimientotags/${page.value}/${numRespuesta.value}/${tag}/${estatusurl}/${fechaurl}`) //Ciframos la url para mandarla en el axios
+      modalLoading.value = false //Cerramos el spiiner
+      axios.get(ruta) //Mandamos a llamar el axios
+        .then((result)=>{
+          if(result.status == 200){ //Si recibimos un estatus 200 
+            modalLoading.value = false //Quitamos spiiner
+            totalPaginas.value = result.data.paginas_totales  //asignamos valor al numero total de paginas
+            currentPage.value = result.data.pagina_actual //Asignamos valor a la pagina actual
+            result.data.tags.forEach((e)=>{ //Creamos el objeto tag
+              let obj = {
+                tag: e.tag,
+                insertionDate : e.insertionDate,
+                active: e.active
+              }
+              cruces.value.push(obj)//Metemos el objeto tag a la lista 
+            })
+            if(cruces.value.length == 0){//Si el tamaño del arreglo que no contiene los tags es igual a cero
+              notify({ //Notificamos que no existen casos ni coincidencias
+              title:'Sin Información',
+              text:'No existen registros con los criterios de tu busqueda' ,
+              type: 'warn'
+            });
+            }
+            }else{ //Si esto es falso
+              modalLoading.value = false //Cerramos Spinner
+              notify({ //NOtificamos que no encontramos Tags
+                title:'Sin Información',
+                text:'No se encontraron tags',
+                type: 'warn'
+              });
+            }
+          }).catch((error)=>{
+            console.log(error);
+          })
+      
     }
   //Función que limpia los input de busqueda y regresa las transacciones de la plaza sin filtros
     function limpiar(){
@@ -460,7 +520,8 @@ export default {
       hasMorePages, 
       modalLoading,
       showModal,
-      agregarTag
+      agregarTag,
+      searchchange
       }
   }
 }

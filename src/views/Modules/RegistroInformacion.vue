@@ -27,7 +27,7 @@
       </div>
       <div class="flex-none my-auto text-white font-md p-2">
         Resultados:
-        <select v-model="numRespuesta" class="text-gray-800 w-16 rounded">
+        <select v-model="numRespuesta" class="text-gray-800 w-16 rounded" @change="buscarchange(fecha,tag,carril,cuerpo)">
           <option value="10">10</option>
           <option value="30">30</option>
           <option value="50">50</option>
@@ -125,6 +125,7 @@ export default {
       header.tag = ''
       header.carril = ''
       header.cuerpo = ''
+      numRespuesta.value = 10
       let fechaRuta = ' '//Creamos literales con un espacio en blanco, que nos va a servir para enviarlo en la ruta encriptada
       let tagRuta = ' '
       let carrilRuta = ' '
@@ -175,6 +176,33 @@ export default {
         })
       }
     }
+    function buscarchange(fecha, tag, carril, cuerpo){ //Función que realiza la busqueda en la base con un evento click
+      modalLoading.value = true
+      if(fecha == '')//Hacemos la validaciones necesarias para poder agregar el espacio vacio es que no se ha escrito o seleccionado un dato en los filtros
+        {
+          fecha = ' '
+        }
+      if(tag == ''){
+        tag = ' '
+        }
+      if(carril == ''){
+        carril = ' '
+      }
+      if(cuerpo == ''){
+        cuerpo = ' '
+      }
+      const ruta = (encodeURI(`${API}/ferromex/registroInformacion/${paginaActual.value}/${numRespuesta.value}/${fecha}/${tag}/${carril}/${cuerpo}`))//Constante que almacena la ruta encriptada para hacer la petición al API
+      axios.get(ruta)//Realizamos la petición http al API
+        .then((result) => {//Si el endpoint tiene una respuesta correcta
+          cruces.value = result.data.cruces//Asignamos los valores del resultado a la constrante que se va a mostrar en la tabla
+          console.log(cruces.value)
+          totalPaginas.value = result.data.paginas_totales//Asignamos el valor de las páginas totales para saber el limite de páginas en el componente de paginación
+          paginaActual.value = result.data.pagina_actual//Asignamos el valor de la página actual para enviarlo al componente de paginación
+          modalLoading.value = false
+        }).catch((error) => {//Si el endpoint tiene un error en la respuesta
+          console.log(error.request.response);
+        })
+    }
     function tiempos(minutos){ //función donde se indica los segundos para poder reiniciar la busqueda dependiendo de la opción seleccionada
       if(minutos == 'tres'){
         seconds.value = 180
@@ -221,7 +249,27 @@ export default {
     }
     onUnmounted(stopInterval)//Ejecuta la función cuando se desmonta el componente
 
-    return { header, carriles, modalLoading, cambiarPagina, buscar, setInterval_, tiempos, todos, ...toRefs(header), carrilesExistentes, stopInterval, cruces, contador, tiempo, totalPaginas, paginaActual, hasMorePages, numRespuesta}
+    return { 
+      header, 
+      carriles, 
+      modalLoading, 
+      cambiarPagina, 
+      buscar,
+      buscarchange, 
+      setInterval_, 
+      tiempos, 
+      todos, 
+      ...toRefs(header), 
+      carrilesExistentes,
+      stopInterval,
+      cruces, 
+      contador, 
+      tiempo, 
+      totalPaginas, 
+      paginaActual, 
+      hasMorePages, 
+      numRespuesta
+      }
 }
 }
 </script>

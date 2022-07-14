@@ -16,7 +16,7 @@
       </div>
       <div class="flex-none my-auto text-white font-md p-2">
         Resultados:
-        <select v-model="numRespuesta" class="text-gray-800 w-16 rounded">
+        <select v-model="numRespuesta" class="text-gray-800 w-16 rounded" @change="buscarchange(nombre , estatus)">
           <option value="10">10</option>
           <option value="30">30</option>
           <option value="50">50</option>
@@ -173,7 +173,7 @@ export default {
         nombre = ' '
       if(estatus == undefined)//Si no se ha seleccionado ningún estatus en el header, el valor de estatus será un espacio en blanco
         estatus = ' '
-      if(nombre == ' ' && estatus == ' ' && numRespuesta.value == 10)//Si nombre y estatus es espacio en blanco, no se realizará ningúna busqueda, se quedará con la carga inicial
+      if(nombre == ' ' && estatus == ' ')//Si nombre y estatus es espacio en blanco, no se realizará ningúna busqueda, se quedará con la carga inicial
       {
         notify({//Notificación en la que indicamos que no se ha insertado ningún dato para buscar
           title:'Sin Información',
@@ -198,6 +198,27 @@ export default {
         })
       }
     }
+    function buscarchange(nombre, estatus){//Función que realiza la busqueda de los roles existentes, o uno en especificos, recibe como parametros el nombre y el estatus, pueden llegar vacios
+      modalLoading.value = true
+      if(nombre == "")//Si no se ha escrito ningún nombre en el header, el valor de nombre será un espacio en blanco
+        nombre = ' '
+      if(estatus == undefined)//Si no se ha seleccionado ningún estatus en el header, el valor de estatus será un espacio en blanco
+        estatus = ' '
+        roles.value = [] //Constante que contiene los roles se muestra en vacio para hacer una busqueda limpia, y no se queden datos en cache
+        const ruta = encodeURI(`${API}/Identity/roles/${paginaActual.value}/${numRespuesta.value}/${nombre}/${estatus}`)
+        axios.get(ruta)//Llamada al endpoint que trae los roles existentes
+        .then((result) => {//Si el endpoint tiene una respuesta correcta
+          if(result.status == 200){//valida que el estatus de la respuesta sea 200 para saber que es una respuesta correcta y con contenido
+            totalPaginas.value = result.data.paginas_totales//Asignamos el valor de las páginas totales para el componente de páginación
+            paginaActual.value = result.data.pagina_actual//Asignamos el valor de la pagina actual para saber en cual nos posicionamos en el componente de paginación
+            modalLoading.value = false//Cerramos el spinner de carga
+            roles.value = result.data.roles //asignamos los resultados que nos trajo el endpoint a la constante roles
+          }
+        }).catch((error)=>{//Si el endpoint tiene un erro en la respuesta
+          console.log(error.request.response);//Mostramos en consola el error  que nos da el endpoint
+          modalLoading.value = false //cerramos el spinner de carga
+        })
+    }
     function todos (){//Función que trae todos los roles existentes
       roles.value = [] //Constante que contiene los roles se muestra en vacio para hacer una busqueda limpia, y no se queden datos en cache
       modalLoading.value = true//Abrimos el spinner de pantalla de carga
@@ -205,6 +226,7 @@ export default {
       header.estatus = undefined//Damos el valor de undefined a la constante que almacena el estatus que seleccionamos en el header
       let nombreRuta = ' '//Creamos dos literal con un espacio en blanco para mandarla en la ruta
       let estatusRuta = ' '
+      numRespuesta.value = 10 //Volvemos al default a 10 resultados
       const ruta = encodeURI(`${API}/Identity/roles/1/${numRespuesta.value}/${nombreRuta}/${estatusRuta}`)//constante con la ruta codificada
       axios.get(ruta)//Llamada al endpoint que trae los roles existentes
       .then((result) => {//Si el endpoint tiene una respuesta correcta
@@ -241,7 +263,26 @@ export default {
 
     onMounted(todos)//Montamos la función todos apra que traiga todos los roles existentes en la primer carga
 
-    return { roles, modulosExistentes, userModal, abrir_modal_new_rol, newRol, ...toRefs(header), options, craer_nuevo_rol, buscar, todos, vacio, modalLoading, totalPaginas, paginaActual, hasMorePages, numRespuesta, cambiarPagina, cerralmodalpadre }
+    return { 
+      roles, 
+      modulosExistentes, 
+      userModal, 
+      abrir_modal_new_rol, 
+      newRol, 
+      ...toRefs(header), 
+      options, 
+      craer_nuevo_rol, 
+      buscar, 
+      todos, 
+      vacio, 
+      modalLoading, 
+      totalPaginas, 
+      paginaActual, 
+      hasMorePages, 
+      numRespuesta, 
+      cambiarPagina, 
+      cerralmodalpadre,
+      buscarchange }
 
   }, 
 };
