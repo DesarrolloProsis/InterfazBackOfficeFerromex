@@ -367,7 +367,7 @@ export default {
         modalEditar.value = true//Abrimos el modal para editar el usuario
         usuario.value = item//Asignamos los parametros utiles para la edición
       }
-      if(accion.value == 'Cambiar Rol'){
+      if(accion.value == 'Cambiar Perfil'){
         modal_Rol()//Llamamos a la función que abre el modal para cambiar el Rol
         usuario.value = item//Asignamos los parametros utiles para la edición
       }
@@ -379,7 +379,7 @@ export default {
           {  value: 'Desactivar', name: 'Desactivar'},//1
           {  value: 'Cambiar Contraseña', name: 'Cambiar Contraseña'},//2
           {  value: 'Editar Usuario', name: 'Editar Usuario'},//3
-          {  value: 'Cambiar Rol', name: 'Cambiar Rol'},//4
+          {  value: 'Cambiar Perfil', name: 'Cambiar Perfil'},//4
       ]
       let filtroOpciones = []
           if(item.estatus == false)
