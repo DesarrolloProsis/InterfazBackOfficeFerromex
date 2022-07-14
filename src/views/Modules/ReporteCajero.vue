@@ -9,7 +9,7 @@
             <label for="">Plaza de Cobro</label>
         </div>
         <div>
-            <label for="">Numero de Cajero*</label>
+            <label for="">N°Cajero*</label>
         </div>
         <div>
             <label for="">Turno*</label>
@@ -50,9 +50,6 @@
       <table class="tftable w-full">
       <tr class="h-10 w-full bg-gray-200 text-center">
         <th>
-          <label class="text-black px-4 2xl:px-10">#</label>
-        </th>
-        <th>
           <label class="text-black px-4 2xl:px-16">Fecha Inicio</label>
         </th>
         <th>
@@ -70,7 +67,6 @@
       </tr>
       <template v-if="bolsas.length">
          <tr class="text-center w-full text-sm" v-for="(bolsa, index) in bolsas" :key="index">
-        <td>{{bolsa.idBolsa}}</td>
         <td>{{moment.utc(bolsa.fechaInicio).local().format("YYYY-MM-DD HH:mm:ss a")}}</td>
         <td>{{moment.utc(bolsa.fechaFin).local().format("YYYY-MM-DD HH:mm:ss a")}}</td>
         <td>{{bolsa.carrilBolsa}}</td>
