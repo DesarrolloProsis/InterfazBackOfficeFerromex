@@ -225,7 +225,7 @@ export default {
               text:`Se cambió la contraseña al usuario ${usuario.nombre + ' ' + usuario.apellidos}`,
               type: 'success'
             });
-            axios.defaults.headers.common['Authorization'] = '' //Enviamos el token en la cabecera llamada Authorization porque todos los endpoints lo piden
+            //axios.defaults.headers.common['Authorization'] = '' //Enviamos el token en la cabecera llamada Authorization porque todos los endpoints lo piden
             //router.push('/')//Redirigimos al Login
           })
           .catch((error) => {

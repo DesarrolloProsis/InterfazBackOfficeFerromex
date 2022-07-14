@@ -202,7 +202,7 @@ export default {
           {  value: 'Desactivar', name: 'Desactivar'},//1
           {  value: 'Editar Modulos', name: 'Editar Modulos'},//2
       ]
-      let filtroOpciones = [] //Literal que nos da las opciones filtradas que se presentan en la columna de acciones   
+      let filtroOpciones = [] //Literal que nos da las opciones filtradas que se presentan en la columna de acciones 
         if(rol.estatus == false)
           filtroOpciones.push(options[0])
         if(rol.nombreRol != infoUser.role && rol.estatus == true){

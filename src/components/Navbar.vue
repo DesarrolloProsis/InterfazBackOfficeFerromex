@@ -11,7 +11,7 @@
     <div class="flex">
       <div class="-mt-2 animacion">
          <router-link class="" to="/parametros" tag="div">
-          <fa icon="gear" class="w-12 h-8 mt-3 mr-2 text-white"/>
+          <fa icon="gear" class="w-12 h-8 mt-3 mr-2 text-white" :class="{'hidden': ocultarparametros}"/>
       </router-link>
       </div>
       <div class="-mt-2 animacion">
@@ -25,6 +25,7 @@
   </div>
 </template>
 <script>
+const API = process.env.VUE_APP_URL_API_PRODUCCION //constante que hace referencia a la ip donde está montada el API, se utiliza para hacer peticiones
 import Servicio from '../Servicios/Token-Services';//Se importa el servicio que nos permite tener la información del token
 import { onMounted,ref,inject } from 'vue'//se importa onMounted para que haga una devolución de una llamada que se hará al montar el componente
 import router from '../router';
@@ -32,6 +33,7 @@ export default{
   setup(){
     const axios = inject('axios')
     const nombre = ref('')//Constante que alamacena el nombre de usuario
+    const ocultarparametros = ref(false)
     function logout (){//Función que cierra la sesión y elimina el token generadp
       axios.defaults.headers.common['Authorization'] = '' //Enviamos el token en la cabecera llamada Authorization porque todos los endpoints lo piden
       router.push('/')//Redirigimos al Login
@@ -39,10 +41,22 @@ export default{
     function obtenerInfo() {//Función que obtine los datos del usuario
       let info = Servicio.obtenerInfoUser()//Literal que almacena la información del token
       nombre.value = info.nombreCompleto  //asignamos el nombre del usuario en la constante para mostarlo
+      axios.get(`${API}/Ferromex/modules?roleName=${info.role}`)
+      .then((res)=>{
+          let respuesta = res.data.content;
+          let ids  = respuesta.map((x)=>{
+            return x.id
+          })
+          if(ids.includes(14) == false) {
+            ocultarparametros.value = true
+          }
+        }
+      )
+      .catch()
     }
     onMounted(obtenerInfo) //Montamos la función obtenerInfo para poder tener la respuesta cuando se monta el componente
 
-    return { nombre, logout, obtenerInfo }
+    return { nombre, logout, obtenerInfo,ocultarparametros }
   }
 }
 </script>

@@ -54,9 +54,14 @@ export default {
               target[property];
           }
         });
-      for(let i= 0; i<proxy.length; i++){ //asignamos los valores de los modulos correspondientes a cada rol
-        modulos.value.push({'nombre':proxy[i].nameModule, 'imagen':proxy[i].image, 'ruta':proxy[i].route}) 
+      // for(let i= 0; i<proxy.length; i++){ //asignamos los valores de los modulos correspondientes a cada rol
+      //   modulos.value.push({'nombre':proxy[i].nameModule, 'imagen':proxy[i].image, 'ruta':proxy[i].route}) 
+      // }
+      proxy.forEach((e) => {
+        if({}.hasOwnProperty.call(e,'parentModule') == false){
+        modulos.value.push({'nombre':e.nameModule, 'imagen':e.image, 'ruta':e.route}) 
       }
+      })
       modalLoading.value = false //cerramos el spinner
       }).catch((err)=>{console.log(err);})
     }
