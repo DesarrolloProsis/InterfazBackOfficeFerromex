@@ -154,7 +154,7 @@ import { ref,inject } from 'vue'//permite hacer referencia al tipo de dato que s
 import { notify } from "@kyvg/vue3-notification";//muestra las notificaciones en las vistas
 import Servicio from '../Servicios/Token-Services';//Servicio que importa la información del usuario
 import Modal from "../components/Modal.vue"
-import router from '../router';
+//import router from '../router';
 
 export default {
   name: "TablaListaUsuarios",
@@ -207,15 +207,18 @@ export default {
         for(let i = 0; i< data.password.length; i++){//Recorremos toda la palabra insertada en el password y si no encuentra alguna mayuscula no nos dejará insertar
           if (mayusculas.indexOf(data.password.charAt(i),0)!=-1)
             contador.push(true)
-          else
+          else{
             mayuscula.value = false 
+          }   
         }
-        if(contador.includes(true))
+        if(contador.includes(true)){
           mayuscula.value = true
+        }
         if(mayuscula.value ==  true && passConfirm.value === pass.value){//Si hay mínimo una mayuscula en la 
           axios.put(`${API}/Identity/changePassword`, data)
           .then(() => {
             modalPass.value = false
+            modalConfirmacion.value = false
             emit('refrescarTabla', true)//Se realiza el emit al componente padre, para refrescar la tabla con los cambios realizados
             notify({//Notifiación que se le muestra al usuario si se hizo el cmabio correcto
               title:'Cambio Exitoso',
@@ -223,9 +226,11 @@ export default {
               type: 'success'
             });
             axios.defaults.headers.common['Authorization'] = '' //Enviamos el token en la cabecera llamada Authorization porque todos los endpoints lo piden
-            router.push('/')//Redirigimos al Login
+            //router.push('/')//Redirigimos al Login
           })
           .catch((error) => {
+            modalPass.value = false
+            modalConfirmacion.value = false
             notify({//Notifiación que se le muestra al usuario si no se hace el cambio
               title:'Cambio Exitoso',
               text:`No se pudo cambiar la contraseña al usuario ${usuario.nombre + ' ' + usuario.apellidos}`,
@@ -233,9 +238,12 @@ export default {
             });
             console.log(error.request.response);
           })
+        }else{
+          modalConfirmacion.value = false
         }
       }else{
         mayuscula. value = false//Si existe una mayuscula en la contraseña
+        modalConfirmacion.value = false
       }
     }
     function cambiarPass() {//Función que hace el cambio de contraseña del usuario seleccionado
