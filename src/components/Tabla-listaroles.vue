@@ -45,10 +45,13 @@
            <p class="text-center">{{ modulo.label }}</p>
       </div>
       <div class="mx-auto">
-         <div class="relative inline-block w-16 mr-2 align-middle select-none transition duration-200 ease-in">
+         <!-- <div class="relative inline-block w-16 mr-2 align-middle select-none transition duration-200 ease-in">
             <input type="checkbox" :value="modulo.value" v-model="asignarModulos" name="toggle" id="toggle" class="toggle-checkbox absolute w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer"/>
             <label for="toggle" class="toggle-label block overflow-hidden h-6 rounded-full bg-gray-300 cursor-pointer"></label>
-          </div>
+          </div> -->
+          <label for="toogle-switch">
+            <input type="checkbox" :value="modulo.value" v-model="asignarModulos" id='toogle-switch' class="cursor-pointer h-6 w-12 rounded-full appearance-none bg-gray-200 checked:bg-green-600 transition duration-200 relative">
+          </label>
       </div>
       </div>
       <!-- <div class="grid grid-cols-2 mt-6">      
