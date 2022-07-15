@@ -41,13 +41,13 @@ export default{
     function obtenerInfo() {//Función que obtine los datos del usuario
       let info = Servicio.obtenerInfoUser()//Literal que almacena la información del token
       nombre.value = info.nombreCompleto  //asignamos el nombre del usuario en la constante para mostarlo
-      axios.get(`${API}/Ferromex/modules?roleName=${info.role}`)
+      axios.get(`${API}/Ferromex/modules?roleName=${info.role}`)//Conocemos los roles del usuario que entro a la plataforma
       .then((res)=>{
           let respuesta = res.data.content;
-          let ids  = respuesta.map((x)=>{
+          let ids  = respuesta.map((x)=>{ //Obtenemos los id de de los modulos
             return x.id
           })
-          if(ids.includes(14) == false) {
+          if(ids.includes(14) == false) {//Si no contamos con el modulo id 14 no mostramos el engrane
             ocultarparametros.value = true
           }
         }

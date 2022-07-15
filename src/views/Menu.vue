@@ -57,7 +57,7 @@ export default {
       // for(let i= 0; i<proxy.length; i++){ //asignamos los valores de los modulos correspondientes a cada rol
       //   modulos.value.push({'nombre':proxy[i].nameModule, 'imagen':proxy[i].image, 'ruta':proxy[i].route}) 
       // }
-      proxy.forEach((e) => {
+      proxy.forEach((e) => {//reiteracion y comprobacion si es un submodulo
         if({}.hasOwnProperty.call(e,'parentModule') == false){
         modulos.value.push({'nombre':e.nameModule, 'imagen':e.image, 'ruta':e.route}) 
       }
