@@ -121,15 +121,20 @@ export default {
     function modulosExistente(){//Función para obtener todos los modulos registrados
       axios.get(`${API}/Ferromex/modules`)//Endpoint que trae todos los modulos que existen
       .then((result)=>{//Si el endpoint tiene una respuesta correcta
-        for(let i=0; i<result.data.content.length; i++){ //recorremos la respuesta, y cada que recorremos sumamos un 1 para el siguiente rol
-          modulosExistentes.value.push({'value':result.data.content[i].id, 'label':result.data.content[i].nameModule})//asignamos los roles existentes a la variable roles, para mostrarlos en el multiselect
-        }
+      console.log(result.data.content);
+      let modulosexistentes = result.data.content;
+      modulosexistentes.forEach((e) => {//reiteracion y comprobacion si es un submodulo
+        if({}.hasOwnProperty.call(e,'parentModule') == false){
+        modulosExistentes.value.push({'value':e.id, 'label':e.nameModule})//asignamos los roles existentes a la variable roles, para mostrarlos en el multiselect
+      }
+      })
+        // for(let i=0; i<result.data.content.length; i++){ //recorremos la respuesta, y cada que recorremos sumamos un 1 para el siguiente rol
+        //   modulosExistentes.value.push({'value':result.data.content[i].id, 'label':result.data.content[i].nameModule})//asignamos los roles existentes a la variable roles, para mostrarlos en el multiselect
+        // }
       })
     }
     function traerModulos(rol){//Función que trae los modulos asignados a un rol en especifico
       modulosExistente()//Llamamos a la función que trae todos los roles, para llenar el multiselect
-      console.log(rol);
-      console.log(rol.nombreRol);
       console.log(modulosExistentes.value);
       modulos.value = []
       axios.get(`${API}/Ferromex/modules?roleName=${rol.nombreRol}`)//Endpoint que trae los módulos asignados a un rol en especificio, si no le mandamos ningún rol, trae todos los módulos
