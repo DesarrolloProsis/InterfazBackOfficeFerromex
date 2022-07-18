@@ -187,6 +187,7 @@ export default {
       }
     }
     function buscarchange (nombre, estatus){//Función que realiza la busqueda de acuerdo a los parámetros ingresados en los header
+      paginaActual.value = 1;
       modalLoading.value = true//Abrimos el spinner de la pantalla de carga
       if(nombre == ''){ //Hacemos la validación si es que el nombre estaá vacios
          nombre = ' '//Añadimos un espacio en blanco

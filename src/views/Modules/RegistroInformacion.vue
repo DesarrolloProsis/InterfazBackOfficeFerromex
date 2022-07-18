@@ -177,6 +177,7 @@ export default {
       }
     }
     function buscarchange(fecha, tag, carril, cuerpo){ //Función que realiza la busqueda en la base con un evento click
+      paginaActual.value = 1;
       modalLoading.value = true
       if(fecha == '')//Hacemos la validaciones necesarias para poder agregar el espacio vacio es que no se ha escrito o seleccionado un dato en los filtros
         {

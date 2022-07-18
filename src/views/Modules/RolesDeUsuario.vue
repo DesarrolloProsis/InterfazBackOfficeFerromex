@@ -199,7 +199,8 @@ export default {
       }
     }
     function buscarchange(nombre, estatus){//Función que realiza la busqueda de los roles existentes, o uno en especificos, recibe como parametros el nombre y el estatus, pueden llegar vacios
-      modalLoading.value = true
+      paginaActual.value = 1;
+      modalLoading.value = true;
       if(nombre == "")//Si no se ha escrito ningún nombre en el header, el valor de nombre será un espacio en blanco
         nombre = ' '
       if(estatus == undefined)//Si no se ha seleccionado ningún estatus en el header, el valor de estatus será un espacio en blanco
