@@ -34,7 +34,10 @@
     </div>
   </div>
   <div class="flex w-full justify-center p-14 2xl:p-20">
-      <button class="border w-40 bg-ferromex text-white" @click="generareporte(cajero.turno,cajero.fecha)">Generar Reporte</button>
+      <div>
+          <button class="border w-40 bg-ferromex text-white ferromex-color" :class="{'cursor-not-allowed' : bloquearbutton}" @click="generareportever(cajero.turno,cajero.fecha)">Vista previa</button>
+          <button class="border w-40 bg-ferromex text-white ferromex-color" :class="{'cursor-not-allowed' : bloquearbutton}" @click="generareportedescargar(cajero.turno,cajero.fecha)">Descargar Reporte</button>
+      </div>
   </div>
 </div>
 
@@ -66,7 +69,7 @@ setup(){
         hoy.value = new Date().toISOString().split("T")[0];
   })
   const rutapdf = ref('')
-  function generareporte(idturno,fechareporte){
+  function generareportever(idturno,fechareporte){
     if((idturno == undefined && fechareporte == undefined) || idturno == undefined || fechareporte == undefined){
      notify({
             title:'Sin parametros',
@@ -77,11 +80,23 @@ setup(){
     //Generamos la ruta que hara la llamada a la generacion de los reportes
     ServiceFiles.xml_hhtp_request(`${API}/Ferromex/Download/pdf/reporteOperativo/reporteTurno/concentrado/${idturno}/${fechareporte}`)
     ServiceFiles.xml_hhtp_request(`${API}/Ferromex/Download/pdf/reporteOperativo/reporteTurno/transacciones/${idturno}/${fechareporte}`, 'TransaccionesTurno.pdf')
-    cajero.turno = undefined;
-    cajero.fecha = "";
+    
   }
   }
-return {generareporte,cajero,hoy,rutapdf}
+  function generareportedescargar(idturno,fechareporte){
+    if((idturno == undefined && fechareporte == undefined) || idturno == undefined || fechareporte == undefined){
+     notify({
+            title:'Sin parametros',
+            text:'Para generar un reporte debes llenar los parametros necesarios' ,
+            type: 'error'
+     });
+    }else{
+    //Generamos la ruta que hara la llamada a la generacion de los reportes
+    ServiceFiles.descargararchivo(`${API}/Ferromex/Download/pdf/reporteOperativo/reporteTurno/concentrado/${idturno}/${fechareporte}`,fechareporte + ' ConcentradoTurno.pdf')
+    ServiceFiles.descargararchivo(`${API}/Ferromex/Download/pdf/reporteOperativo/reporteTurno/transacciones/${idturno}/${fechareporte}`,fechareporte + ' TransaccionesTurno.pdf')
+  }
+  }
+return {generareportever,generareportedescargar,cajero,hoy,rutapdf}
 }
 }
 </script>

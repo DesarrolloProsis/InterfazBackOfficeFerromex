@@ -54,7 +54,10 @@
                 </div>
             </div>
             <div class="flex w-full justify-center mt-10 mb-8">
-                <button class="border w-40 bg-ferromex text-white ferromex-color" @click="generarreportetotal(dias,meses,semana)">Generar Reporte</button>
+                <div>
+                    <button class="border w-40 bg-ferromex text-white ferromex-color" :class="{'cursor-not-allowed' : bloquearbutton}" @click="generarreportetotalver(dias,meses,semana)">Vista previa</button>
+                    <button class="border w-40 bg-ferromex text-white ferromex-color" :class="{'cursor-not-allowed' : bloquearbutton}" @click="generarreportetotaldescargar(dias,meses,semana)">Descargar Reporte</button>
+                </div>
             </div>
     </Modal>
     <Modal :show="showModalTurno" @cerrarmodal="cerramodalcruceferromex">
@@ -85,7 +88,10 @@
                 </div>
             </div>
             <div class="flex w-full justify-center mt-10 mb-8">
-                <button class="border w-40 bg-ferromex text-white ferromex-color" @click="generarreportecruceferromex(diascf,mesescf,semanacf)">Generar Reporte</button>
+                <div>
+                    <button class="border w-40 bg-ferromex text-white ferromex-color" :class="{'cursor-not-allowed' : bloquearbutton}" @click="generarreportecruceferromexver(diascf,mesescf,semanacf)">Vista previa</button>
+                    <button class="border w-40 bg-ferromex text-white ferromex-color" :class="{'cursor-not-allowed' : bloquearbutton}" @click="generarreportecruceferromexdescargar(diascf,mesescf,semanacf)">Descargar Reporte</button>
+                </div>
             </div>
     </Modal>
 </template>
@@ -115,6 +121,7 @@ export default {
         const bloquearmes = ref(false)
         const hoy = ref('')
         const semana = ref('')
+        const nombrearchivo = ref('')
         const crucestotales = reactive({
             dias: '',
             meses: '',
@@ -206,7 +213,7 @@ export default {
             crucesferromex.semanacf= '' //Limpiamos el campo de semana
         }
         //Funcion para generar reporte cruces totales
-        function generarreportetotal(dias,meses,semana){
+        function generarreportetotalver(dias,meses,semana){
             let urldias = ""
             let urlmeses = ""
             let urlsemana = ""
@@ -235,10 +242,46 @@ export default {
                 const ruta = encodeURI(`${API}/Ferromex/Download/pdf/crucestotales/reporteCruces/${urldias}/${urlmeses}/${urlsemana}`)
                 console.log(ruta)
                 ServiceFiles.xml_hhtp_request(ruta, 'TransaccionesFerromexDetalle.pdf')
-                cerralmodalcrucestotales(false)
+                //cerralmodalcrucestotales(false)
             }
         }
-        function generarreportecruceferromex(dias,meses,semana){
+        function generarreportetotaldescargar(dias,meses,semana){
+            let urldias = ""
+            let urlmeses = ""
+            let urlsemana = ""
+            nombrearchivo.value = ""
+            if(dias == ''){
+               urldias = " "
+            }else if(dias != ''){
+                urldias = dias
+                nombrearchivo.value = dias + ' CrucesTotales.pdf'
+            }
+            if(meses == ''){
+                urlmeses = " "
+            }else if(meses != ''){
+                urlmeses = meses
+                nombrearchivo.value = meses + ' CrucesTotales.pdf'
+            }
+            if(semana == ''){
+                urlsemana = " "
+            }else if(semana != ''){
+                urlsemana = semana
+                nombrearchivo.value = semana + ' CrucesTotales.pdf'
+            }
+            if(urldias == " " && urlmeses == " " && urlsemana == " "){
+                  notify({
+                    title:'Sin parametros',
+                    text:'Para generar un reporte se necesita seleccionar un parametro',
+                    type: 'error'
+                });
+            }else{
+                const ruta = encodeURI(`${API}/Ferromex/Download/pdf/crucestotales/reporteCruces/${urldias}/${urlmeses}/${urlsemana}`)
+                console.log(ruta)
+                ServiceFiles.descargararchivo(ruta, nombrearchivo.value)
+                //cerralmodalcrucestotales(false)
+            }
+        }
+        function generarreportecruceferromexver(dias,meses,semana){
             let urldias = ""
             let urlmeses = ""
             let urlsemana = ""
@@ -266,9 +309,45 @@ export default {
             }else{
                 const rutadescuentolletalle = encodeURI(`${API}/Ferromex/Download/pdf/crucesferromex/descuentodetallesamarre/${urldias}/${urlmeses}/${urlsemana}`)
                 const rutadescuentoamerreresumen = encodeURI(`${API}/Ferromex/Download/pdf/crucesferromex/descuentoamarreresumen/${urldias}/${urlmeses}/${urlsemana}`)
-                ServiceFiles.xml_hhtp_request(rutadescuentolletalle, 'DescuentosDetalleAmarre.pdf')
-                ServiceFiles.xml_hhtp_request(rutadescuentoamerreresumen, 'DescuentosDetalleResumen.pdf')
-                cerramodalcruceferromex(false)
+                ServiceFiles.xml_hhtp_request(rutadescuentolletalle)
+                ServiceFiles.xml_hhtp_request(rutadescuentoamerreresumen)
+                //cerramodalcruceferromex(false)
+            }
+        }
+        function generarreportecruceferromexdescargar(dias,meses,semana){
+            let urldias = ""
+            let urlmeses = ""
+            let urlsemana = ""
+            if(dias == ''){
+               urldias = " "
+            }else if(dias != ''){
+                urldias = dias
+                nombrearchivo.value = dias + ' CrucesIntermodal.pdf'
+            }
+            if(meses == ''){
+                urlmeses = " "
+            }else if(meses != ''){
+                urlmeses = meses
+                nombrearchivo.value = meses + ' CrucesIntermodal.pdf'
+            }
+            if(semana == ''){
+                urlsemana = " "
+            }else if(semana != ''){
+                urlsemana = semana
+                nombrearchivo.value = semana + ' CrucesIntermodal.pdf'
+            }
+            if(urldias == " " && urlmeses == " " && urlsemana == " "){
+                  notify({
+                    title:'Sin parametros',
+                    text:'Para generar un reporte se necesita seleccionar un parametro' ,
+                    type: 'error'
+                });
+            }else{
+                const rutadescuentolletalle = encodeURI(`${API}/Ferromex/Download/pdf/crucesferromex/descuentodetallesamarre/${urldias}/${urlmeses}/${urlsemana}`)
+                const rutadescuentoamerreresumen = encodeURI(`${API}/Ferromex/Download/pdf/crucesferromex/descuentoamarreresumen/${urldias}/${urlmeses}/${urlsemana}`)
+                ServiceFiles.descargararchivo(rutadescuentolletalle, nombrearchivo.value)
+                ServiceFiles.descargararchivo(rutadescuentoamerreresumen, nombrearchivo.value)
+                //cerramodalcruceferromex(false)
             }
         }
 
@@ -285,12 +364,15 @@ export default {
         bloqueardia,
         bloquearsemana,// bloqueamos los campos
         bloquearmes,
+        nombrearchivo,
         abrirmodalcrucestotales,
         abrirmodalcrucesferromex,
         limpiarcrucestotales,
         limpiarcrucesferromex,
-        generarreportetotal,
-        generarreportecruceferromex,
+        generarreportetotalver,
+        generarreportetotaldescargar,
+        generarreportecruceferromexver,
+        generarreportecruceferromexdescargar,
         cerralmodalcrucestotales,
         cerramodalcruceferromex,
         ...toRefs(crucestotales),
