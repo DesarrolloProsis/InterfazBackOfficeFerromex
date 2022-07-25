@@ -12,8 +12,8 @@ import axios from 'axios'
 import VueAxios from 'vue-axios'
 
 var token = localStorage.getItem('token')
-var tokenenviar = 'Bearer ' + token.replace(/['"]+/g, '')
 if(token){
+    var tokenenviar = 'Bearer ' + token.replace(/['"]+/g, '')
     axios.defaults.headers.common['Authorization'] = tokenenviar;
 }
 
