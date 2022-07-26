@@ -267,8 +267,11 @@ export default {
                 const rutadescuentolletalle = encodeURI(`${API}/Ferromex/Download/pdf/crucesferromex/descuentodetallesamarre/${urldias}/${urlmeses}/${urlsemana}`)
                 const rutadescuentoamerreresumen = encodeURI(`${API}/Ferromex/Download/pdf/crucesferromex/descuentoamarreresumen/${urldias}/${urlmeses}/${urlsemana}`)
                 ServiceFiles.xml_hhtp_request(rutadescuentolletalle, 'DescuentosDetalleAmarre.pdf')
-                ServiceFiles.xml_hhtp_request(rutadescuentoamerreresumen, 'DescuentosDetalleResumen.pdf')
+                setTimeout(() => {
+                    ServiceFiles.xml_hhtp_request(rutadescuentoamerreresumen, 'DescuentosDetalleResumen.pdf')
+                }, 5000);
                 cerramodalcruceferromex(false)
+                
             }
         }
 
