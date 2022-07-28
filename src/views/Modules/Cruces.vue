@@ -329,7 +329,7 @@ export default {
                 //cerramodalcruceferromex(false)
             }
         }
-        function generarreportecruceferromexdescargar(dias,meses,semana,reporte){
+        function generarreportecruceferromexdescargar(dias,meses,semana){
             let urldias = ""
             let urlmeses = ""
             let urlsemana = ""
