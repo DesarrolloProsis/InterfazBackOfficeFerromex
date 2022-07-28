@@ -360,15 +360,12 @@ export default {
             }else{
                 const rutadescuentolletalle = encodeURI(`${API}/Ferromex/Download/pdf/crucesferromex/descuentodetallesamarre/${urldias}/${urlmeses}/${urlsemana}`)
                 const rutadescuentoamerreresumen = encodeURI(`${API}/Ferromex/Download/pdf/crucesferromex/descuentoamarreresumen/${urldias}/${urlmeses}/${urlsemana}`)
-                if(reporte == "1"){
-                    ServiceFiles.descargararchivo(rutadescuentolletalle, nombrearchivo.value)
-                }else if( reporte == "2"){
-                    ServiceFiles.descargararchivo(rutadescuentoamerreresumen, nombrearchivo.value)
-                }else if( reporte == "3"){
-                    ServiceFiles.descargararchivo(rutadescuentolletalle, nombrearchivo.value)
-                    ServiceFiles.descargararchivo(rutadescuentoamerreresumen, nombrearchivo.value)
-                }
-                //cerramodalcruceferromex(false)
+                ServiceFiles.xml_hhtp_request(rutadescuentolletalle, 'DescuentosDetalleAmarre.pdf')
+                setTimeout(() => {
+                    ServiceFiles.xml_hhtp_request(rutadescuentoamerreresumen, 'DescuentosDetalleResumen.pdf')
+                }, 5000);
+                cerramodalcruceferromex(false)
+                
             }
         }
 
