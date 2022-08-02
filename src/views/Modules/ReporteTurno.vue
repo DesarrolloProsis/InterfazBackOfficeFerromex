@@ -37,6 +37,7 @@
       <button class="border w-40 bg-ferromex text-white" @click="generareporte(cajero.turno,cajero.fecha)">Generar Reporte</button>
   </div>
 </div>
+
 </div>
  
 <Footer/>
@@ -47,14 +48,15 @@ const API = process.env.VUE_APP_URL_API_PRODUCCION
 import Navbar from "../../components/Navbar.vue";
 import Footer from "../../components/Footer";
 import { notify } from "@kyvg/vue3-notification";
-import { reactive, ref,onMounted } from 'vue'
-import ServiceFiles from '../../Servicios/Files-Service'
+import { reactive, ref,onMounted } from 'vue';
+import ServiceFiles from "../../Servicios/Files-Service";
 export default {
 components: {
         Navbar,
-        Footer,
+        Footer
     },
 setup(){
+
   const cajero = reactive({
     turno: undefined,
     fecha: "" 
@@ -63,6 +65,7 @@ setup(){
   onMounted(()=>{
         hoy.value = new Date().toISOString().split("T")[0];
   })
+  const rutapdf = ref('')
   function generareporte(idturno,fechareporte){
     if((idturno == undefined && fechareporte == undefined) || idturno == undefined || fechareporte == undefined){
      notify({
@@ -72,13 +75,13 @@ setup(){
      });
     }else{
     //Generamos la ruta que hara la llamada a la generacion de los reportes
-    ServiceFiles.xml_hhtp_request(`${API}/Ferromex/Download/pdf/reporteOperativo/reporteTurno/concentrado/${idturno}/${fechareporte}`, 'ConcentradoTurno.pdf')
+    ServiceFiles.xml_hhtp_request(`${API}/Ferromex/Download/pdf/reporteOperativo/reporteTurno/concentrado/${idturno}/${fechareporte}`)
     ServiceFiles.xml_hhtp_request(`${API}/Ferromex/Download/pdf/reporteOperativo/reporteTurno/transacciones/${idturno}/${fechareporte}`, 'TransaccionesTurno.pdf')
     cajero.turno = undefined;
     cajero.fecha = "";
   }
   }
-return {generareporte,cajero,hoy}
+return {generareporte,cajero,hoy,rutapdf}
 }
 }
 </script>

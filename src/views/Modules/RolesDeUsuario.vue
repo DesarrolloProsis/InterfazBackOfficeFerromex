@@ -1,11 +1,11 @@
 <template>
   <Navbar/>
-  <h1 class="title font-titulo ml-24 font-bold">Roles de Usuario</h1>
+  <h1 class="title font-titulo ml-24 font-bold">Perfiles de Usuario</h1>
   <!-- Header Rol  -->
   <div class="container mx-auto px-0 pb-2 pt-4">    
     <div class="flex flex-wrap ferromex-color p-1 rounded-lg">
       <div class="flex-none my-auto text-white font-md p-2 ml-10">
-        Nombre:<input v-model="nombre" type="text" class="rounded text-black ml-2 md:w-20 2xl:w-44"/>
+        Perfil:<input v-model="nombre" type="text" class="rounded text-black ml-2 md:w-20 2xl:w-44"/>
       </div>
       <div class="flex-none my-auto text-white font-md p-2">
         Estatus:  
@@ -14,14 +14,22 @@
           <option v-for="(option ,index) in options" :key="index" :value="option">{{option}}</option>
         </select>
       </div>
+      <div class="flex-none my-auto text-white font-md p-2">
+        Resultados:
+        <select v-model="numRespuesta" class="text-gray-800 w-16 rounded" @change="buscarchange(nombre , estatus)">
+          <option value="10">10</option>
+          <option value="30">30</option>
+          <option value="50">50</option>
+        </select>
+      </div>
       <div class="flex-none my-auto text-white font-md p-2 ml-10">
         <button @click="buscar(nombre , estatus)" class="btn-buscar animacion">Buscar</button>
       </div>
       <div class="flex-none my-auto text-white font-md p-2 ml-10">
         <button @click="todos()" class="btn-buscar animacion">Todos</button>
       </div>
-      <div class="flex-none my-auto text-white font-md p-2 md:ml-32 2xl:ml-69">
-        <button @click="abrir_modal_new_rol" class="btn-buscar animacion">Agregar Rol</button>
+      <div class="flex-none my-auto text-white font-md p-2 md:ml-32 ">
+        <button @click="abrir_modal_new_rol" class="btn-buscar animacion">Agregar Perfil</button>
       </div>
     </div>
     <TablaRoles :infoRoles="roles"/>
@@ -32,9 +40,9 @@
   <!-- Modal Agregar Rol -->
   <Modal :show="userModal" @cerrarmodal="cerralmodalpadre">
     <div>
-      <p class="text-gray-900 font-bold text-2xl -mt-8 mb-8 text-center">Agregar Nuevo Rol</p>     
+      <p class="text-gray-900 font-bold text-2xl -mt-8 mb-8 text-center">Agregar Nuevo Perfil</p>     
       <div class="grid grid-cols-2 mt-2">
-        <p class="text-sm mb-1 font-semibold text-gray-700 text-center sm:-ml-6">Nombre Rol</p>
+        <p class="text-sm mb-1 font-semibold text-gray-700 text-center sm:-ml-6">Nombre Perfil</p>
         <input v-model="newRol.nombre" type="text" class="border mx-auto w-52 rounded-lg" :class="{'border border-red-400': vacio}" @input="vacio = false">
       </div>
       <div class="grid grid-cols-2 mt-2">
@@ -70,10 +78,9 @@ import Paginacion from "../../components/Paginacion.vue" //Importamos el compone
 import Spinner from '../../components/Spinner.vue' //Importamos el componente del spinner para las pantallas de carga
 import Navbar from "../../components/Navbar.vue";//Importamos el componente navbar para la navegación
 import Footer from "../../components/Footer";//Importamos el componente Footer
-import axios from 'axios';//Importamos axios, para poder hacer llamadas a endpoint 
 import Multiselect from '@vueform/multiselect'//Importamos el componente multiselect para la selección de modulos a asignar
 import { notify } from "@kyvg/vue3-notification";//Importamos el componente notify para mostrar las notifiaciones al usuario
-import { onMounted, reactive, ref, toRefs } from 'vue';
+import { onMounted, reactive, ref, toRefs, inject } from 'vue';
 import Modal from "../../components/Modal.vue"
 const API = process.env.VUE_APP_URL_API_PRODUCCION
 export default {
@@ -87,8 +94,7 @@ export default {
     Modal
   },
   setup(){
-    
-    
+    const axios = inject('axios')
     const roles = ref([])//Constante que almacena el listado de roles que existen
     const userModal = ref(false) //Constante que permite abrir el modal para agregar un nuevo Rol
     const options = ref(['Activo', 'Inactivo'])//Constante que almacena las opciones de estatus que pueden seleccionar en el header
@@ -97,7 +103,7 @@ export default {
     const totalPaginas = ref(0) //variable que indica el número total de páginas por resultado
     const paginaActual = ref(1) //variable que indica la página en la que estás dentro de la paginación, en la primer carga siempre es la página 1
     const hasMorePages = ref(true) //variable para poder cambiar de páginas con los botones
-    const numRespuesta = ref(9)//Variable que indica el número de respuestas por página
+    const numRespuesta = ref(10)//Variable que indica el número de respuestas por página
     const newRol = reactive({ nombre: "", vistas: [] }) //constante reactiva que nos va a permitir generar un arreglo con los datos de los modulos a agregar al rol
     const header = reactive({ nombre: "", estatus: undefined })//Constante reactiva que almacena el nombre y estatus para realizar el filtro de busqueda
     const vacio = ref(false)//Constante que activa la bandera de validaciones sobre campos vacios en los modales
@@ -192,6 +198,28 @@ export default {
         })
       }
     }
+    function buscarchange(nombre, estatus){//Función que realiza la busqueda de los roles existentes, o uno en especificos, recibe como parametros el nombre y el estatus, pueden llegar vacios
+      paginaActual.value = 1;
+      modalLoading.value = true;
+      if(nombre == "")//Si no se ha escrito ningún nombre en el header, el valor de nombre será un espacio en blanco
+        nombre = ' '
+      if(estatus == undefined)//Si no se ha seleccionado ningún estatus en el header, el valor de estatus será un espacio en blanco
+        estatus = ' '
+        roles.value = [] //Constante que contiene los roles se muestra en vacio para hacer una busqueda limpia, y no se queden datos en cache
+        const ruta = encodeURI(`${API}/Identity/roles/${paginaActual.value}/${numRespuesta.value}/${nombre}/${estatus}`)
+        axios.get(ruta)//Llamada al endpoint que trae los roles existentes
+        .then((result) => {//Si el endpoint tiene una respuesta correcta
+          if(result.status == 200){//valida que el estatus de la respuesta sea 200 para saber que es una respuesta correcta y con contenido
+            totalPaginas.value = result.data.paginas_totales//Asignamos el valor de las páginas totales para el componente de páginación
+            paginaActual.value = result.data.pagina_actual//Asignamos el valor de la pagina actual para saber en cual nos posicionamos en el componente de paginación
+            modalLoading.value = false//Cerramos el spinner de carga
+            roles.value = result.data.roles //asignamos los resultados que nos trajo el endpoint a la constante roles
+          }
+        }).catch((error)=>{//Si el endpoint tiene un erro en la respuesta
+          console.log(error.request.response);//Mostramos en consola el error  que nos da el endpoint
+          modalLoading.value = false //cerramos el spinner de carga
+        })
+    }
     function todos (){//Función que trae todos los roles existentes
       roles.value = [] //Constante que contiene los roles se muestra en vacio para hacer una busqueda limpia, y no se queden datos en cache
       modalLoading.value = true//Abrimos el spinner de pantalla de carga
@@ -199,6 +227,7 @@ export default {
       header.estatus = undefined//Damos el valor de undefined a la constante que almacena el estatus que seleccionamos en el header
       let nombreRuta = ' '//Creamos dos literal con un espacio en blanco para mandarla en la ruta
       let estatusRuta = ' '
+      numRespuesta.value = 10 //Volvemos al default a 10 resultados
       const ruta = encodeURI(`${API}/Identity/roles/1/${numRespuesta.value}/${nombreRuta}/${estatusRuta}`)//constante con la ruta codificada
       axios.get(ruta)//Llamada al endpoint que trae los roles existentes
       .then((result) => {//Si el endpoint tiene una respuesta correcta
@@ -235,7 +264,26 @@ export default {
 
     onMounted(todos)//Montamos la función todos apra que traiga todos los roles existentes en la primer carga
 
-    return { roles, modulosExistentes, userModal, abrir_modal_new_rol, newRol, ...toRefs(header), options, craer_nuevo_rol, buscar, todos, vacio, modalLoading, totalPaginas, paginaActual, hasMorePages, numRespuesta, cambiarPagina, cerralmodalpadre }
+    return { 
+      roles, 
+      modulosExistentes, 
+      userModal, 
+      abrir_modal_new_rol, 
+      newRol, 
+      ...toRefs(header), 
+      options, 
+      craer_nuevo_rol, 
+      buscar, 
+      todos, 
+      vacio, 
+      modalLoading, 
+      totalPaginas, 
+      paginaActual, 
+      hasMorePages, 
+      numRespuesta, 
+      cambiarPagina, 
+      cerralmodalpadre,
+      buscarchange }
 
   }, 
 };

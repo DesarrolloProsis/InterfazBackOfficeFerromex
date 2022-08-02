@@ -1,5 +1,5 @@
 <template>
-  <div class="responsive-table">          
+  <div class="responsive-table overflow-auto">          
     <table class="tftable">
       <tr class="h-10">
         <th>
@@ -9,7 +9,7 @@
           <label class="rounded-full px-20 bg-gray-200 ring-2 ring-gray-500 p-2 text-black 2xl:px-28">Nombre Completo</label>
         </th>
         <th>
-          <label class="rounded-full px-20 bg-gray-200 ring-2 ring-gray-500 p-2 text-black 2xl:px-28">Rol</label>
+          <label class="rounded-full px-20 bg-gray-200 ring-2 ring-gray-500 p-2 text-black 2xl:px-28">Perfil</label>
         </th>
         <th>
           <label class="rounded-full px-20 bg-gray-200 ring-2 ring-gray-500 p-2 text-black 2xl:px-28">Estatus</label>
@@ -24,7 +24,7 @@
         <td :class="{'text-gray-400': !usuario.estatus}">{{ usuario.rol }}</td>
         <td :class="{'text-gray-400': !usuario.estatus}">
           <span v-if="usuario.estatus == true">Activo</span>
-          <span v-else>Inactivo</span>
+          <span v-else>Desactivado</span>
         </td>
         <td>
           <div>
@@ -119,10 +119,10 @@
   <!-- MODAL CAMBIAR ROL -->
   <Modal :show="modalRol"  @cerrarmodal="modalRol = false, validacion = false, seleccionado.rol = ''">
     <div>
-      <p class="text-gray-900 font-bold text-2xl -mt-8 mb-8 text-center -mx-6">Cambiar Rol a {{ usuario.nombre +' '+ usuario.apellidos }}</p>
-      <p class="text-gray-900 font-bold text-2xl -mt-8 mb-8 text-center">con Rol {{ usuario.rol }}</p>
+      <p class="text-gray-900 font-bold text-2xl -mt-8 mb-8 text-center -mx-6">Cambiar Perfil a {{ usuario.nombre +' '+ usuario.apellidos }}</p>
+      <p class="text-gray-900 font-bold text-2xl -mt-8 mb-8 text-center">con Perfil {{ usuario.rol }}</p>
       <div class="grid grid-cols-2 mt-2">      
-        <p class="text-sm mb-1 font-semibold text-gray-700  text-center sm:-ml-6">Rol</p>
+        <p class="text-sm mb-1 font-semibold text-gray-700  text-center sm:-ml-6">Perfil</p>
         <Multiselect
           v-model="seleccionado.rol"
           placeholder="Seleccione un Rol"
@@ -150,12 +150,11 @@
 const API = process.env.VUE_APP_URL_API_PRODUCCION//Constante que almacena la cadena de conexión a la API
 import Spinner from '../components/Spinner.vue'//Componente spinner para las pantallas de carga
 import Multiselect from '@vueform/multiselect'//Componente multiselect para el menú de acciones
-import { ref } from 'vue'//permite hacer referencia al tipo de dato que será la constante y asi volverla reactivaz
+import { ref,inject } from 'vue'//permite hacer referencia al tipo de dato que será la constante y asi volverla reactivaz
 import { notify } from "@kyvg/vue3-notification";//muestra las notificaciones en las vistas
 import Servicio from '../Servicios/Token-Services';//Servicio que importa la información del usuario
-import axios from "axios";
 import Modal from "../components/Modal.vue"
-import router from '../router';
+//import router from '../router';
 
 export default {
   name: "TablaListaUsuarios",
@@ -165,6 +164,7 @@ export default {
   components:{ Multiselect, Spinner, Modal },
   emits: ["refrescarTabla"],
     setup(props, {emit}) {
+    const axios = inject('axios')
     const modalEditar = ref(false)//Constante que va a abrir el modal que permite editar el usuario
     const modalPass = ref(false)//Modal que va a abrir el modal que permite cambiar la contraseña del usuario
     const modalRol = ref(false)//Constancia que va a abrir el modal que permite cambiar el rol del usuario
@@ -207,25 +207,30 @@ export default {
         for(let i = 0; i< data.password.length; i++){//Recorremos toda la palabra insertada en el password y si no encuentra alguna mayuscula no nos dejará insertar
           if (mayusculas.indexOf(data.password.charAt(i),0)!=-1)
             contador.push(true)
-          else
+          else{
             mayuscula.value = false 
+          }   
         }
-        if(contador.includes(true))
+        if(contador.includes(true)){
           mayuscula.value = true
+        }
         if(mayuscula.value ==  true && passConfirm.value === pass.value){//Si hay mínimo una mayuscula en la 
           axios.put(`${API}/Identity/changePassword`, data)
           .then(() => {
             modalPass.value = false
+            modalConfirmacion.value = false
             emit('refrescarTabla', true)//Se realiza el emit al componente padre, para refrescar la tabla con los cambios realizados
             notify({//Notifiación que se le muestra al usuario si se hizo el cmabio correcto
               title:'Cambio Exitoso',
               text:`Se cambió la contraseña al usuario ${usuario.nombre + ' ' + usuario.apellidos}`,
               type: 'success'
             });
-            axios.defaults.headers.common['Authorization'] = '' //Enviamos el token en la cabecera llamada Authorization porque todos los endpoints lo piden
-            router.push('/')//Redirigimos al Login
+            //axios.defaults.headers.common['Authorization'] = '' //Enviamos el token en la cabecera llamada Authorization porque todos los endpoints lo piden
+            //router.push('/')//Redirigimos al Login
           })
           .catch((error) => {
+            modalPass.value = false
+            modalConfirmacion.value = false
             notify({//Notifiación que se le muestra al usuario si no se hace el cambio
               title:'Cambio Exitoso',
               text:`No se pudo cambiar la contraseña al usuario ${usuario.nombre + ' ' + usuario.apellidos}`,
@@ -233,9 +238,12 @@ export default {
             });
             console.log(error.request.response);
           })
+        }else{
+          modalConfirmacion.value = false
         }
       }else{
         mayuscula. value = false//Si existe una mayuscula en la contraseña
+        modalConfirmacion.value = false
       }
     }
     function cambiarPass() {//Función que hace el cambio de contraseña del usuario seleccionado
@@ -353,17 +361,21 @@ export default {
       }
     }
     function acciones_mapper(item){//Asignación de funciones de la lista de opciones que hay en el menú de acciones
-      if(accion.value == 'Habilitar'){
+      if(accion.value == 'Activar'){
         cambiarEstatus(item)//Llamamos a la función cambiarEstatus y le enviamos el parámetro del usuario que seleccionamos
-      }if(accion.value == 'Deshabilitar'){
+      }
+      if(accion.value == 'Desactivar'){
         cambiarEstatus(item)//Llamamos a la función cambiarEstatus y le enviamos el parámetro del usuario que seleccionamos
-      }if(accion.value == 'Cambiar Contraseña'){
+      }
+      if(accion.value == 'Cambiar Contraseña'){
         seleccionado.value = item;//Asignamos los valores del usuario seleccionado a la constante seleccionado
         modalPass.value = true;//abrimos el modal para cambiar el password
-      }if(accion.value == 'Editar Usuario'){
+      }
+      if(accion.value == 'Editar Usuario'){
         modalEditar.value = true//Abrimos el modal para editar el usuario
         usuario.value = item//Asignamos los parametros utiles para la edición
-      }if(accion.value == 'Cambiar Rol'){
+      }
+      if(accion.value == 'Cambiar Perfil'){
         modal_Rol()//Llamamos a la función que abre el modal para cambiar el Rol
         usuario.value = item//Asignamos los parametros utiles para la edición
       }
@@ -371,11 +383,11 @@ export default {
     }
     function opticones_select_acciones(item){//Lista de opciones que se muestran en el menú de acciones
       let options = [
-          {  value: 'Habilitar', name: 'Habilitar'},//0
-          {  value: 'Deshabilitar', name: 'Deshabilitar'},//1
+          {  value: 'Activar', name: 'Activar'},//0
+          {  value: 'Desactivar', name: 'Desactivar'},//1
           {  value: 'Cambiar Contraseña', name: 'Cambiar Contraseña'},//2
           {  value: 'Editar Usuario', name: 'Editar Usuario'},//3
-          {  value: 'Cambiar Rol', name: 'Cambiar Rol'},//4
+          {  value: 'Cambiar Perfil', name: 'Cambiar Perfil'},//4
       ]
       let filtroOpciones = []
           if(item.estatus == false)
@@ -386,7 +398,7 @@ export default {
               filtroOpciones.push(options[1])
               filtroOpciones.push(options[4])
             }
-            if(item.usuarioId == infoUser.sub)
+            if(infoUser.role == "AdminFerromex") //Si el usuario solo es AdminFerromex solo el podra cambiar las contraseñas
               filtroOpciones.push(options[2])
           }
       return filtroOpciones  //Regresamos la lista de acciones filtrada

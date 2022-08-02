@@ -1,5 +1,5 @@
 <template>
-  <div class="responsive-table">
+  <div class="responsive-table overflow-auto">
     <table class="tftable">
       <tr class="h-10">
         <th class="">
@@ -41,7 +41,7 @@
     <div>
         <div class="w-full flex items-center justify-center">
           <fa icon="circle-exclamation" class="h-20 text-yellow-400" />
-          <p class="text-gray-900 font-medium text-lg ml-2 text-justify">Estas a punto de <label :class="{'text-green-600':texto == 'habilitar','text-yellow-600' :texto === 'deshabilitar','text-red-600' :texto === 'eliminar',  }">{{texto}}</label> el tag "{{infotag.tag}}" estas seguro</p>
+          <p class="text-gray-900 font-medium text-lg ml-2 text-justify">Estas a punto de <label :class="{'text-green-600':texto == 'activar','text-yellow-600' :texto === 'desactivar','text-red-600' :texto === 'eliminar',  }">{{texto}}</label> el tag "{{infotag.tag}}" estas seguro</p>
         </div>
         <div class="mt-10 mb-4 w-full flex justify-center">
           <button class="rounded-lg w-32 botonIconOk" @click="accion(texto)">Confirmar</button>
@@ -52,10 +52,9 @@
 <script>
 const API = process.env.VUE_APP_URL_API_PRODUCCION
 import moment from 'moment'
-import { ref } from 'vue'
+import { ref,inject } from 'vue'
 import Modal from "../components/Modal.vue"
 import Multiselect from '@vueform/multiselect'//Importamos el componente multiselect para la selección de modulos a asignar
-import axios from 'axios'
 import { notify } from "@kyvg/vue3-notification";
 export default {
   name: "TablaBusquedaCruces",
@@ -70,6 +69,7 @@ export default {
   },
   setup(props ,{ emit }){
     //Declaracion de variable
+      const axios = inject('axios')
       const showModalAdvertencia = ref(false)//Variable que manipula el modal de advertencia
       const texto = ref('') //Variable que contiene el texto del modal
       const select = ref('') // Variable que contiene el valor del multiselect
@@ -131,30 +131,30 @@ export default {
       function opticones_select_acciones(item){//Lista de opciones que se muestran en el menú de acciones
       let filtroOpciones = [] //Declaramos el arreglo de que contendran las opciones
       let options = [ //Declaramos el arreglo que contiene las acciones posibles 
-          {  value: '0', name: 'Activo'},//0
-          {  value: '1', name: 'Inactivo'},//1
+          {  value: '0', name: 'Activar'},//0
+          {  value: '1', name: 'Desactivar'},//1
           {  value: '2', name: 'Eliminar'},//2
       ]
           if(item.active == true){ //Si el estatus del tag es activo entonces 
             filtroOpciones = []
             filtroOpciones.push(options[1])//Agregamos la opcion de deshabilitar
-            filtroOpciones.push(options[2])//Agregamos la opcion de Eliminar
+            //filtroOpciones.push(options[2])//Agregamos la opcion de Eliminar
           }
           if(item.active ==  false){//Si el estatus del tag es inactivo
             filtroOpciones = []
             filtroOpciones.push(options[0])//Agregamos la opcion de habilitar
-            filtroOpciones.push(options[2])//Agregamos la opcion de eliminar
+            //filtroOpciones.push(options[2])//Agregamos la opcion de eliminar
           }
       return filtroOpciones  //Regresamos la lista de acciones filtrada
     }
      function acciones_mapper(item){//Asignación de funciones de la lista de opciones que hay en el menú de acciones
       if(select.value == '0'){ //Apartir del value del multiselect asignamos un valor al texto 
         showModalAdvertencia.value = !showModalAdvertencia.value //Abrimos nuestro modal de advertencia
-        texto.value = "habilitar"//Si es 0 el texto sera habilitar
+        texto.value = "activar"//Si es 0 el texto sera habilitar
         infotag.value = item //Asignamos la informacion del tag a nuestra varible reactiva de vue
       }if(select.value == '1'){
         showModalAdvertencia.value = !showModalAdvertencia.value //Abrimos nuestro modal de advertencia
-        texto.value = "deshabilitar"//Si es 1 el texto sera deshabilitar
+        texto.value = "desactivar"//Si es 1 el texto sera deshabilitar
         infotag.value = item//Asignamos la informacion del tag a nuestra varible reactiva de vue
       }if(select.value == '2'){
        showModalAdvertencia.value = !showModalAdvertencia.value //Abrimos nuestro modal de advertencia

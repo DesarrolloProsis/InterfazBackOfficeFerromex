@@ -1,6 +1,6 @@
 <template>
 <Navbar/>
-<div class="grid justify-items-center p-18 mt-6 2xl:p-42">
+<div class="grid justify-items-center p-18 mt-6 2xl:p-36">
 <div class="bg-white w-96 h-69 rounded-lg shadow-md 2xl:w-80 2xl:h-80">
   <h1 class="text-4xl font-bold font-titulo text-center p-2 2xl:text-6xl 2xl:p-4">Reporte Cajero</h1>
   <div class="flex w-full justify-center mt-4 gap-8 2xl:gap-20 2xl:mt-10">
@@ -9,7 +9,7 @@
             <label for="">Plaza de Cobro</label>
         </div>
         <div>
-            <label for="">Numero de Cajero*</label>
+            <label for="">N°Cajero*</label>
         </div>
         <div>
             <label for="">Turno*</label>
@@ -50,16 +50,13 @@
       <table class="tftable w-full">
       <tr class="h-10 w-full bg-gray-200 text-center">
         <th>
-          <label class="text-black px-4 2xl:px-10">#</label>
+          <label class="text-black px-4 2xl:px-16">Fecha Inicio</label>
         </th>
         <th>
-          <label class="text-black px-4 2xl:px-16">Inicio</label>
+          <label class="text-black px-4 2xl:px-10">Fecha Fin</label>
         </th>
         <th>
-          <label class="text-black px-4 2xl:px-10">Fin</label>
-        </th>
-        <th>
-          <label class="text-black px-4 2xl:px-10">Carril</label>
+          <label class="text-black px-4 2xl:px-10">ViA</label>
         </th>
         <th>
           <label class="text-black px-4 2xl:px-12">Bolsa</label>
@@ -70,13 +67,12 @@
       </tr>
       <template v-if="bolsas.length">
          <tr class="text-center w-full text-sm" v-for="(bolsa, index) in bolsas" :key="index">
-        <td>{{bolsa.idBolsa}}</td>
         <td>{{moment.utc(bolsa.fechaInicio).local().format("YYYY-MM-DD HH:mm:ss a")}}</td>
         <td>{{moment.utc(bolsa.fechaFin).local().format("YYYY-MM-DD HH:mm:ss a")}}</td>
         <td>{{bolsa.carrilBolsa}}</td>
         <td>{{bolsa.bolsa}}</td>
         <td>
-          <button class="rounded-lg w-18 bg-ferromex text-white p-10" @click="generarbolsa(bolsa.idBolsa)">Generar</button>
+          <button class="rounded-lg w-18 bg-ferromex text-white p-10" @click="generarbolsa(bolsa.idBolsa)">Generar </button>
         </td>
        </tr>
       </template>
@@ -98,9 +94,8 @@ const API = process.env.VUE_APP_URL_API_PRODUCCION
 import Navbar from "../../components/Navbar.vue";
 import Footer from "../../components/Footer";
 import Modal from "../../components/Modal.vue"
-import axios from "axios";
 import { notify } from "@kyvg/vue3-notification";
-import { reactive, ref,onMounted, toRefs } from 'vue'
+import { reactive, ref,onMounted, toRefs,inject } from 'vue'
 import ServiceFiles from '../../Servicios/Files-Service'
 import moment from 'moment'
 export default {
@@ -113,6 +108,7 @@ created: function () {
     this.moment = moment;
 },
 setup(){
+  const axios = inject('axios')
   const showModal = ref(false)
   const cajero = reactive({
     numerocajero: "",
@@ -157,9 +153,11 @@ setup(){
       showModal.value = modal
       bolsas.value = []
     }
+  //Funcion que genera los reportes
     function generarbolsa(idbolsa){
-      ServiceFiles.xml_hhtp_request(`${API}/Ferromex/Download/pdf/reporteOperativo/reporteCajero/concentrado/${idbolsa}`, 'CajeroContrado.pdf');
-      ServiceFiles.xml_hhtp_request(`${API}/Ferromex/Download/pdf/reporteOperativo/reporteCajero/transacciones/${idbolsa}`, 'TransaccionesCajero.pdf');
+      ServiceFiles.xml_hhtp_request(`${API}/Ferromex/Download/pdf/reporteOperativo/reporteCajero/concentrado/${idbolsa}`, 'CajeroContrado.pdf'); //Con el servicio importado mandamos la ruta y el nombre
+      ServiceFiles.xml_hhtp_request(`${API}/Ferromex/Download/pdf/reporteOperativo/reporteCajero/transacciones/${idbolsa}`, 'TransaccionesCajero.pdf');//Con el servicio importado mandamos la ruta y el nombre
+      //Devolvemos los valores a su valor por default
       bolsas.value = [];
       showModal.value = false
       cajero.numerocajero = ""

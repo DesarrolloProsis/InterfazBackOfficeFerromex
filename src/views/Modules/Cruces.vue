@@ -1,6 +1,6 @@
 <template>
     <Navbar/>
-    <h1 class="title font-bold font-titulo my-8">Cruces</h1>
+    <h1 class="title font-bold font-titulo my-8">Cruces Telepeaje</h1>
     <div class="container mx-auto px-auto px-48 my-32 pt-10">
         <div class="flex flex-wrap">
             <button class=" p-7 -mt-12 w-1/2" @click="abrirmodalcrucestotales()">
@@ -19,7 +19,7 @@
                             <fa icon="calendar-day" class="text-white h-32 p-2"/>
                         </div>
                         <div class="text-center py-5 font-titulo font-bold text-white ">
-                            <h1>Cruces Ferromex</h1>
+                            <h1>Cruces Intermodal</h1>
                         </div>
                     </div>
             </button>
@@ -58,7 +58,7 @@
             </div>
     </Modal>
     <Modal :show="showModalTurno" @cerrarmodal="cerramodalcruceferromex">
-        <h1 class="text-4xl font-bold font-titulo text-center mt-4">Cruces Ferromex</h1>
+        <h1 class="text-4xl font-bold font-titulo text-center mt-4">Cruces Intermodal</h1>
             <div class="flex w-full justify-center gap-20 mt-10">
                 <div class="flex flex-col gap-10">
                     <div>
@@ -267,8 +267,11 @@ export default {
                 const rutadescuentolletalle = encodeURI(`${API}/Ferromex/Download/pdf/crucesferromex/descuentodetallesamarre/${urldias}/${urlmeses}/${urlsemana}`)
                 const rutadescuentoamerreresumen = encodeURI(`${API}/Ferromex/Download/pdf/crucesferromex/descuentoamarreresumen/${urldias}/${urlmeses}/${urlsemana}`)
                 ServiceFiles.xml_hhtp_request(rutadescuentolletalle, 'DescuentosDetalleAmarre.pdf')
-                ServiceFiles.xml_hhtp_request(rutadescuentoamerreresumen, 'DescuentosDetalleResumen.pdf')
+                setTimeout(() => {
+                    ServiceFiles.xml_hhtp_request(rutadescuentoamerreresumen, 'DescuentosDetalleResumen.pdf')
+                }, 5000);
                 cerramodalcruceferromex(false)
+                
             }
         }
 

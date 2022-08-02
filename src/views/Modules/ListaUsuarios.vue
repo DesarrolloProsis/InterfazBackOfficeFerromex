@@ -14,13 +14,21 @@
           <option v-for="(option ,index) in options" :key="index" :value="option">{{option}}</option>
         </select>
       </div>
+      <div class="flex-none my-auto text-white font-md p-2">
+        Resultados:
+        <select v-model="numRespuesta" class="text-gray-800 w-16 rounded" @change="buscarchange(nombre,estatus)">
+          <option value="10">10</option>
+          <option value="30">30</option>
+          <option value="50">50</option>
+        </select>
+      </div>
       <div class="flex-none my-auto text-white font-md p-2 ml-10">
         <button @click="buscar(nombre,estatus)" class="btn-buscar animacion">Buscar</button>
       </div>
       <div class="flex-none my-auto text-white font-md p-2 ml-6">
         <button @click="todos()" class="btn-buscar animacion">Todos</button>
       </div>
-      <div class="flex-none my-auto text-white font-md p-2 md:ml-32 2xl:ml-69">
+      <div class="flex-none my-auto text-white font-md p-2 md:ml-32">
         <button @click="abrirModal" class="btn-buscar animacion">Agregar Usuario</button>
       </div>
     </div>
@@ -56,10 +64,10 @@
         <span></span>
         <span></span>
         <span></span>
-        <p class="text-sm mb-1 font-semibold text-gray-700 mt-2 sm:-ml-6">Rol *</p>
+        <p class="text-sm mb-1 font-semibold text-gray-700 mt-2 sm:-ml-6">Perfil *</p>
         <Multiselect
           v-model="usuario.rol"
-          placeholder="Seleccione un Rol"
+          placeholder="Seleccione un perfil"
           :searchable="true"
           :options="roles"
           :close-on-select="true"
@@ -85,8 +93,7 @@ import { notify } from "@kyvg/vue3-notification";//Componente que realiuza las n
 import Spinner from '../../components/Spinner.vue'//Componente que contiene el spinner para las pantallas de cargas
 import Paginacion from "../../components/Paginacion.vue"//Componente que contiene la paginación
 import Modal from "../../components/Modal.vue"//Importamos el componente modal
-import axios from "axios";
-import { onMounted, reactive, ref, toRefs } from 'vue'
+import { onMounted, reactive,inject, ref, toRefs } from 'vue'
 export default {
   components: {
     TablaListaUsuarios,
@@ -98,6 +105,7 @@ export default {
     Modal
   },
   setup() {
+    const axios = inject('axios')
     const usuarios = ref([])//Constante que almacena el array de todos los usuarios que se han registrado con toda la información
     const options = ref(['Activo', 'Inactivo'])//Constante que almacena las opciones de estatus que pueden seleccionar en el header
     const modalAgregar = ref(false)//Constante que abre el modal para agregar el usuario
@@ -107,7 +115,7 @@ export default {
     const totalPaginas = ref(0)//Constante que almacena el total de páginas que hay en la busqueda
     const paginaActual = ref(1)//Constante que almacena la página actual de la busqueda realizada
     const hasMorePages = ref(true)//Constante que nos indica si puede haber más páginas y si puede hacer un cambio de página
-    const numRespuesta = ref(9)//Constante que indica el número de respuestas que va a mostrar por página
+    const numRespuesta = ref(10)//Constante que indica el número de respuestas que va a mostrar por página
     const usuario = reactive ({})//constante reactiva que va a almacenar la información de un usuario nuevo
     const mayuscula = ref(true)//Constante que almacena la respuesta de la validación si es que hay o no mayusculas para la contraseña
     const corta = ref(true)//Constante que alamcena la respuesta de la validación si es que la contraseña es muy corta
@@ -133,6 +141,7 @@ export default {
       header.estatus = undefined//Damos el valor de undefined a la constante que almacena el estatus que seleccionamos en el header
       let nombreRuta = ' '//Creamos dos literal con un espacio en blanco para mandarla en la ruta
       let estatusRuta = ' '//Creamos dos literal con un espacio en blanco para mandarla en la ruta
+      numRespuesta.value = 10 //Filtramos por 10 valores por default
       const ruta = encodeURI(`${API}/Identity/user/1/${numRespuesta.value}/${nombreRuta}/${estatusRuta}`)
       axios.get(ruta)//Llamada al endpoint que trae los roles existentes
       .then((result) => {//Si el endpoint tiene una respuesta correcta
@@ -176,6 +185,30 @@ export default {
           modalLoading.value = false //cerramos el spinner de carga
         })
       }
+    }
+    function buscarchange (nombre, estatus){//Función que realiza la busqueda de acuerdo a los parámetros ingresados en los header
+      paginaActual.value = 1;
+      modalLoading.value = true//Abrimos el spinner de la pantalla de carga
+      if(nombre == ''){ //Hacemos la validación si es que el nombre estaá vacios
+         nombre = ' '//Añadimos un espacio en blanco
+      }
+      if(estatus == undefined){ //Hacemos la validación si es que el estatus está indefinido
+        estatus = ' '//Añadimos un espacio en blanco
+      }
+      modalLoading.value = true//Abrimos el spinner de pantalla de carga
+      const ruta = encodeURI(`${API}/Identity/user/${paginaActual.value}/${numRespuesta.value}/${nombre}/${estatus}`)
+      axios.get(ruta)//Llamada al endpoint que trae los roles existentes
+        .then((result) => {//Si el endpoint tiene una respuesta correcta
+        if(result.status == 200){//valida que el estatus de la respuesta sea 200 para saber que es una respuesta correcta y con contenido
+          totalPaginas.value = result.data.paginas_totales
+          paginaActual.value = result.data.pagina_actual
+          modalLoading.value = false//Cerramos el spinner de carga
+          usuarios.value = result.data.usuarios //asignamos los resultados que nos trajo el endpoint a la constante roles
+          }
+        }).catch((error)=>{//Si el endpoint tiene un error en la respuesta
+          console.log(error.request.response);//Mostramos en consola el error  que nos da el endpoint
+          modalLoading.value = false //cerramos el spinner de carga
+        })
     }
     function cambiarPagina (page){//Función que permite hacer el cambio de páginas con las nuevas respuestas
       if(header.nombre == '')//Si el nombre está vacio
@@ -243,8 +276,17 @@ export default {
               }
             })
             .catch(error => {
-              console.log(error.request.response);
-              modalAgregar.value = false//cerramos el spinner de la pantalla de carga
+              let descripcionerror = JSON.parse(error.request.response);
+              if(descripcionerror[0].code == "DuplicateUserName"){
+                notify({//notificación de que el usuario se inserto correctamente
+                  title:'Usuario Repetido',//titulo de la notificaci{on}
+                  text:`No se puede crear el usuario`,//texto de la notificación 
+                  duration: 3000,//duración de la notificación
+                  closeonclick:true,//si le damos click se cierra la notificación
+                  type: 'warn'//el tipo de notificación, si es success el color será verde
+                });
+              }else{
+                modalAgregar.value = false//cerramos el spinner de la pantalla de carga
                 usuario.pass = '',//limpiamos el valor de password del formulario de agregar usuario
                 usuario.nombre = '',//limpiamos el valor de nombre del formulario de agregar usuario
                 usuario.apellidos = '',//limpiamos el valor de apellido o apellidos del formulario de agregar usuario
@@ -257,6 +299,7 @@ export default {
                   type: 'error'//el tipo de notificación, si es success el color será verde
                 });
                 todos()//LLamamos a la función para refrescar la tabla
+              }
             })
           }
         }else{
@@ -275,7 +318,28 @@ export default {
     }
     onMounted(todos)//Montamos la función todos para que en la primer carga traiga todos los usuarios existentes
 
-  return { abrirModal, todos, guardar, buscar, cambiarPagina, cerrarModal, usuario, usuarios, options, ...toRefs(header), mayuscula, tipoInput, corta, modalAgregar, roles, modalLoading, paginaActual, hasMorePages, numRespuesta, totalPaginas }
+  return { abrirModal, 
+  todos, 
+  guardar, 
+  buscar, 
+  cambiarPagina, 
+  cerrarModal, 
+  usuario, 
+  usuarios, 
+  options, 
+  ...toRefs(header),
+  mayuscula, 
+  tipoInput, 
+  corta, 
+  modalAgregar, 
+  roles, 
+  modalLoading, 
+  paginaActual, 
+  hasMorePages, 
+  numRespuesta, 
+  totalPaginas,
+  buscarchange
+  }
   },
 }
 </script>

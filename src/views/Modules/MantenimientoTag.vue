@@ -1,7 +1,7 @@
 <template>
   <Navbar/>
   <div class="container mx-auto px-0 mb-4">
-    <h1 class="title-center font-titulo font-bold pb-4 mb-2">Mantenimiento de Tag's</h1>
+    <h1 class="title-center font-titulo font-bold pb-4 mb-2">Gestión de Tags</h1>
   <div>
     <div class="-mt-4 mx-2 md:mx-0">
         <div class="flex flex-col  bg-ferromex rounded-lg border-gray-200 pb-0 mb-4">          
@@ -19,7 +19,15 @@
               </div>
               <div class="w-full inline-flex flex-2 justify-center">
                 <label for="tag" class="text-white my-auto">Fecha:</label>
-                  <input v-model="fecha" type="date" :max="hoy" class="my-auto p-1 bg-white flex border border-gray-200 rounded ml-2 h-6 w-40 "> 
+                  <input v-model="fecha" type="date" :max="hoy" class="my-auto p-1 bg-white flex border border-gray-200 rounded ml-2 h-6 w-40"> 
+              </div>
+            <div class="w-full inline-flex flex-2 justify-center">
+                <label for="tag" class="text-white my-auto">Resultados:</label>
+                <select v-model="numRespuesta" class="text-center my-auto bg-white flex border border-gray-200 rounded ml-2 h-6 w-20" @change="searchchange(tag, estatus, fecha)">
+                  <option value="10">10</option>
+                  <option value="30">30</option>
+                  <option value="50">50</option>
+                </select>
               </div>
               <div class="w-full flex-1">
                 <div class="h-full my-auto text-white font-md p-2 ">                      
@@ -62,7 +70,7 @@
                 </div>
                 <div class="flex flex-col gap-10">
                     <div>
-                        <input type="text" class="border border-gray-500 rounded focus:border-blue-400 focus:outline-none" :class="{'border-red-600': validarTag}" v-model="numerotagagregar" @input="limpiarvalidacion()">
+                        <input type="text" class="border rounded focus:border-blue-400 focus:outline-none" :class="{'border-red-600': validarTag}" v-model="numerotagagregar" @input="limpiarvalidacion()">
                         <span v-if="validarTag" class="flex items-center font-medium tracking-wide text-red-500 text-xs mt-1 ml-1">
                          {{validarTagTexto}}
                         </span>
@@ -70,7 +78,7 @@
                 </div>
             </div>
             <div class="flex w-full justify-center mt-10 mb-8">
-                <button class="border w-40 bg-ferromex text-white" @click="agregarTag(numerotagagregar)">Agregar TAG</button>
+                <button class="rounded-lg w-18 bg-ferromex text-white p-10" @click="agregarTag(numerotagagregar)">Agregar TAG</button>
             </div>
   </Modal>
 <Footer/>
@@ -80,12 +88,11 @@ const API = process.env.VUE_APP_URL_API_PRODUCCION
 import TablaMantenimientoTag from "../../components/Tabla-ManteniminetoTags.vue";
 import Navbar from "../../components/Navbar.vue";
 import Footer from "../../components/Footer";
-import axios from "axios";
 import ServiceFiles from '../../Servicios/Files-Service'
 import Paginacion from "../../components/Paginacion.vue"
 import { notify } from "@kyvg/vue3-notification";
 import Spinner from '../../components/Spinner.vue'
-import { ref,reactive,toRefs,onMounted } from 'vue'
+import { ref,reactive,toRefs,onMounted,inject } from 'vue'
 import Modal from "../../components/Modal.vue"
 export default {
   name: "BusquedaCruces",
@@ -98,6 +105,7 @@ export default {
     Modal
   },
   setup() {
+    const axios = inject('axios')
     const cruces = ref([]) //Variable para llenar la tabla de tags
     const page = ref(1) //Variable que maneja la paginacion para que se le indique desde donde iniciar
     const hoy = ref('') //Variable que se utiliza para dar a los inputs date el maximo dia a seleccionar que es el dia de hoy 
@@ -105,7 +113,7 @@ export default {
     const currentPage = ref(1) //Variable que indica la pagina actual 
     const hasMorePages = ref(true) //Varible que ocupa la paginacion para indicarle qu epuede avanzar entre pagina
     const modalLoading = ref(false) //Variable que muestra el sppiner de carga
-    const numRespuesta = ref(9) //Variable de numero de resultados que espera la paginacion
+    const numRespuesta = ref(10) //Variable de numero de resultados que espera la paginacion
     const showModal = ref(false) //Varible del modal de agregar tag
     const numerotagagregar = ref('') //Variable del input tag a agregar
     const options = ref(['Activo','Inactivo']) //Declaracion de las opciones del select de options 
@@ -173,6 +181,7 @@ export default {
     }
     //Función que busca los tags
     function search(tag, estatus, fecha){
+      console.log(numRespuesta.value)
       modalLoading.value = true //Abrimos el spinner
       cruces.value = [] // Declaramos el arreglo en vacio
       if(tag == ""){ //Validamos si el campo llega vacio le damos un espacio en blanco 
@@ -239,6 +248,66 @@ export default {
           })
       }
     }
+    function searchchange(tag, estatus, fecha){
+      modalLoading.value = true //Abrimos el spinner
+      cruces.value = [] // Declaramos el arreglo en vacio
+      if(tag == ""){ //Validamos si el campo llega vacio le damos un espacio en blanco 
+        tag = " "
+      }
+      if(estatus == undefined){ //Validamos si el campo llega vacio le damos un espacio en blanco
+        estatus = " "
+      }
+      if(fecha == ""){ //Validamos si el campo llega vacio le damos un espacio en blanco
+        fecha = " "
+      }
+      let estatusurl = "" //Declaramos varibles que iran en la url final
+      let fechaurl = fecha //Declaramos varibles que iran en la url final
+      if(fecha != " "){ //si la fecha es diferente a un espacio en blanco 
+        fechaurl = new Date(fecha).toISOString() //Le damos formato para que lo reciba el back
+      }
+      if(estatus == "Activo"){ // Si el estatus viene como activo
+        estatusurl = "true" //En la varible de la url la enviamos como true
+      }else if(estatus == "Inactivo"){ // Si el estatus viene como inactivo
+        estatusurl = "false" //En la varible de la url la enviamos como false
+      }else if(estatus == " "){ // Si el estatus viene como vacio
+        estatusurl = " " //En la varible de la url la enviamos como espacio en blanco
+      }
+      const ruta = encodeURI(`${API}/ferromex/mantenimientotags/${page.value}/${numRespuesta.value}/${tag}/${estatusurl}/${fechaurl}`) //Ciframos la url para mandarla en el axios
+      modalLoading.value = false //Cerramos el spiiner
+      axios.get(ruta) //Mandamos a llamar el axios
+        .then((result)=>{
+          if(result.status == 200){ //Si recibimos un estatus 200 
+            modalLoading.value = false //Quitamos spiiner
+            totalPaginas.value = result.data.paginas_totales  //asignamos valor al numero total de paginas
+            currentPage.value = result.data.pagina_actual //Asignamos valor a la pagina actual
+            result.data.tags.forEach((e)=>{ //Creamos el objeto tag
+              let obj = {
+                tag: e.tag,
+                insertionDate : e.insertionDate,
+                active: e.active
+              }
+              cruces.value.push(obj)//Metemos el objeto tag a la lista 
+            })
+            if(cruces.value.length == 0){//Si el tamaño del arreglo que no contiene los tags es igual a cero
+              notify({ //Notificamos que no existen casos ni coincidencias
+              title:'Sin Información',
+              text:'No existen registros con los criterios de tu busqueda' ,
+              type: 'warn'
+            });
+            }
+            }else{ //Si esto es falso
+              modalLoading.value = false //Cerramos Spinner
+              notify({ //NOtificamos que no encontramos Tags
+                title:'Sin Información',
+                text:'No se encontraron tags',
+                type: 'warn'
+              });
+            }
+          }).catch((error)=>{
+            console.log(error);
+          })
+      
+    }
   //Función que limpia los input de busqueda y regresa las transacciones de la plaza sin filtros
     function limpiar(){
       modalLoading.value = true// Abrimos spinner
@@ -256,6 +325,7 @@ export default {
         let tagruta = " " //Usamos una varible para que podamos poner el espacio en blanco
         let estatusruta = " " //Usamos una varible para que podamos poner el espacio en blanco
         let fecharuta = " " //Usamos una varible para que podamos poner el espacio en blanco
+        numRespuesta.value = 10;
         const ruta = encodeURI(`${API}/Ferromex/mantenimientotags/${page.value}/${numRespuesta.value}/${tagruta}/${estatusruta}/${fecharuta}`) //Codificamos la ruta que llevara el axios
         axios.get(ruta) //Disparamos la ruta
         .then((result)=>{
@@ -434,6 +504,7 @@ export default {
       limpiar,
       cargatags,
       showMore,
+      numRespuesta,
       actualizarLista,
       limpiarvalidacion, 
       actualizar,
@@ -449,7 +520,8 @@ export default {
       hasMorePages, 
       modalLoading,
       showModal,
-      agregarTag
+      agregarTag,
+      searchchange
       }
   }
 }
