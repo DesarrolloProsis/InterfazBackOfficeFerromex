@@ -7,7 +7,12 @@
         Fecha:<input v-model="fecha" type="date" class="rounded text-black ml-2 md:w-10 xl:w-44" />
       </div>
       <div class="flex-none my-auto text-white font-md p-2">
-        TAG:<input v-model="tag" type="text" class="rounded text-black ml-2 md:w-10 xl:w-44" />
+        <select v-model="tipo" class="text-gray-800 w-32 rounded">
+          <option value="A">TAG</option>
+          <option value="B">No Economico</option>
+          <option value="C">No Placa</option>
+        </select>
+        <input v-model="tag" type="text" class="rounded text-black ml-2 md:w-10 xl:w-32" />
       </div>
       <div class="flex-none my-auto text-white font-md p-2">
         ViA:
@@ -75,6 +80,7 @@ export default {
   components: { TablaInformacionTelepeaje, Navbar, Footer, Paginacion, Spinner},
   setup() {
     const axios = inject('axios')
+    const tipo = ref('A')
     const modalLoading = ref(false) //Constante que permite abrir el spinner de las pantalla de carga
     const cruces = ref([])//Constante que almacena los cruces para mostrar en la tabla
     const tiempo = ref('') //Constante que almacena el tiempo seleccionado para actualizar la tabla
@@ -253,7 +259,8 @@ export default {
     return { 
       header, 
       carriles, 
-      modalLoading, 
+      modalLoading,
+      tipo, 
       cambiarPagina, 
       buscar,
       buscarchange, 

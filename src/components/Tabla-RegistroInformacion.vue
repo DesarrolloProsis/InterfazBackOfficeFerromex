@@ -13,6 +13,12 @@
         <label class="rounded-full px-20 bg-gray-200 ring-2 ring-gray-500 p-2 font-bold text-black">Tag</label>
       </th>
       <th class="">
+        <label class="rounded-full px-20 bg-gray-200 ring-2 ring-gray-500 p-2 font-bold text-black">No Placa</label>
+      </th>
+      <th class="">
+        <label class="rounded-full px-20 bg-gray-200 ring-2 ring-gray-500 p-2 font-bold text-black">No Economico</label>
+      </th>
+      <th class="">
         <label class="rounded-full px-20 bg-gray-200 ring-2 ring-gray-500 p-2 font-bold text-black">ViA</label>
       </th>
       <th class="">
@@ -23,6 +29,8 @@
       <td>{{ cruce.fecha }}</td>
       <td>{{ cruce.hora }}</td>
       <td>{{ cruce.tag }}</td>
+      <td></td>
+      <td></td>
       <td>{{ cruce.carril }}</td>
       <td>{{ cruce.clase }}</td>
     </tr>

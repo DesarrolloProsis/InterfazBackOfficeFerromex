@@ -7,8 +7,12 @@
         <div class="flex flex-col  bg-ferromex rounded-lg border-gray-200 pb-0 mb-4">          
             <div class="flex-1 flex flex-row space-x-2">
               <div class="w-full inline-flex flex-2 justify-center">
-                <label for="tag" class="text-white my-auto">TAG:</label>
-                  <input id="tag" v-model="tag" class="my-auto bg-white flex border border-gray-200 rounded ml-2 h-6 w-40" placeholder="Buscar No. Tag" type="text" />
+                 <select v-model="tipo" class="text-gray-800 w-32 rounded h-6 my-auto">
+                  <option value="A">TAG</option>
+                  <option value="B">No Economico</option>
+                  <option value="C">No Placa</option>
+                </select>
+                  <input id="tag" v-model="tag" class="my-auto bg-white flex border border-gray-200 rounded ml-2 h-6 w-40" placeholder="Buscar" type="text" />
               </div>
               <div class="w-full inline-flex flex-2 justify-center">
                 <label for="tag" class="text-white my-auto">Estatus:</label>
@@ -106,6 +110,7 @@ export default {
   },
   setup() {
     const axios = inject('axios')
+    const tipo = ref('A');
     const cruces = ref([]) //Variable para llenar la tabla de tags
     const page = ref(1) //Variable que maneja la paginacion para que se le indique desde donde iniciar
     const hoy = ref('') //Variable que se utiliza para dar a los inputs date el maximo dia a seleccionar que es el dia de hoy 
@@ -504,6 +509,7 @@ export default {
       limpiar,
       cargatags,
       showMore,
+      tipo,
       numRespuesta,
       actualizarLista,
       limpiarvalidacion, 
