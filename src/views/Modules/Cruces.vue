@@ -54,15 +54,15 @@
             </div>
             <div class="flex w-full justify-center mt-10 mb-8">
                 <div>
-                    <button class="border w-40 bg-ferromex text-white ferromex-color" @click="generarreportetotalver(dias,meses,semana)">Vista previa</button>
-                    <button class="border w-40 bg-ferromex text-white ferromex-color" @click="generarreportetotaldescargar(dias,meses,semana)">Descargar Reporte</button>
+                    <button class="rounded-lg w-18 bg-ferromex text-white p-10" @click="generarreportetotalver(dias,meses,semana)">Vista previa</button>
+                    <button class="rounded-lg w-18 bg-ferromex text-white p-10" @click="generarreportetotaldescargar(dias,meses,semana)">Descargar Reporte</button>
                 </div>
             </div>
     </Modal>
     <Modal :show="showModalTurno" @cerrarmodal="cerramodalcruceferromex">
         <h1 class="text-4xl font-bold font-titulo text-center mt-4">Cruces Intermodal</h1>
             <div class="flex w-full justify-center gap-20 mt-10">
-                <div class="flex flex-col gap-10">
+                <div class="flex flex-col gap-11">
                     <div>
                         <label for="">Dia</label>
                     </div>
@@ -71,6 +71,13 @@
                     </div>
                     <div>
                         <label for="">Semana</label>
+                    </div>
+                    <div>
+                        <select v-model="tipo" class="input">
+                            <option value="A">TAG</option>
+                            <option value="B">No Economico</option>
+                            <option value="C">No Placa</option>
+                        </select>
                     </div>
                     <div>
                         <label>Tipo de Reporte</label>
@@ -87,6 +94,9 @@
                         <input type="week" class="input"  :disabled="bloquearsemana" :class="{'cursor-not-allowed' : bloquearsemana}" v-model="semanacf" @change="bloquearinputsemana()">
                     </div>
                     <div>
+                        <input id="tag" v-model="tag" class="input" placeholder="Buscar" type="text" />
+                    </div>
+                    <div>
                         <select class="input" v-model="reportecf"  placeholder="XXXXX">
                         <option value="undefined" disabled>Seleccione una opción</option>
                         <option value="1">Descuento Detalles Amarre</option>
@@ -98,8 +108,8 @@
             </div>
             <div class="flex w-full justify-center mt-10 mb-8">
                 <div>
-                    <button class="border w-40 bg-ferromex text-white ferromex-color"  @click="generarreportecruceferromexver(diascf,mesescf,semanacf,reportecf)">Vista previa</button>
-                    <button class="border w-40 bg-ferromex text-white ferromex-color"  @click="generarreportecruceferromexdescargar(diascf,mesescf,semanacf,reportecf)">Descargar Reporte</button>
+                    <button class="rounded-lg w-18 bg-ferromex text-white p-10"  @click="generarreportecruceferromexver(diascf,mesescf,semanacf,reportecf,tipo,tag)">Vista previa</button>
+                    <button class="rounded-lg w-18 bg-ferromex text-white p-10 ml-6"  @click="generarreportecruceferromexdescargar(diascf,mesescf,semanacf,reportecf,tipo,tag)">Descargar Reporte</button>
                 </div>
             </div>
     </Modal>
@@ -141,6 +151,8 @@ export default {
             diascf:'',
             mesescf: '',
             semanacf:'',
+            tipo:'A',
+            tag:'',
             reportecf:undefined
         })
         
@@ -290,10 +302,11 @@ export default {
                 ServiceFiles.descargararchivo(ruta, nombrearchivo.value)
             }
         }
-        function generarreportecruceferromexver(dias,meses,semana,reporte){
+        function generarreportecruceferromexver(dias,meses,semana,reporte,tipo,tag){
             let urldias = ""
             let urlmeses = ""
             let urlsemana = ""
+            let urltag = ""
             if(dias == ''){
                urldias = " "
             }else if(dias != ''){
@@ -309,15 +322,38 @@ export default {
             }else if(semana != ''){
                 urlsemana = semana
             }
-            if(urldias == " " && urlmeses == " " && urlsemana == " " || reporte == undefined){
+            if(tag == ''){
+                tag == ' '
+            }else if(tag != ''){
+                urltag = tag
+            }
+            if(urldias == " " && urlmeses == " " && urlsemana == " " && urltag == " " || reporte == undefined){
                   notify({
                     title:'Sin parametros',
                     text:'Para generar un reporte se necesita seleccionar un parametro' ,
                     type: 'error'
                 });
             }else{
-                const rutadescuentolletalle = encodeURI(`${API}/Ferromex/Download/pdf/crucesferromex/descuentodetallesamarre/${urldias}/${urlmeses}/${urlsemana}`)
-                const rutadescuentoamerreresumen = encodeURI(`${API}/Ferromex/Download/pdf/crucesferromex/descuentoamarreresumen/${urldias}/${urlmeses}/${urlsemana}`)
+            let numeroplaca = "";
+            let numeroeconomico = "";
+            let tagRuta = ""
+                if(urltag != ' '){
+                    if(tipo == 'A'){
+                        tagRuta = urltag
+                        numeroplaca = " "
+                        numeroeconomico = " "
+                    }else if(tipo == 'B'){
+                        tagRuta = " "
+                        numeroplaca = " "
+                        numeroeconomico = urltag
+                    }else if(tipo == 'C'){
+                        tagRuta = " "
+                        numeroplaca = urltag
+                        numeroeconomico = " "
+                    }
+                }
+                const rutadescuentolletalle = encodeURI(`${API}/Ferromex/Download/pdf/crucesferromex/descuentodetallesamarre/${urldias}/${urlmeses}/${urlsemana}/${tagRuta}/${numeroplaca}/${numeroeconomico}`)
+                const rutadescuentoamerreresumen = encodeURI(`${API}/Ferromex/Download/pdf/crucesferromex/descuentoamarreresumen/${urldias}/${urlmeses}/${urlsemana}/${tagRuta}/${numeroplaca}/${numeroeconomico}`)
                 if(reporte == "1"){
                     ServiceFiles.xml_hhtp_request(rutadescuentolletalle)
                 }else if( reporte == "2"){
@@ -329,10 +365,11 @@ export default {
                 //cerramodalcruceferromex(false)
             }
         }
-        function generarreportecruceferromexdescargar(dias,meses,semana){
+        function generarreportecruceferromexdescargar(dias,meses,semana,tipo,tag){
             let urldias = ""
             let urlmeses = ""
             let urlsemana = ""
+            let urltag = ""
             if(dias == ''){
                urldias = " "
             }else if(dias != ''){
@@ -351,6 +388,11 @@ export default {
                 urlsemana = semana
                 nombrearchivo.value = semana + ' CrucesIntermodal.pdf'
             }
+             if(tag == ''){
+                tag == ' '
+            }else if(tag != ''){
+                urltag = tag
+            }
             if(urldias == " " && urlmeses == " " && urlsemana == " "){
                   notify({
                     title:'Sin parametros',
@@ -358,8 +400,26 @@ export default {
                     type: 'error'
                 });
             }else{
-                const rutadescuentolletalle = encodeURI(`${API}/Ferromex/Download/pdf/crucesferromex/descuentodetallesamarre/${urldias}/${urlmeses}/${urlsemana}`)
-                const rutadescuentoamerreresumen = encodeURI(`${API}/Ferromex/Download/pdf/crucesferromex/descuentoamarreresumen/${urldias}/${urlmeses}/${urlsemana}`)
+            let numeroplaca = "";
+            let numeroeconomico = "";
+            let tagRuta = ""
+                if(urltag != ' '){
+                    if(tipo == 'A'){
+                        tagRuta = urltag
+                        numeroplaca = " "
+                        numeroeconomico = " "
+                    }else if(tipo == 'B'){
+                        tagRuta = " "
+                        numeroplaca = " "
+                        numeroeconomico = urltag
+                    }else if(tipo == 'C'){
+                        tagRuta = " "
+                        numeroplaca = urltag
+                        numeroeconomico = " "
+                    }
+                }
+                const rutadescuentolletalle = encodeURI(`${API}/Ferromex/Download/pdf/crucesferromex/descuentodetallesamarre/${urldias}/${urlmeses}/${urlsemana}/${tagRuta}/${numeroplaca}/${numeroeconomico}`)
+                const rutadescuentoamerreresumen = encodeURI(`${API}/Ferromex/Download/pdf/crucesferromex/descuentoamarreresumen/${urldias}/${urlmeses}/${urlsemana}/${tagRuta}/${numeroplaca}/${numeroeconomico}`)
                 ServiceFiles.xml_hhtp_request(rutadescuentolletalle, 'DescuentosDetalleAmarre.pdf')
                 setTimeout(() => {
                     ServiceFiles.xml_hhtp_request(rutadescuentoamerreresumen, 'DescuentosDetalleResumen.pdf')
@@ -413,22 +473,12 @@ export default {
 }
 </style>
 <style scoped>
-.border {
-    border: 1px solid #ffffff;
-    border-radius: 150px;
-    -webkit-box-shadow: 5px 5px 14px -5px rgba(0, 0, 0, 0.44);
-    box-shadow: 5px 5px 14px -5px rgba(0, 0, 0, 0.44);
-}
 .img {
     display: block;
     margin: auto;
     width: 200px;
     height: 200px;
     background-color: transparent;
-}
-.border h1 {
-    text-align: center;
-    padding-top: 15px;
 }
 .bg-ferromex {
   background-color: #BB2028;

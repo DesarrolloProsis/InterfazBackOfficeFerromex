@@ -27,7 +27,7 @@
               </div>
             <div class="w-full inline-flex flex-2 justify-center">
                 <label for="tag" class="text-white my-auto">Resultados:</label>
-                <select v-model="numRespuesta" class="text-center my-auto bg-white flex border border-gray-200 rounded ml-2 h-6 w-20" @change="searchchange(tag, estatus, fecha)">
+                <select v-model="numRespuesta" class="text-center my-auto bg-white flex border border-gray-200 rounded ml-2 h-6 w-20" @change="searchchange(tag, estatus, fecha,tipo)">
                   <option value="10">10</option>
                   <option value="30">30</option>
                   <option value="50">50</option>
@@ -35,7 +35,7 @@
               </div>
               <div class="w-full flex-1">
                 <div class="h-full my-auto text-white font-md p-2 ">                      
-                  <button :disabled="modalLoading" class="btn-buscar animacion" :class="{'cursor-not-allowed': modalLoading}" @click="search( tag, estatus, fecha)">Buscar</button>
+                  <button :disabled="modalLoading" class="btn-buscar animacion" :class="{'cursor-not-allowed': modalLoading}" @click="search( tag, estatus, fecha,tipo)">Buscar</button>
                 </div>
               </div>
               <div class="w-full flex-1">
@@ -71,10 +71,28 @@
                     <div>
                         <label for="">TAG</label>
                     </div>
+                      <div>
+                        <label for="">Numero de Placa</label>
+                    </div>
+                      <div>
+                        <label for="">Numero Economico</label>
+                    </div>
                 </div>
                 <div class="flex flex-col gap-10">
                     <div>
-                        <input type="text" class="border rounded focus:border-blue-400 focus:outline-none" :class="{'border-red-600': validarTag}" v-model="numerotagagregar" @input="limpiarvalidacion()">
+                        <input type="text" class="input" :class="{'border-red-600': validarTag}" v-model="numerotagagregar" @input="limpiarvalidacion()">
+                        <span v-if="validarTag" class="flex items-center font-medium tracking-wide text-red-500 text-xs mt-1 ml-1">
+                         {{validarTagTexto}}
+                        </span>
+                    </div>
+                    <div>
+                        <input type="text" class="input" :class="{'border-red-600': validarTag}" v-model="numeroplaca" @input="limpiarvalidacion()">
+                        <span v-if="validarTag" class="flex items-center font-medium tracking-wide text-red-500 text-xs mt-1 ml-1">
+                         {{validarTagTexto}}
+                        </span>
+                    </div>
+                    <div>
+                        <input type="text" class="input" :class="{'border-red-600': validarTag}" v-model="numeroeconomico" @input="limpiarvalidacion()">
                         <span v-if="validarTag" class="flex items-center font-medium tracking-wide text-red-500 text-xs mt-1 ml-1">
                          {{validarTagTexto}}
                         </span>
@@ -121,6 +139,8 @@ export default {
     const numRespuesta = ref(10) //Variable de numero de resultados que espera la paginacion
     const showModal = ref(false) //Varible del modal de agregar tag
     const numerotagagregar = ref('') //Variable del input tag a agregar
+    const numeroplaca = ref('')
+    const numeroeconomico = ref('')
     const options = ref(['Activo','Inactivo']) //Declaracion de las opciones del select de options 
     const actualizar = ref(false) //variable apra actualizar la tabla
     const validarTag = ref(false) //Variable que maneja la validacion del input del tag
@@ -185,8 +205,8 @@ export default {
       numerotagagregar.value = '' //Limpiamos el input de agregar tag
     }
     //Función que busca los tags
-    function search(tag, estatus, fecha){
-      console.log(numRespuesta.value)
+    function search(tag, estatus, fecha,tipo){
+      console.log(tipo)
       modalLoading.value = true //Abrimos el spinner
       cruces.value = [] // Declaramos el arreglo en vacio
       if(tag == ""){ //Validamos si el campo llega vacio le damos un espacio en blanco 
@@ -208,6 +228,9 @@ export default {
         });
       }else{ //En caso de que eso sea falso 
         let estatusurl = "" //Declaramos varibles que iran en la url final
+        let numeroeconomico = ""
+        let numeroplaca = ""
+        let tagRuta = ""
         let fechaurl = fecha //Declaramos varibles que iran en la url final
         if(fecha != " "){ //si la fecha es diferente a un espacio en blanco 
           fechaurl = new Date(fecha).toISOString() //Le damos formato para que lo reciba el back
@@ -219,7 +242,22 @@ export default {
         }else if(estatus == " "){ // Si el estatus viene como vacio
           estatusurl = " " //En la varible de la url la enviamos como espacio en blanco
         }
-        const ruta = encodeURI(`${API}/ferromex/mantenimientotags/${page.value}/${numRespuesta.value}/${tag}/${estatusurl}/${fechaurl}`) //Ciframos la url para mandarla en el axios
+        if(tag != ' '){
+          if(tipo == 'A'){
+            tagRuta = tag
+            numeroplaca = " "
+            numeroeconomico = " "
+          }else if(tipo == 'B'){
+            tagRuta = " "
+            numeroplaca = " "
+            numeroeconomico = tag
+          }else if(tipo == 'C'){
+            tagRuta = " "
+            numeroplaca = tag
+            numeroeconomico = " "
+          }
+        }
+        const ruta = encodeURI(`${API}/ferromex/mantenimientotags/${page.value}/${numRespuesta.value}/${tagRuta}/${estatusurl}/${fechaurl}/${numeroplaca}/${numeroeconomico}`) //Ciframos la url para mandarla en el axios
         modalLoading.value = false //Cerramos el spiiner
         axios.get(ruta) //Mandamos a llamar el axios
         .then((result)=>{
@@ -253,7 +291,7 @@ export default {
           })
       }
     }
-    function searchchange(tag, estatus, fecha){
+    function searchchange(tag, estatus, fecha,tipo){
       modalLoading.value = true //Abrimos el spinner
       cruces.value = [] // Declaramos el arreglo en vacio
       if(tag == ""){ //Validamos si el campo llega vacio le damos un espacio en blanco 
@@ -267,6 +305,9 @@ export default {
       }
       let estatusurl = "" //Declaramos varibles que iran en la url final
       let fechaurl = fecha //Declaramos varibles que iran en la url final
+      let numeroeconomico = ""
+      let numeroplaca = ""
+      let tagRuta = ""
       if(fecha != " "){ //si la fecha es diferente a un espacio en blanco 
         fechaurl = new Date(fecha).toISOString() //Le damos formato para que lo reciba el back
       }
@@ -277,7 +318,22 @@ export default {
       }else if(estatus == " "){ // Si el estatus viene como vacio
         estatusurl = " " //En la varible de la url la enviamos como espacio en blanco
       }
-      const ruta = encodeURI(`${API}/ferromex/mantenimientotags/${page.value}/${numRespuesta.value}/${tag}/${estatusurl}/${fechaurl}`) //Ciframos la url para mandarla en el axios
+      if(tag != ' '){
+        if(tipo == 'A'){
+          tagRuta = tag
+          numeroplaca = " "
+          numeroeconomico = " "
+        }else if(tipo == 'B'){
+          tagRuta = " "
+          numeroplaca = " "
+          numeroeconomico = tag
+        }else if(tipo == 'C'){
+          tagRuta = " "
+          numeroplaca = tag
+          numeroeconomico = " "
+        }
+      }
+      const ruta = encodeURI(`${API}/ferromex/mantenimientotags/${page.value}/${numRespuesta.value}/${tagRuta}/${estatusurl}/${fechaurl}/${numeroplaca}/${numeroeconomico}`) //Ciframos la url para mandarla en el axios
       modalLoading.value = false //Cerramos el spiiner
       axios.get(ruta) //Mandamos a llamar el axios
         .then((result)=>{
@@ -504,6 +560,8 @@ export default {
     return{ 
       cerralmodalpadre,
       numerotagagregar,
+      numeroplaca,
+      numeroeconomico,
       ...toRefs(header),
       search, 
       limpiar,
