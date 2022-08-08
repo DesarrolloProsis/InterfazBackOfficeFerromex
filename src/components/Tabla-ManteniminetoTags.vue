@@ -9,7 +9,7 @@
           <label class="rounded-full px-20 bg-gray-200 ring-2 ring-gray-500 p-2 font-bold text-black">Estatus</label>
         </th>
         <th class="">
-          <label class="rounded-full px-20 bg-gray-200 ring-2 ring-gray-500 p-2 font-bold text-black">Fecha de Registro</label>
+          <label class="rounded-full px-20 bg-gray-200 ring-2 ring-gray-500 p-2 font-bold text-black">Fecha</label>
         </th>
         <th class="">
           <label class="rounded-full px-20 bg-gray-200 ring-2 ring-gray-500 p-2 font-bold text-black">No Economico</label>
@@ -26,8 +26,8 @@
         <td v-if = "cruces.active == true">Activo</td>
         <td v-else :class="{'text-gray-400':!cruces.active}">Desactivado</td>
         <td :class="{'text-gray-400':!cruces.active}" >{{moment.utc(cruces.insertionDate).local().format("YYYY-MM-DD HH:mm:ss a")}}</td>
-        <td></td>
-        <td></td>
+        <td>{{cruces.economicNumber}}</td>
+        <td>{{cruces.vehiclePlate}}</td>
         <td class="w-66">
           <div class="w-66 mx-auto">
             <Multiselect v-model="select" placeholder="Seleccione una Acción" @close="acciones_mapper(cruces)"  :options="opticones_select_acciones(cruces)">
