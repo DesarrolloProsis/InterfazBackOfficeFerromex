@@ -7,7 +7,7 @@
         <div class="flex flex-col  bg-ferromex rounded-lg border-gray-200 pb-0 mb-4">          
             <div class="flex-1 flex flex-row space-x-2">
               <div class="w-full inline-flex flex-2 justify-center">
-                 <select v-model="tipo" class="text-gray-800 w-32 rounded h-6 my-auto">
+                <select v-model="tipo" class="text-gray-800 w-32 rounded h-6 my-auto">
                   <option value="A">TAG</option>
                   <option value="B">No Economico</option>
                   <option value="C">No Placa</option>
@@ -82,19 +82,19 @@
                     <div>
                         <input type="text" class="input" :class="{'border-red-600': validarTag}" v-model="numerotagagregar" @input="limpiarvalidacion()">
                         <span v-if="validarTag" class="flex items-center font-medium tracking-wide text-red-500 text-xs mt-1 ml-1">
-                         {{validarTagTexto}}
+                        {{validarTagTexto}}
                         </span>
                     </div>
                     <div>
                         <input type="text" class="input" :class="{'border-red-600': validarTag}" v-model="numeroplaca" @input="limpiarvalidacion()">
                         <span v-if="validarTag" class="flex items-center font-medium tracking-wide text-red-500 text-xs mt-1 ml-1">
-                         {{validarTagTexto}}
+                        {{validarTagTexto}}
                         </span>
                     </div>
                     <div>
                         <input type="text" class="input" :class="{'border-red-600': validarTag}" v-model="numeroeconomico" @input="limpiarvalidacion()">
                         <span v-if="validarTag" class="flex items-center font-medium tracking-wide text-red-500 text-xs mt-1 ml-1">
-                         {{validarTagTexto}}
+                        {{validarTagTexto}}
                         </span>
                     </div>
                 </div>
