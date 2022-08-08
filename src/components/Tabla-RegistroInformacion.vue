@@ -29,8 +29,8 @@
       <td>{{ cruce.fecha }}</td>
       <td>{{ cruce.hora }}</td>
       <td>{{ cruce.tag }}</td>
-      <td></td>
-      <td></td>
+      <td>{{ cruce.noPlaca}}</td>
+      <td>{{ cruce.noEconomico}}</td>
       <td>{{ cruce.carril }}</td>
       <td>{{ cruce.clase }}</td>
     </tr>
