@@ -55,7 +55,7 @@
             <div class="flex w-full justify-center mt-10 mb-8">
                 <div>
                     <button class="rounded-lg w-18 bg-ferromex text-white p-10" @click="generarreportetotalver(dias,meses,semana)">Vista previa</button>
-                    <button class="rounded-lg w-18 bg-ferromex text-white p-10" @click="generarreportetotaldescargar(dias,meses,semana)">Descargar Reporte</button>
+                    <button class="rounded-lg w-18 bg-ferromex text-white p-10 ml-6" @click="generarreportetotaldescargar(dias,meses,semana)">Descargar Reporte</button>
                 </div>
             </div>
     </Modal>
@@ -243,7 +243,7 @@ export default {
             let urlmeses = ""
             let urlsemana = ""
             if(dias == ''){
-               urldias = " "
+            urldias = " "
             }else if(dias != ''){
                 urldias = dias
             }
