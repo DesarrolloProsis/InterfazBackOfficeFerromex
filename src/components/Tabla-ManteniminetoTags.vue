@@ -26,8 +26,8 @@
         <td v-if = "cruces.active == true">Activo</td>
         <td v-else :class="{'text-gray-400':!cruces.active}">Desactivado</td>
         <td :class="{'text-gray-400':!cruces.active}" >{{moment.utc(cruces.insertionDate).local().format("YYYY-MM-DD HH:mm:ss a")}}</td>
-        <td>{{cruces.economicNumber}}</td>
-        <td>{{cruces.vehiclePlate}}</td>
+        <td :class="{'text-gray-400':!cruces.active}">{{cruces.economicNumber}}</td>
+        <td :class="{'text-gray-400':!cruces.active}">{{cruces.vehiclePlate}}</td>
         <td class="w-66">
           <div class="w-66 mx-auto">
             <Multiselect v-model="select" placeholder="Seleccione una Acción" @close="acciones_mapper(cruces)"  :options="opticones_select_acciones(cruces)">

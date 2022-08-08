@@ -497,7 +497,7 @@ export default {
     background-color: transparent;
 }
 .bg-ferromex {
-  background-color: #BB2028;
-  padding: 10px 5px;
+    background-color: #BB2028;
+    padding: 10px 5px;
 }
 </style>
