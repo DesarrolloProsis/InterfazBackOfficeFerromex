@@ -100,7 +100,7 @@
                 </div>
             </div>
             <div class="flex w-full justify-center mt-10 mb-8">
-                <button class="rounded-lg w-18 bg-ferromex text-white p-10" @click="agregarTag(numerotagagregar)">Agregar TAG</button>
+                <button class="rounded-lg w-18 bg-ferromex text-white p-10" @click="agregarTag(numerotagagregar,numeroplaca,numeroeconomico)">Agregar TAG</button>
             </div>
   </Modal>
 <Footer/>
@@ -162,22 +162,18 @@ export default {
       let tagruta = " "//Declaramos la variable con un espacio vacio para que el urlencode lo detecte y genere un %20
         let estatusruta = " "//Declaramos la variable con un espacio vacio para que el urlencode lo detecte y genere un %20
         let fecharuta = " "//Declaramos la variable con un espacio vacio para que el urlencode lo detecte y genere un %20
-        const ruta = encodeURI(`${API}/Ferromex/mantenimientotags/${page.value}/${numRespuesta.value}/${tagruta}/${estatusruta}/${fecharuta}`)//Declaramos la ruta a consummir
+        let noPlacaRuta = " "
+        let noEconomico = " "
+        const ruta = encodeURI(`${API}/Ferromex/mantenimientotags/${page.value}/${numRespuesta.value}/${tagruta}/${estatusruta}/${fecharuta}/${noPlacaRuta}/${noEconomico}`)//Declaramos la ruta a consummir
         axios.get(ruta)//Mandamos a llamar la ruta a consumir
         .then((result)=>{
+          console.log(result)
         if(result.status == 200){ //En caso de que la respuesta sea correcta
           modalLoading.value = false//Quitamos el spinner
           totalPaginas.value = result.data.paginas_totales //Asignamos el numero total de paginas
           currentPage.value = result.data.pagina_actual //Asignamos la pagina actual
-          result.data.tags.forEach((e)=>{ //Creamos el objeto del tag
-            let obj = {
-              tag: e.tag,
-              insertionDate : e.insertionDate,
-              active: e.active
-            }
-            cruces.value.push(obj)//Agregamos el tag a nuestro arreglo de los tags para que se pueda consumir la informacion
-          })
-       }else{
+          cruces.value = result.data.tags
+      }else{
           modalLoading.value = false //Quitamos el spinner
           notify({ //Arrojamos una notificacion de que no hay registros en caso de ser falso
             title:'Sin Información',
@@ -203,6 +199,9 @@ export default {
     const cerralmodalpadre = (modal) => {
       showModal.value = modal //Cerramos el modal de agrgar tag
       numerotagagregar.value = '' //Limpiamos el input de agregar tag
+      numeroeconomico.value = ''
+      numeroplaca.value = ''
+      limpiarvalidacion()
     }
     //Función que busca los tags
     function search(tag, estatus, fecha,tipo){
@@ -256,8 +255,13 @@ export default {
             numeroplaca = tag
             numeroeconomico = " "
           }
+        }else{
+          tagRuta = " "
+          numeroplaca = " "
+          numeroeconomico = " "
         }
         const ruta = encodeURI(`${API}/ferromex/mantenimientotags/${page.value}/${numRespuesta.value}/${tagRuta}/${estatusurl}/${fechaurl}/${numeroplaca}/${numeroeconomico}`) //Ciframos la url para mandarla en el axios
+        console.log(ruta);
         modalLoading.value = false //Cerramos el spiiner
         axios.get(ruta) //Mandamos a llamar el axios
         .then((result)=>{
@@ -265,14 +269,7 @@ export default {
               modalLoading.value = false //Quitamos spiiner
               totalPaginas.value = result.data.paginas_totales  //asignamos valor al numero total de paginas
               currentPage.value = result.data.pagina_actual //Asignamos valor a la pagina actual
-              result.data.tags.forEach((e)=>{ //Creamos el objeto tag
-                let obj = {
-                  tag: e.tag,
-                  insertionDate : e.insertionDate,
-                  active: e.active
-                }
-                cruces.value.push(obj)//Metemos el objeto tag a la lista 
-              })
+              cruces.value = result.data.tags
             if(cruces.value.length == 0){//Si el tamaño del arreglo que no contiene los tags es igual a cero
               notify({ //Notificamos que no existen casos ni coincidencias
               title:'Sin Información',
@@ -319,6 +316,7 @@ export default {
         estatusurl = " " //En la varible de la url la enviamos como espacio en blanco
       }
       if(tag != ' '){
+        page.value = 1; 
         if(tipo == 'A'){
           tagRuta = tag
           numeroplaca = " "
@@ -332,6 +330,10 @@ export default {
           numeroplaca = tag
           numeroeconomico = " "
         }
+      }else{
+        tagRuta = " "
+        numeroplaca = " "
+        numeroeconomico = " "
       }
       const ruta = encodeURI(`${API}/ferromex/mantenimientotags/${page.value}/${numRespuesta.value}/${tagRuta}/${estatusurl}/${fechaurl}/${numeroplaca}/${numeroeconomico}`) //Ciframos la url para mandarla en el axios
       modalLoading.value = false //Cerramos el spiiner
@@ -341,14 +343,7 @@ export default {
             modalLoading.value = false //Quitamos spiiner
             totalPaginas.value = result.data.paginas_totales  //asignamos valor al numero total de paginas
             currentPage.value = result.data.pagina_actual //Asignamos valor a la pagina actual
-            result.data.tags.forEach((e)=>{ //Creamos el objeto tag
-              let obj = {
-                tag: e.tag,
-                insertionDate : e.insertionDate,
-                active: e.active
-              }
-              cruces.value.push(obj)//Metemos el objeto tag a la lista 
-            })
+            cruces.value = result.data.tags
             if(cruces.value.length == 0){//Si el tamaño del arreglo que no contiene los tags es igual a cero
               notify({ //Notificamos que no existen casos ni coincidencias
               title:'Sin Información',
@@ -380,28 +375,24 @@ export default {
          });
       }else{
         cruces.value = [] //Limpiamos el arreglo que contendra los datos
+        tipo.value = 'A'
         header.tag = "" //Inicializamos la variable a su valor original
         header.estatus = undefined //Inicializamos la variable a su valor original
         header.fecha = "" //Inicializamos la variable a su valor original
         let tagruta = " " //Usamos una varible para que podamos poner el espacio en blanco
         let estatusruta = " " //Usamos una varible para que podamos poner el espacio en blanco
         let fecharuta = " " //Usamos una varible para que podamos poner el espacio en blanco
+        let noEconomico = " "
+        let noPlaca = " "
         numRespuesta.value = 10;
-        const ruta = encodeURI(`${API}/Ferromex/mantenimientotags/${page.value}/${numRespuesta.value}/${tagruta}/${estatusruta}/${fecharuta}`) //Codificamos la ruta que llevara el axios
+        const ruta = encodeURI(`${API}/Ferromex/mantenimientotags/${page.value}/${numRespuesta.value}/${tagruta}/${estatusruta}/${fecharuta}/${noPlaca}/${noEconomico}`) //Codificamos la ruta que llevara el axios
         axios.get(ruta) //Disparamos la ruta
         .then((result)=>{
         if(result.status == 200){ //Si recibimos un estatus 200 
           modalLoading.value = false //Quitamos spiiner
           totalPaginas.value = result.data.paginas_totales //Asignamos el numero total de paginas
           currentPage.value = result.data.pagina_actual //Asignamos la pagina actual
-          result.data.tags.forEach((e)=>{ //Creamos el objeto tag
-            let obj = {
-              tag: e.tag,
-              insertionDate : e.insertionDate,
-              active: e.active
-            }
-            cruces.value.push(obj)//Metemos el objeto tag a la lista 
-          })
+          cruces.value = result.data.tags
        }else{
           modalLoading.value = false //Cerramos Spinner
           notify({ //Notificamos que no encontramos Tags
@@ -420,7 +411,7 @@ export default {
       }
     }
     //Funcion para agregar tag 
-    function agregarTag(tag){
+    function agregarTag(tag,np,ne){
         if(tag == ""){ //Comprobamos si el tag viene vacio
           validarTag.value = true //Si es asi declaramos en true nuestra bandera para mostrar el span 
           validarTagTexto.value = 'El campo del tag no puede ir vacio' //Incluimos el texto del span o por que se esta dando el error
@@ -430,7 +421,9 @@ export default {
           const tagcompleto = { // Creamos objeto para enviar el tag completo 
             "tag": tag.toUpperCase(), //volvemos a mayusculas todo el contenido de este texto
             "insertionDate": hoy, //Asignamos la fecha y hora ya con su formato
-            "active": true //Mandamos por default el valor de activo
+            "active": true, //Mandamos por default el valor de activo
+            "vehiclePlate": np,
+            "economicNumber": ne
           }
           const ruta = encodeURI(`${API}/Ferromex/agregartag`) // codificamos la ruta para que tenga el formato URL
           axios.post(ruta,tagcompleto) //Mandamos a llamar el endpoint
@@ -441,7 +434,9 @@ export default {
               type: 'success'
             });
             numerotagagregar.value = '' //Limpiamos el input
-            cargatags(header.tag,header.estatus,header.fecha )//Mandamos a llamar a la funcion de la carga de todos los tags
+            numeroplaca.value = ''
+            numeroeconomico.value = ''
+            cargatags()//Mandamos a llamar a la funcion de la carga de todos los tags
           }).catch((error) =>{
             notify({//Enviamos una notificacion
             title:'Upps ocurrio un error ' + error.request.status, //mostramos el numero del error en el titulo
@@ -459,21 +454,16 @@ export default {
         let tagruta = " " //Asignamos el valor de un espacio blanco para la ruta a consumir
         let estatusruta = " " //Asignamos el valor de un espacio blanco para la ruta a consumir
         let fecharuta = " " //Asignamos el valor de un espacio blanco para la ruta a consumir
-        const ruta = encodeURI(`${API}/Ferromex/mantenimientotags/${page}/${numRespuesta.value}/${tagruta}/${estatusruta}/${fecharuta}`) //Codificamos la ruta 
+        let noEconomico = " "
+        let noPlaca = " "
+        const ruta = encodeURI(`${API}/Ferromex/mantenimientotags/${page}/${numRespuesta.value}/${tagruta}/${estatusruta}/${fecharuta}/${noPlaca}/${noEconomico}`) //Codificamos la ruta 
         axios.get(ruta) //Llamamos el end point 
         .then((result)=>{
           if(result.status == 200){ //Si obtenemos una respuesta positiva
             modalLoading.value = false //Quitamos spinner
               totalPaginas.value = result.data.paginas_totales //Asignamos el numero total de paginas
               currentPage.value = result.data.pagina_actual //Asignamos la pagina actual
-              result.data.tags.forEach((e)=>{ //Creamos el objeto tag
-                let obj = {
-                  tag: e.tag,
-                  insertionDate : e.insertionDate,
-                  active: e.active
-                }
-                cruces.value.push(obj) //Metemos el objeto tag a la lista 
-          })
+              cruces.value = result.data.tags
           }
         })
       }
@@ -481,6 +471,8 @@ export default {
         let estatusurl = "" //Declaramos varibles que iran en la url final
         let fechaurl = header.fecha //Declaramos varibles que iran en la url final
         let tagurl = "" //Declaramos varibles que iran en la url final
+        let numeroplaca = ""
+        let numeroeconomico = ""
         if(header.fecha != ""){ //si la fecha es diferente a un espacio en blanco 
           fechaurl = new Date(header.fecha).toISOString() //Le damos formato para que lo reciba el back
         }else if(header.fecha == ""){ 
@@ -495,10 +487,25 @@ export default {
         }
         if(header.tag == ""){ // Si el tag viene como vacio
           tagurl = " " //Asignamos un valor en blanco
-        }else if(header.tag != ""){ // Si el tag es diferente al vacio 
-          tagurl = header.tag // Es igual al parametro que le asignamos 
+          numeroplaca = " "
+          numeroeconomico = " "
+        }else if(header.tag != ' '){
+        if(tipo.value == 'A'){
+          tagurl = header.tag
+          numeroplaca = " "
+          numeroeconomico = " "
+        }else if(tipo.value == 'B'){
+          tagurl = " "
+          numeroplaca = " "
+          numeroeconomico = header.tag
+        }else if(tipo.value == 'C'){
+          tagurl = " "
+          numeroplaca = header.tag
+          numeroeconomico = " "
         }
-       const ruta = encodeURI(`${API}/ferromex/mantenimientotags/${page}/${numRespuesta.value}/${tagurl}/${estatusurl}/${fechaurl}`) //Codificamos la url para el end point
+        }
+       const ruta = encodeURI(`${API}/ferromex/mantenimientotags/${page}/${numRespuesta.value}/${tagurl}/${estatusurl}/${fechaurl}/${numeroplaca}/${numeroeconomico}`) //Codificamos la url para el end point
+        console.log(ruta)
         modalLoading.value = false //cerramos el spinner
         axios.get(ruta) //Mandamos a llamar el End point
         .then((result)=>{
@@ -506,14 +513,7 @@ export default {
               modalLoading.value = false //Quitmaos spinner
               totalPaginas.value = result.data.paginas_totales //Asignamos el numero total de paginas
               currentPage.value = result.data.pagina_actual //Asignamos la pagina actual
-              result.data.tags.forEach((e)=>{ //Creamos el objeto tag
-                let obj = {
-                  tag: e.tag,
-                  insertionDate : e.insertionDate,
-                  active: e.active
-                }
-                cruces.value.push(obj) //Metemos el objeto tag a la lista 
-              })
+              cruces.value = result.data.tags
           }
         })
       }
@@ -527,17 +527,36 @@ export default {
     }                 
     // //Función que manda a llamar al servicio para descargar el archivo en el formato seleccionado
     function downloadApi(tag,estatus,fecha) {
-      if(tag == ""){//Si el parametro lo recibimos vacio
-        tag = " " //Damos el valor en un espacio en blanco
-      }
       if(estatus == undefined){//Si el parametro lo recibimos indefinido
         estatus = " "//Damos el valor en un espacio en blanco
       }
       if(fecha == ""){//Si el parametro lo recibimos fecha
         fecha = " "//Damos el valor en un espacio en blanco
       }
+      let tagurl = "" //Declaramos varibles que iran en la url final
+      let numeroplaca = ""
+      let numeroeconomico = ""
+      if(tag == ""){ // Si el tag viene como vacio
+          tagurl = " " //Asignamos un valor en blanco
+          numeroplaca = " "
+          numeroeconomico = " "
+        }else if(tag != ' '){
+        if(tipo.value == 'A'){
+          tagurl = header.tag
+          numeroplaca = " "
+          numeroeconomico = " "
+        }else if(tipo.value == 'B'){
+          tagurl = " "
+          numeroplaca = " "
+          numeroeconomico = header.tag
+        }else if(tipo.value == 'C'){
+          tagurl = " "
+          numeroplaca = header.tag
+          numeroeconomico = " "
+        }
+      }
       if(tag == ' ' && estatus == ' ' && fecha == ' '){
-        const ruta = encodeURI(`${API}/ferromex/Download/pdf/mantenimientotags/${tag}/${estatus}/${fecha}`)//Ruta codificado
+        const ruta = encodeURI(`${API}/Ferromex/Download/pdf/mantenimientotags/${tagurl}/${estatus}/${fecha}/${numeroplaca}/${numeroeconomico}`)//Ruta codificado
         ServiceFiles.xml_hhtp_request(ruta, 'reportemantenimientotags.pdf')//Mandamos a llamar el servicio 
       }else{ //En caso de ser falso
         let estatusurl = "" //Declaramos variables para la url final
@@ -552,7 +571,7 @@ export default {
         }else if(estatus == " "){// Si el estatus viene como vacio
           estatusurl = " "//La varible final lleva un espacio en blaco
         }
-        const ruta = encodeURI(`${API}/Ferromex/Download/pdf/mantenimientotags/${tag}/${estatusurl}/${fechaurl}`)//Ruta codificado
+        const ruta = encodeURI(`${API}/Ferromex/Download/pdf/mantenimientotags/${tagurl}/${estatusurl}/${fechaurl}/${numeroplaca}/${numeroeconomico}`)//Ruta codificado
         ServiceFiles.xml_hhtp_request(ruta, 'reportemantenimientotags.pdf')//Mandamos a llamar el servicio 
       }
     }
