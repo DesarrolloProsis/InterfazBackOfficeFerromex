@@ -201,6 +201,7 @@ export default {
         let NoEconomico = ""
         let tagenviar = ""
         if(tag != ' '){
+          paginaActual.value = 1;
           if(tipo == 'A'){
             tagenviar = tag
             NoPlaca = " ";
