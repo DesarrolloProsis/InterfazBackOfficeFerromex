@@ -44,16 +44,19 @@
                         <input type="date" class="input" v-model="concentradoferromex.diascfe" @change="bloquearinputs()">
                     </div>
                     <div>
-                        <input type="month" class="input" v-model="concentradoferromex.mesescfe" :disabled="bloquear" :class="{'cursor-not-allowed' : bloquear}">
+                        <input type="month" class="input" v-model="concentradoferromex.mesescfe" :disabled="bloquear" :class="{'cursor-not-allowed' : bloquear}" @change="bloquearinputs()">
                     </div>
                     <div>
-                        <input type="week" class="input" v-model="concentradoferromex.semanacfe" :disabled="bloquear" :class="{'cursor-not-allowed' : bloquear}">
+                        <input type="week" class="input" v-model="concentradoferromex.semanacfe" :disabled="bloquear" :class="{'cursor-not-allowed' : bloquear}" @change="bloquearinputs()">
                     </div>
                     
                 </div>
             </div>
-            <div class="flex w-full justify-center mt-10 mb-8">
-                <button class="border w-40 bg-ferromex text-white ferromex-color" @click="concentradoFerromex(concentradoferromex.diascfe,concentradoferromex.mesescfe,concentradoferromex.semanacfe)">Generar Reporte</button>
+            <div class="flex flex-col w-full items-center justify-center mt-10 mb-8">
+                <div>
+                    <button class="border w-40 bg-ferromex text-white ferromex-color" :class="{'cursor-not-allowed' : bloquearbutton}" @click="concentradoFerromexver(concentradoferromex.diascfe,concentradoferromex.mesescfe,concentradoferromex.semanacfe)">Vista previa</button>
+                    <button class="border w-40 bg-ferromex text-white ferromex-color" :class="{'cursor-not-allowed' : bloquearbutton}" @click="concentradoFerromexdescargar(concentradoferromex.diascfe,concentradoferromex.mesescfe,concentradoferromex.semanacfe)">Descargar Reporte</button>
+                </div>
             </div>
     </Modal>
 </template>
@@ -90,6 +93,8 @@ export default {
         const carriles = ref(true)
         const showModal = ref(false)
         const bloquear = ref(false)
+        const bloquearbutton = ref(true)
+        const nombrearchivo = ref("")
         const concentradoferromex = reactive({
             diascfe: '',
             mesescfe: '',
@@ -111,12 +116,14 @@ export default {
             concentradoferromex.diascfe = ''
             concentradoferromex.mesescfe = ''
             concentradoferromex.semanacfe = ''
+            bloquearbutton.value = true
         }
         //Funcion para bloquear los inputs de mes y semana en caso de ser seleccionado el de dia
         function bloquearinputs(){
             bloquear.value = true // bloqueamos los campos
+            bloquearbutton.value = false
         }
-       function concentradoFerromex(dias,meses,semana){
+       function concentradoFerromexver(dias,meses,semana){
            let urldias = ""
             let urlmeses = ""
             let urlsemana = ""
@@ -138,16 +145,52 @@ export default {
             if(urldias == " " && urlmeses == " " && urlsemana == " "){
                   notify({
                     title:'Sin parametros',
-                    text:'Para generar un reporte se necesita seleccionar un parametro',
+                    text:'Para ver un reporte se necesita seleccionar un parametro',
                     type: 'error'
                 });
             }else{
                 const ruta = encodeURI(`${API}/Ferromex/Download/pdf/concentradosferromex/${urldias}/${urlmeses}/${urlsemana}`)
                 console.log(ruta)
-                ServiceFiles.xml_hhtp_request(ruta, 'ResumenIngresosFerromex.pdf')
-                cerramodalconcentradoferromex(false)
+                ServiceFiles.xml_hhtp_request(ruta)
+                //cerramodalconcentradoferromex(false)
             }
-       }
+            }
+        function concentradoFerromexdescargar(dias,meses,semana){
+           let urldias = ""
+            let urlmeses = ""
+            let urlsemana = ""
+            nombrearchivo.value = ""
+            if(dias == ''){
+               urldias = " "
+            }else if(dias != ''){
+                urldias = dias
+                nombrearchivo.value = dias + ' AuditoriaIntermodal.pdf'
+            }
+            if(meses == ''){
+                urlmeses = " "
+            }else if(meses != ''){
+                urlmeses = meses
+                nombrearchivo.value = meses +' AuditoriaIntermodal.pdf'
+            }
+            if(semana == ''){
+                urlsemana = " "
+            }else if(semana != ''){
+                urlsemana = semana
+                nombrearchivo.value = semana + ' AuditoriaIntermodal.pdf'
+            }
+            if(urldias == " " && urlmeses == " " && urlsemana == " "){
+                  notify({
+                    title:'Sin parametros',
+                    text:'Para descargar un reporte se necesita seleccionar un parametro',
+                    type: 'error'
+                });
+            }else{
+                const ruta = encodeURI(`${API}/Ferromex/Download/pdf/concentradosferromex/${urldias}/${urlmeses}/${urlsemana}`)
+                console.log(ruta)
+                ServiceFiles.descargararchivo(ruta,nombrearchivo.value)
+                //cerramodalconcentradoferromex(false)
+            }
+        }
         return {
             modulos,
             carriles, 
@@ -157,8 +200,11 @@ export default {
             limpiarconcentradoferromex,
             bloquearinputs,
             abrirmodalconcentradoferromex,
+            concentradoFerromexdescargar,
             concentradoferromex,
-            concentradoFerromex
+            bloquearbutton,
+            nombrearchivo,
+            concentradoFerromexver,
             }
     }
 }

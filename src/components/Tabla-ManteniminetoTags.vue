@@ -3,16 +3,22 @@
     <table class="tftable">
       <tr class="h-10">
         <th class="">
-          <label class="rounded-full px-20 bg-gray-200 ring-2 ring-gray-500 p-2 font-bold text-black 2xl:px-28">Tag</label>
+          <label class="rounded-full px-20 bg-gray-200 ring-2 ring-gray-500 p-2 font-bold text-black">Tag</label>
         </th>
         <th class="">
-          <label class="rounded-full px-20 bg-gray-200 ring-2 ring-gray-500 p-2 text-black 2xl:px-28">Estatus</label>
+          <label class="rounded-full px-20 bg-gray-200 ring-2 ring-gray-500 p-2 font-bold text-black">Estatus</label>
         </th>
         <th class="">
-          <label class="rounded-full px-20 bg-gray-200 ring-2 ring-gray-500 p-2 text-black 2xl:px-28">Fecha de Registro</label>
-          </th>
+          <label class="rounded-full px-20 bg-gray-200 ring-2 ring-gray-500 p-2 font-bold text-black">Fecha</label>
+        </th>
         <th class="">
-          <label class="rounded-full px-20 bg-gray-200 ring-2 ring-gray-500 p-2 text-black 2xl:px-28">Acciones</label>
+          <label class="rounded-full px-20 bg-gray-200 ring-2 ring-gray-500 p-2 font-bold text-black">No Economico</label>
+        </th>
+        <th class="">
+          <label class="rounded-full px-20 bg-gray-200 ring-2 ring-gray-500 p-2 font-bold text-black">No Placa</label>
+        </th>
+        <th class="">
+          <label class="rounded-full px-20 bg-gray-200 ring-2 ring-gray-500 p-2 font-bold text-black">Acciones</label>
           </th>
       </tr>
         <tr v-for="(cruces, index) in dataCruces" :key="index"  class="text-black">
@@ -20,6 +26,8 @@
         <td v-if = "cruces.active == true">Activo</td>
         <td v-else :class="{'text-gray-400':!cruces.active}">Desactivado</td>
         <td :class="{'text-gray-400':!cruces.active}" >{{moment.utc(cruces.insertionDate).local().format("YYYY-MM-DD HH:mm:ss a")}}</td>
+        <td :class="{'text-gray-400':!cruces.active}">{{cruces.economicNumber}}</td>
+        <td :class="{'text-gray-400':!cruces.active}">{{cruces.vehiclePlate}}</td>
         <td class="w-66">
           <div class="w-66 mx-auto">
             <Multiselect v-model="select" placeholder="Seleccione una Acción" @close="acciones_mapper(cruces)"  :options="opticones_select_acciones(cruces)">

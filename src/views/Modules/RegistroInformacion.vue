@@ -6,8 +6,13 @@
       <div class="flex-none my-auto text-white font-md p-2 ml-20 md:ml-1">
         Fecha:<input v-model="fecha" type="date" class="rounded text-black ml-2 md:w-10 xl:w-44" />
       </div>
-      <div class="flex-none my-auto text-white font-md p-2">
-        TAG:<input v-model="tag" type="text" class="rounded text-black ml-2 md:w-10 xl:w-44" />
+      <div class="flex-none my-auto text-white text-center font-md p-2">
+        <select v-model="tipo" class="text-gray-800 w-32 rounded">
+          <option value="A">TAG</option>
+          <option value="B">No Economico</option>
+          <option value="C">No Placa</option>
+        </select>
+        <input v-model="tag" type="text" class="rounded text-black ml-2 md:w-10 xl:w-32" />
       </div>
       <div class="flex-none my-auto text-white font-md p-2">
         ViA:
@@ -19,7 +24,7 @@
         </select>
       </div>
       <div class="flex-none my-auto text-white font-md p-2">
-        Cuerpo:
+        Cuerpo: 
         <select v-model="cuerpo" class="text-gray-800 w-16 rounded">
           <option value="A">Cuerpo A</option>
           <option value="B">Cuerpo B</option>
@@ -27,20 +32,29 @@
       </div>
       <div class="flex-none my-auto text-white font-md p-2">
         Resultados:
-        <select v-model="numRespuesta" class="text-gray-800 w-16 rounded" @change="buscarchange(fecha,tag,carril,cuerpo)">
+        <select v-model="numRespuesta" class="text-gray-800 w-16 rounded" @change="buscarchange(fecha,tag,carril,cuerpo,tipo,clase)">
           <option value="10">10</option>
           <option value="30">30</option>
           <option value="50">50</option>
         </select>
       </div>
-      <div class="flex-none my-auto text-white font-md p-2 ml-39 md:ml-10">
-        <button @click="buscar(fecha,tag,carril,cuerpo)" class="btn-buscar animacion">Buscar</button>
+      <div class="flex-none my-auto text-white font-md p-2">
+        Clase:
+        <select v-model="clase" class="flex-none text-black rounded" name="select" placeholder="Selecciona">
+          <option :value="undefined">Seleccione Clase</option>
+          <option v-for="(clase ,index) in clases" :key="index" :value="clase.clase">
+              {{ clase.clase }}
+          </option>
+        </select>
       </div>
-      <div class="flex-none my-auto text-white font-md p-2 ml-10">
+      <div class="flex-none my-auto text-white font-md p-2">
+        <button @click="buscar(fecha,tag,carril,cuerpo,tipo,clase)" class="btn-buscar animacion">Buscar</button>
+      </div>
+      <div class="flex-none my-auto text-white font-md p-2 ">
         <button @click="todos()" class="btn-buscar animacion">Todos</button>
       </div>
-      <div class="flex-none my-auto ml-right text-white">
-        <select v-model="tiempo" @change="tiempos(tiempo)" class="text-gray-800 w-55 rounded">
+      <div class="flex-none my-auto ml-14 text-white w-10">
+        <select v-model="tiempo" @change="tiempos(tiempo)" class="text-gray-800 w-24 -ml-14 rounded">
           <option value="" disabled>Tiempo de Actualización</option>
           <option value="tres">3 min</option>
           <option value="seis">6 min</option>
@@ -75,6 +89,7 @@ export default {
   components: { TablaInformacionTelepeaje, Navbar, Footer, Paginacion, Spinner},
   setup() {
     const axios = inject('axios')
+    const tipo = ref('A')
     const modalLoading = ref(false) //Constante que permite abrir el spinner de las pantalla de carga
     const cruces = ref([])//Constante que almacena los cruces para mostrar en la tabla
     const tiempo = ref('') //Constante que almacena el tiempo seleccionado para actualizar la tabla
@@ -88,6 +103,8 @@ export default {
     const paginaActual = ref(1) //variable que indica la página en la que estás dentro de la paginación, en la primer carga siempre es la página 1
     const hasMorePages = ref(true) //variable para poder cambiar de páginas con los botones
     const numRespuesta = ref(10)//Variable que indica el número de respuestas por página
+    const clase = ref('');
+    const clases = ref([]);
 
     contador.value = moment.utc(seconds.value).format('HH:mm:ss');//Damos formato para el contador, nos mostrará unicamente los minutos y segundos
     expires_in.value = seconds.value;//Asignamos el valor de los segundos que queremos que descienda desde un inicio
@@ -118,21 +135,36 @@ export default {
       }).catch((error) => {//Si el endpoint tiene un error en la respuesta
         console.log(error.request.response);//Mostramos en consola el error
       })
-    }
+      const rutaclases = (encodeURI(`${API}/Ferromex/clases`))
+      axios.get(rutaclases)
+        .then((result) =>{
+          clases.value = result.data
+        })
+        .catch(
+          (error)=> console.log(error)
+        )
+      }
+    
     function todos (){ //Función que trae todos los cruces, y limpia los header
       modalLoading.value = true//Activamos la bandera que nos muestra el spinner de la pantalla de carga
       header.fecha = ''//Limpiamos los filtros del header
-      header.tag = ''
-      header.carril = ''
-      header.cuerpo = ''
+      header.tag = '';
+      header.carril = '';
+      header.cuerpo = '';
+      tipo.value = 'A';
+      clase.value = '';
       numRespuesta.value = 10
-      let fechaRuta = ' '//Creamos literales con un espacio en blanco, que nos va a servir para enviarlo en la ruta encriptada
-      let tagRuta = ' '
-      let carrilRuta = ' '
-      let cuerpoRuta = ' '
-      const ruta = (encodeURI(`${API}/ferromex/registroInformacion/1/${numRespuesta.value}/${fechaRuta}/${tagRuta}/${carrilRuta}/${cuerpoRuta}`))//Constante almacena la ruta encriptada para hacer la petición al API
+      let fechaRuta = ' ';//Creamos literales con un espacio en blanco, que nos va a servir para enviarlo en la ruta encriptada
+      let tagRuta = ' ';
+      let carrilRuta = ' ';
+      let cuerpoRuta = ' ';
+      let NoEconomicoRuta = ' ';
+      let NoPlacaRuta = ' ';
+      let claseRuta = ' ';
+      const ruta = (encodeURI(`${API}/ferromex/registroInformacion/1/${numRespuesta.value}/${fechaRuta}/${tagRuta}/${carrilRuta}/${cuerpoRuta}/${NoPlacaRuta}/${NoEconomicoRuta}/${claseRuta}`))//Constante almacena la ruta encriptada para hacer la petición al API
       axios.get(ruta)//Hacemos la petición https al API con la ruta encriptada anteriormente
       .then((result) => {//Si el endpoint tiene una respuesta correcta
+        console.log(result.data)
         cruces.value = result.data.cruces//Asignamos el valor de los resultados del endpoint para mostrarlos en la tabla
         console.log(cruces.value)
         totalPaginas.value = result.data.paginas_totales//Asignamos el valor del número de páginas totales para la paginación
@@ -144,7 +176,7 @@ export default {
         modalLoading.value = false//Desactivamos la bandera que muestra el spinner de la pantalla de carga
       })
     }
-    function buscar(fecha, tag, carril, cuerpo){ //Función que realiza la busqueda en la base con un evento click
+    function buscar(fecha,tag,carril,cuerpo,tipo,clase){ //Función que realiza la busqueda en la base con un evento click
       modalLoading.value = true
       if(fecha == '')//Hacemos la validaciones necesarias para poder agregar el espacio vacio es que no se ha escrito o seleccionado un dato en los filtros
         fecha = ' '
@@ -154,7 +186,9 @@ export default {
         carril = ' '
       if(cuerpo == '')
         cuerpo = ' '
-      if(fecha == ' ' && tag == ' ' && carril == ' ' && cuerpo == ' ')//Hacemos la validación para saber si no se escribió o seleccionó nada en los filtros
+      if(clase == '')
+        clase = ' '
+      if(fecha == ' ' && tag == ' ' && carril == ' ' && cuerpo == ' ' && clase == ' ')//Hacemos la validación para saber si no se escribió o seleccionó nada en los filtros
       {
         notify({//Notificación en la que indicamos que no se ha insertado ningún dato para buscar
           title:'Sin Información',
@@ -163,7 +197,31 @@ export default {
         });
         modalLoading.value = false
       }else{
-        const ruta = (encodeURI(`${API}/ferromex/registroInformacion/${paginaActual.value}/${numRespuesta.value}/${fecha}/${tag}/${carril}/${cuerpo}`))//Constante que almacena la ruta encriptada para hacer la petición al API
+        let NoPlaca = ""
+        let NoEconomico = ""
+        let tagenviar = ""
+        if(tag != ' '){
+          paginaActual.value = 1;
+          if(tipo == 'A'){
+            tagenviar = tag
+            NoPlaca = " ";
+            NoEconomico = " "
+          }else if(tipo == 'B'){
+            tagenviar = " "
+            NoPlaca = " ";
+            NoEconomico = tag
+          }else if(tipo == 'C'){
+            tagenviar = " "
+            NoPlaca = tag;
+            NoEconomico = " "
+          }
+        }else{
+          tagenviar = " "
+          NoPlaca = " "
+          NoEconomico = " "
+        }
+        const ruta = (encodeURI(`${API}/ferromex/registroInformacion/${paginaActual.value}/${numRespuesta.value}/${fecha}/${tagenviar}/${carril}/${cuerpo}/${NoPlaca}/${NoEconomico}/${clase}`))//Constante que almacena la ruta encriptada para hacer la petición al API
+        console.log(ruta)
         axios.get(ruta)//Realizamos la petición http al API
         .then((result) => {//Si el endpoint tiene una respuesta correcta
           cruces.value = result.data.cruces//Asignamos los valores del resultado a la constrante que se va a mostrar en la tabla
@@ -176,7 +234,7 @@ export default {
         })
       }
     }
-    function buscarchange(fecha, tag, carril, cuerpo){ //Función que realiza la busqueda en la base con un evento click
+    function buscarchange(fecha, tag, carril, cuerpo,tipo,clase){ //Función que realiza la busqueda en la base con un evento click
       paginaActual.value = 1;
       modalLoading.value = true
       if(fecha == '')//Hacemos la validaciones necesarias para poder agregar el espacio vacio es que no se ha escrito o seleccionado un dato en los filtros
@@ -192,7 +250,33 @@ export default {
       if(cuerpo == ''){
         cuerpo = ' '
       }
-      const ruta = (encodeURI(`${API}/ferromex/registroInformacion/${paginaActual.value}/${numRespuesta.value}/${fecha}/${tag}/${carril}/${cuerpo}`))//Constante que almacena la ruta encriptada para hacer la petición al API
+      if(clase == ''){
+        clase = ' '
+      }
+        let NoPlaca = "";
+        let NoEconomico = "";
+        let tagenviar = ""
+        if(tag != ' '){
+          if(tipo == 'A'){
+            tagenviar = tag
+            NoPlaca = " ";
+            NoEconomico = " "
+          }else if(tipo == 'B'){
+            tagenviar = " "
+            NoPlaca = " ";
+            NoEconomico = tag
+          }else if(tipo == 'C'){
+            tagenviar = " "
+            NoPlaca = tag;
+            NoEconomico = " "
+          }
+        }else{
+          tagenviar = " "
+          NoPlaca = " ";
+          NoEconomico = " "
+        }
+      const ruta = (encodeURI(`${API}/ferromex/registroInformacion/${paginaActual.value}/${numRespuesta.value}/${fecha}/${tagenviar}/${carril}/${cuerpo}/${NoPlaca}/${NoEconomico}/${clase}`))//Constante que almacena la ruta encriptada para hacer la petición al API
+      console.log(ruta)
       axios.get(ruta)//Realizamos la petición http al API
         .then((result) => {//Si el endpoint tiene una respuesta correcta
           cruces.value = result.data.cruces//Asignamos los valores del resultado a la constrante que se va a mostrar en la tabla
@@ -233,7 +317,36 @@ export default {
         header.carril = ' '
       if(header.cuerpo == '')
         header.cuerpo = ' '
-      const ruta = (encodeURI(`${API}/ferromex/registroInformacion/${page}/${numRespuesta.value}/${fechaVacia}/${header.tag}/${header.carril}/${header.cuerpo}`))//Constante que almacena la ruta encriptada para hacer la petición al API
+      let claseRuta;
+      if(clase.value == ''){
+        claseRuta = ' '
+      }else{
+        claseRuta = clase.value
+      }
+      let NoPlaca = "";
+      let NoEconomico = "";
+      let tagenviar = ""  
+      if(header.tag != ' '){
+        if(tipo.value == 'A'){
+          tagenviar = header.tag
+          NoPlaca = " ";
+          NoEconomico = " "
+        }else if(tipo.value == 'B'){
+          tagenviar = " "
+          NoPlaca = " ";
+          NoEconomico = header.tag
+        }else if(tipo.value == 'C'){
+          tagenviar = " "
+          NoPlaca = header.tag;
+          NoEconomico = " "
+        }
+      }else{
+        tagenviar = " "
+        NoPlaca = " ";
+        NoEconomico = " "
+      }
+      const ruta = (encodeURI(`${API}/ferromex/registroInformacion/${page}/${numRespuesta.value}/${fechaVacia}/${tagenviar}/${header.carril}/${header.cuerpo}/${NoPlaca}/${NoEconomico}/${claseRuta}`))//Constante que almacena la ruta encriptada para hacer la petición al API
+      console.log(ruta);
       axios.get(ruta)
       .then((result) => {//Si el endpoint contiene una respuesta correcta
         cruces.value = result.data.cruces//Asignamos el valor de los resultados del endpoint para mostrarlos en la tabla
@@ -252,10 +365,13 @@ export default {
 
     return { 
       header, 
-      carriles, 
-      modalLoading, 
+      carriles,
+      clases, 
+      modalLoading,
+      tipo, 
       cambiarPagina, 
       buscar,
+      clase,
       buscarchange, 
       setInterval_, 
       tiempos, 
