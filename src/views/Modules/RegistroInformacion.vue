@@ -24,7 +24,7 @@
         </select>
       </div>
       <div class="flex-none my-auto text-white font-md p-2">
-        Cuerpo:
+        Cuerpo: 
         <select v-model="cuerpo" class="text-gray-800 w-16 rounded">
           <option value="A">Cuerpo A</option>
           <option value="B">Cuerpo B</option>
