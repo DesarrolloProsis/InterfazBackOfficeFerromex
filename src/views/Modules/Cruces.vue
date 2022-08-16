@@ -64,13 +64,13 @@
             <div class="flex w-full justify-center gap-20 mt-10">
                 <div class="flex flex-col gap-11">
                     <div>
-                        <label for="">Dia</label>
+                        <label for="">Dia*</label>
                     </div>
                     <div>
-                        <label for="">Año/Mes</label>
+                        <label for="">Año/Mes*</label>
                     </div>
                     <div>
-                        <label for="">Semana</label>
+                        <label for="">Semana*</label>
                     </div>
                     <div>
                         <select v-model="tipo" class="input">

@@ -77,15 +77,21 @@
                         <label for="">Plaza de Cobro</label>
                     </div>
                     <div>
+                        <label for="">Fecha*</label>
+                    </div>
+                    <div>
                         <label for="">ViA</label>
                     </div>
                     <div>
-                        <label for="">Fecha</label>
-                    </div>
+                        <label>Tipo de Reporte</label>
+                    </div> 
                 </div>
                 <div class="flex flex-col gap-10">
                     <div>
                         <label for="">Manzanillo</label>
+                    </div>
+                    <div>
+                        <input type="date" class="input" v-model="fecha">
                     </div>
                     <div>
                         <select v-model="carril" class="flex-none text-black rounded" name="select" placeholder="Selecciona">
@@ -96,9 +102,13 @@
                         </select>
                     </div>
                     <div>
-                        <input type="date" class="input" v-model="fecha">
+                        <select class="input" v-model="reportecf"  placeholder="XXXXX">
+                        <option value="undefined" disabled>Seleccione una opción</option>
+                        <option value="1">Operativo Detalle</option>
+                        <option value="2">Opertativo Concentrado</option>
+                        <option value="3">Ambos</option>
+                        </select>
                     </div>
-                    
                 </div>
             </div>
             <div class="flex flex-col w-full items-center justify-center mt-10 mb-8">
