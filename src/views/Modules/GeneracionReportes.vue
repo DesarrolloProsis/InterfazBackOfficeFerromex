@@ -114,10 +114,11 @@
             <div class="flex flex-col w-full items-center justify-center mt-10 mb-8">
                 <div>
                     <button class="border w-40 bg-ferromex text-white ferromex-color" :class="{'cursor-not-allowed' : bloquearbutton}" @click="concentradoFerromexver(concentradoferromex.diascfe,concentradoferromex.mesescfe,concentradoferromex.semanacfe)">Vista previa</button>
-                    <button class="border w-40 bg-ferromex text-white ferromex-color" :class="{'cursor-not-allowed' : bloquearbutton}" @click="concentradoFerromexdescargar(concentradoferromex.diascfe,concentradoferromex.mesescfe,concentradoferromex.semanacfe)">Descargar Reporte</button>
+                    <button class="border w-40 bg-ferromex text-white ferromex-color ml-8" :class="{'cursor-not-allowed' : bloquearbutton}" @click="concentradoFerromexdescargar(concentradoferromex.diascfe,concentradoferromex.mesescfe,concentradoferromex.semanacfe)">Descargar Reporte</button>
                 </div>
             </div>
     </Modal>
+    <Spinner :modalLoading="loading"/>
 </template>
 <script>
 const API = process.env.VUE_APP_URL_API_PRODUCCION
@@ -125,8 +126,9 @@ import { ref,reactive,inject,onMounted,toRefs } from 'vue'
 import Navbar from "../../components/Navbar.vue";
 import Footer from "../../components/Footer";
 import Modal from "../../components/Modal.vue"
-import ServiceFiles from '../../Servicios/Files-Service'
+import { file }  from '../../Servicios/Files-Service'
 import { notify } from "@kyvg/vue3-notification";
+import Spinner from '../../components/Spinner.vue'
 
 import ModuloGeneracionReportes from "../../components/Modulo-generacionreportes";
 export default {
@@ -134,10 +136,12 @@ export default {
         Navbar,
         Footer,
         ModuloGeneracionReportes,
-        Modal
+        Modal,
+        Spinner
     },
     setup() {
         const axios = inject('axios')
+        const { xml_hhtp_request,loading } = file();
         const modulos = ref([
                 {
                     img_src: "Menu/monitoreo-servicios.png",
@@ -232,7 +236,7 @@ export default {
             }else{
                 const ruta = encodeURI(`${API}/Ferromex/Download/pdf/concentradosferromex/${urldias}/${urlmeses}/${urlsemana}`)
                 console.log(ruta)
-                ServiceFiles.xml_hhtp_request(ruta)
+                xml_hhtp_request(ruta,1)
                 //cerramodalconcentradoferromex(false)
             }
             }
@@ -268,12 +272,13 @@ export default {
             }else{
                 const ruta = encodeURI(`${API}/Ferromex/Download/pdf/concentradosferromex/${urldias}/${urlmeses}/${urlsemana}`)
                 console.log(ruta)
-                ServiceFiles.descargararchivo(ruta,nombrearchivo.value)
+                xml_hhtp_request(ruta,2,nombrearchivo.value)
                 //cerramodalconcentradoferromex(false)
             }
         }
         return {
             modulos,
+            loading,
             carriles, 
             showModal,
             showModalReporteDia,

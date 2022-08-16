@@ -57,12 +57,12 @@
 </template>
 
 <script>
-const API = process.env.VUE_APP_URL_API_PRODUCCION
+//const API = process.env.VUE_APP_URL_API_PRODUCCION
 import Navbar from "../../components/Navbar.vue";
 import Footer from "../../components/Footer";
 import { notify } from "@kyvg/vue3-notification";
 import { reactive, ref,onMounted } from 'vue';
-import ServiceFiles from "../../Servicios/Files-Service";
+
 export default {
 components: {
         Navbar,
@@ -92,12 +92,12 @@ setup(){
     }else{
     //Generamos la ruta que hara la llamada a la generacion de los reportes
     if(reporte == "1"){
-      ServiceFiles.xml_hhtp_request(`${API}/Ferromex/Download/pdf/reporteOperativo/reporteTurno/concentrado/${idturno}/${fechareporte}`)
+      //ServiceFiles.xml_hhtp_request(`${API}/Ferromex/Download/pdf/reporteOperativo/reporteTurno/concentrado/${idturno}/${fechareporte}`)
     }else if(reporte == "2"){
-      ServiceFiles.xml_hhtp_request(`${API}/Ferromex/Download/pdf/reporteOperativo/reporteTurno/transacciones/${idturno}/${fechareporte}`)
+      //ServiceFiles.xml_hhtp_request(`${API}/Ferromex/Download/pdf/reporteOperativo/reporteTurno/transacciones/${idturno}/${fechareporte}`)
     }else if(reporte == "3"){
-      ServiceFiles.xml_hhtp_request(`${API}/Ferromex/Download/pdf/reporteOperativo/reporteTurno/concentrado/${idturno}/${fechareporte}`)
-      ServiceFiles.xml_hhtp_request(`${API}/Ferromex/Download/pdf/reporteOperativo/reporteTurno/transacciones/${idturno}/${fechareporte}`)
+      //ServiceFiles.xml_hhtp_request(`${API}/Ferromex/Download/pdf/reporteOperativo/reporteTurno/concentrado/${idturno}/${fechareporte}`)
+      //ServiceFiles.xml_hhtp_request(`${API}/Ferromex/Download/pdf/reporteOperativo/reporteTurno/transacciones/${idturno}/${fechareporte}`)
     }
     
   
@@ -114,12 +114,12 @@ setup(){
     }else{
     //Generamos la ruta que hara la llamada a la generacion de los reportes
     if(reporte == "1"){
-      ServiceFiles.descargararchivo(`${API}/Ferromex/Download/pdf/reporteOperativo/reporteTurno/concentrado/${idturno}/${fechareporte}`,fechareporte + ' ConcentradoTurno.pdf')
+      //ServiceFiles.descargararchivo(`${API}/Ferromex/Download/pdf/reporteOperativo/reporteTurno/concentrado/${idturno}/${fechareporte}`,fechareporte + ' ConcentradoTurno.pdf')
     }else if(reporte == "2"){
-      ServiceFiles.descargararchivo(`${API}/Ferromex/Download/pdf/reporteOperativo/reporteTurno/transacciones/${idturno}/${fechareporte}`,fechareporte + ' TransaccionesTurno.pdf')
+      //ServiceFiles.descargararchivo(`${API}/Ferromex/Download/pdf/reporteOperativo/reporteTurno/transacciones/${idturno}/${fechareporte}`,fechareporte + ' TransaccionesTurno.pdf')
     }else if(reporte == "3"){
-      ServiceFiles.descargararchivo(`${API}/Ferromex/Download/pdf/reporteOperativo/reporteTurno/concentrado/${idturno}/${fechareporte}`,fechareporte + ' ConcentradoTurno.pdf')
-      ServiceFiles.descargararchivo(`${API}/Ferromex/Download/pdf/reporteOperativo/reporteTurno/transacciones/${idturno}/${fechareporte}`,fechareporte + ' TransaccionesTurno.pdf')
+      //ServiceFiles.descargararchivo(`${API}/Ferromex/Download/pdf/reporteOperativo/reporteTurno/concentrado/${idturno}/${fechareporte}`,fechareporte + ' ConcentradoTurno.pdf')
+      //ServiceFiles.descargararchivo(`${API}/Ferromex/Download/pdf/reporteOperativo/reporteTurno/transacciones/${idturno}/${fechareporte}`,fechareporte + ' TransaccionesTurno.pdf')
     }
   }
   }

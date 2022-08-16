@@ -64,6 +64,7 @@
   <Paginacion :total-pages="totalPaginas" :total="100" :current-page="currentPage" :has-more-pages="hasMorePages" @pagechanged="showMore"/> 
   </div>
   <Spinner :modalLoading="modalLoading"/>
+  <Spinner :modalLoading="loading"/>
   <Modal :show="showModal" @cerrarmodal="cerralmodalpadre">
         <h1 class="text-4xl font-bold font-titulo text-center mt-4">Agregar Tag</h1>
             <div class="flex w-full justify-center gap-20 mt-10">
@@ -110,7 +111,7 @@ const API = process.env.VUE_APP_URL_API_PRODUCCION
 import TablaMantenimientoTag from "../../components/Tabla-ManteniminetoTags.vue";
 import Navbar from "../../components/Navbar.vue";
 import Footer from "../../components/Footer";
-import ServiceFiles from '../../Servicios/Files-Service'
+import { file }  from '../../Servicios/Files-Service'
 import Paginacion from "../../components/Paginacion.vue"
 import { notify } from "@kyvg/vue3-notification";
 import Spinner from '../../components/Spinner.vue'
@@ -128,6 +129,7 @@ export default {
   },
   setup() {
     const axios = inject('axios')
+    const { xml_hhtp_request,loading } = file();
     const tipo = ref('A');
     const cruces = ref([]) //Variable para llenar la tabla de tags
     const page = ref(1) //Variable que maneja la paginacion para que se le indique desde donde iniciar
@@ -372,7 +374,7 @@ export default {
             title:'Sin Información',
             text:'No puedes limpiar los parametros si estan vacios' ,
             type: 'warn'
-         });
+        });
       }else{
         cruces.value = [] //Limpiamos el arreglo que contendra los datos
         tipo.value = 'A'
@@ -393,7 +395,7 @@ export default {
           totalPaginas.value = result.data.paginas_totales //Asignamos el numero total de paginas
           currentPage.value = result.data.pagina_actual //Asignamos la pagina actual
           cruces.value = result.data.tags
-       }else{
+        }else{
           modalLoading.value = false //Cerramos Spinner
           notify({ //Notificamos que no encontramos Tags
             title:'Sin Información',
@@ -557,7 +559,7 @@ export default {
       }
       if(tag == ' ' && estatus == ' ' && fecha == ' '){
         const ruta = encodeURI(`${API}/Ferromex/Download/pdf/mantenimientotags/${tagurl}/${estatus}/${fecha}/${numeroplaca}/${numeroeconomico}`)//Ruta codificado
-        ServiceFiles.xml_hhtp_request(ruta, 'reportemantenimientotags.pdf')//Mandamos a llamar el servicio 
+        xml_hhtp_request(ruta,2,'reportemantenimientotags.pdf')//Mandamos a llamar el servicio 
       }else{ //En caso de ser falso
         let estatusurl = "" //Declaramos variables para la url final
         let fechaurl = fecha //Declaramos variables para la url final
@@ -572,12 +574,13 @@ export default {
           estatusurl = " "//La varible final lleva un espacio en blaco
         }
         const ruta = encodeURI(`${API}/Ferromex/Download/pdf/mantenimientotags/${tagurl}/${estatusurl}/${fechaurl}/${numeroplaca}/${numeroeconomico}`)//Ruta codificado
-        ServiceFiles.xml_hhtp_request(ruta, 'reportemantenimientotags.pdf')//Mandamos a llamar el servicio 
+        xml_hhtp_request(ruta,2, 'reportemantenimientotags.pdf')//Mandamos a llamar el servicio 
       }
     }
 
     return{ 
       cerralmodalpadre,
+      loading,
       numerotagagregar,
       numeroplaca,
       numeroeconomico,

@@ -113,6 +113,7 @@
                 </div>
             </div>
     </Modal>
+    <Spinner :modalLoading="loading"/>
 </template>
 <script>
 const API = process.env.VUE_APP_URL_API_PRODUCCION
@@ -122,16 +123,19 @@ import { ref,reactive,toRefs,onMounted } from 'vue'
 import Navbar from "../../components/Navbar.vue";
 import Footer from "../../components/Footer";
 import Modal from "../../components/Modal.vue";
-import ServiceFiles from '../../Servicios/Files-Service';
+import { file }  from '../../Servicios/Files-Service'
 import { notify } from "@kyvg/vue3-notification";
+import Spinner from '../../components/Spinner.vue'
 
 export default {
     components: {
         Navbar,
         Footer,
-        Modal
+        Modal,
+        Spinner
     },
     setup(){
+        const { xml_hhtp_request,loading } = file();
         const showModal = ref(false)
         const showModalTurno = ref(false)
         const modulos = ref([])
@@ -266,7 +270,7 @@ export default {
             }else{
                 const ruta = encodeURI(`${API}/Ferromex/Download/pdf/crucestotales/reporteCruces/${urldias}/${urlmeses}/${urlsemana}`)
                 console.log(ruta)
-                ServiceFiles.xml_hhtp_request(ruta, 'TransaccionesFerromexDetalle.pdf')
+                xml_hhtp_request(ruta,1)
             }
         }
         function generarreportetotaldescargar(dias,meses,semana){
@@ -300,7 +304,7 @@ export default {
                 });
             }else{
                 const ruta = encodeURI(`${API}/Ferromex/Download/pdf/crucestotales/reporteCruces/${urldias}/${urlmeses}/${urlsemana}`)
-                ServiceFiles.descargararchivo(ruta, nombrearchivo.value)
+                xml_hhtp_request(ruta,2,nombrearchivo.value)
             }
         }
         function generarreportecruceferromexver(dias,meses,semana,reporte,tipo,tag){
@@ -362,12 +366,12 @@ export default {
                 console.log(rutadescuentolletalle);
                 console.log(rutadescuentoamerreresumen);
                 if(reporte == "1"){
-                    ServiceFiles.xml_hhtp_request(rutadescuentolletalle)
+                    xml_hhtp_request(rutadescuentolletalle,1)
                 }else if( reporte == "2"){
-                    ServiceFiles.xml_hhtp_request(rutadescuentoamerreresumen)
+                    xml_hhtp_request(rutadescuentoamerreresumen,1)
                 }else if( reporte == "3"){
-                    ServiceFiles.xml_hhtp_request(rutadescuentolletalle)
-                    ServiceFiles.xml_hhtp_request(rutadescuentoamerreresumen)
+                    xml_hhtp_request(rutadescuentolletalle,1)
+                    xml_hhtp_request(rutadescuentoamerreresumen,1)
                 }
                 //cerramodalcruceferromex(false)
             }
@@ -434,12 +438,12 @@ export default {
                 console.log(rutadescuentolletalle);
                 console.log(rutadescuentoamerreresumen);
                 if(reporte == "1"){
-                    ServiceFiles.descargararchivo(rutadescuentolletalle,'descuentodetalle' + hoy.value + '.pdf')
+                    xml_hhtp_request(rutadescuentolletalle,2,'descuentodetalle' + hoy.value + '.pdf')
                 }else if( reporte == "2"){
-                    ServiceFiles.descargararchivo(rutadescuentoamerreresumen,'descuentoamarreresumen' + hoy.value + '.pdf')
+                    xml_hhtp_request(rutadescuentoamerreresumen,2,'descuentoamarreresumen' + hoy.value + '.pdf')
                 }else if( reporte == "3"){
-                    ServiceFiles.descargararchivo(rutadescuentolletalle,'descuentodetalle' + hoy.value + '.pdf')
-                    ServiceFiles.descargararchivo(rutadescuentoamerreresumen,'descuentoamarreresumen' + hoy.value + '.pdf')
+                    xml_hhtp_request(rutadescuentolletalle,2,'descuentodetalle' + hoy.value + '.pdf')
+                    xml_hhtp_request(rutadescuentoamerreresumen,2,'descuentoamarreresumen' + hoy.value + '.pdf')
                 }
                 //cerramodalcruceferromex(false)
             }
@@ -449,6 +453,7 @@ export default {
         return {
         modulos,
         showModal,
+        loading,
         showModalTurno,
         hoy,
         semana,
