@@ -3,6 +3,16 @@
     <h1 class="title font-bold font-titulo">Reportes Intermodal</h1>
     <div class="container mx-auto px-auto px-48 pt-10 my-32">
         <div class="flex flex-wrap ">
+            <button class="p-7 -mt-12 w-1/3" @click="abrirmodaloperativos()">
+                    <div class="rounded-lg  animacion flex flex-col bg-ferromex border-2 border-gray-900" >
+                    <div>
+                            <img class="img" src="@/assets/Menu/capacidad-de-almacenamiento.png" />
+                        </div>
+                        <div class="text-center py-5 font-titulo font-bold text-white ">
+                            <h1>Operativos</h1>
+                        </div>
+                    </div>
+            </button>
             <ModuloGeneracionReportes
                 v-for="(modulo, index) in modulos"
                 :key="index"
@@ -14,7 +24,7 @@
             ></ModuloGeneracionReportes>
             <button class="p-7 -mt-12 w-1/3" @click="abrirmodalconcentradoferromex">
                     <div class="rounded-lg  animacion flex flex-col bg-ferromex border-2 border-gray-900" >
-                       <div>
+                    <div>
                             <img class="img" src="@/assets/Menu/almacenamiento-de-base-de-datos.png" />
                         </div>
                         <div class="text-center py-5 font-titulo font-bold text-white ">
@@ -59,10 +69,49 @@
                 </div>
             </div>
     </Modal>
+    <Modal :show="showModalReporteDia" @cerrarmodal="cerramodaloperativos">
+        <h1 class="text-4xl font-bold font-titulo text-center mt-4">Reporte Dia</h1>
+            <div class="flex w-full justify-center gap-20 mt-10">
+                <div class="flex flex-col gap-10">
+                    <div>
+                        <label for="">Plaza de Cobro</label>
+                    </div>
+                    <div>
+                        <label for="">ViA</label>
+                    </div>
+                    <div>
+                        <label for="">Fecha</label>
+                    </div>
+                </div>
+                <div class="flex flex-col gap-10">
+                    <div>
+                        <label for="">Manzanillo</label>
+                    </div>
+                    <div>
+                        <select v-model="carril" class="flex-none text-black rounded" name="select" placeholder="Selecciona">
+                            <option :value="undefined">Seleccione ViA</option>
+                            <option v-for="(ca ,index) in carriles" :key="index" :value="ca.id">
+                            {{ ca.Carril }}
+                            </option>
+                        </select>
+                    </div>
+                    <div>
+                        <input type="date" class="input" v-model="fecha">
+                    </div>
+                    
+                </div>
+            </div>
+            <div class="flex flex-col w-full items-center justify-center mt-10 mb-8">
+                <div>
+                    <button class="border w-40 bg-ferromex text-white ferromex-color" :class="{'cursor-not-allowed' : bloquearbutton}" @click="concentradoFerromexver(concentradoferromex.diascfe,concentradoferromex.mesescfe,concentradoferromex.semanacfe)">Vista previa</button>
+                    <button class="border w-40 bg-ferromex text-white ferromex-color" :class="{'cursor-not-allowed' : bloquearbutton}" @click="concentradoFerromexdescargar(concentradoferromex.diascfe,concentradoferromex.mesescfe,concentradoferromex.semanacfe)">Descargar Reporte</button>
+                </div>
+            </div>
+    </Modal>
 </template>
 <script>
 const API = process.env.VUE_APP_URL_API_PRODUCCION
-import { ref,reactive } from 'vue'
+import { ref,reactive,inject,onMounted,toRefs } from 'vue'
 import Navbar from "../../components/Navbar.vue";
 import Footer from "../../components/Footer";
 import Modal from "../../components/Modal.vue"
@@ -78,20 +127,17 @@ export default {
         Modal
     },
     setup() {
-        const modulos = ref([  {
-                    img_src: "Menu/capacidad-de-almacenamiento.png",
-                    nombre: "Operativos",
-                    ruta: "/inicio/Reportes-Operativos",
-                    color: "red"
-                },
+        const axios = inject('axios')
+        const modulos = ref([
                 {
                     img_src: "Menu/monitoreo-servicios.png",
                     nombre: "Cruces Telepeaje",
                     ruta: "/inicio/Cruces",
                     color: "red"
                 }])
-        const carriles = ref(true)
+        const carriles = ref([])
         const showModal = ref(false)
+        const showModalReporteDia = ref(false)
         const bloquear = ref(false)
         const bloquearbutton = ref(true)
         const nombrearchivo = ref("")
@@ -100,16 +146,41 @@ export default {
             mesescfe: '',
             semanacfe: ''
         })
+        const reportedia = reactive({
+            carril: undefined,
+            fecha:''
+        })
+    onMounted( ()=> 
+        carrilesExistentes()
+    )
+    function carrilesExistentes (){//Función que trae todos los carriles existentes
+        const ruta = (encodeURI(`${API}/ferromex/carriles`))//Constante que guarda la ruta encriptada para la consulta en el API
+        axios.get(ruta)//Hacemos una petición http al API con la ruta previamente encriptada
+            .then((result) => {//Si el endpoint responde de manera correcta
+            console.log(result);
+            carriles.value = result.data //Asignamos los valores de la respuesta del endpoint para mostrarlos en el header para los filtros
+        }).catch((error) => {//Si el endpoint tiene un error en la respuesta
+            console.log(error.request.response);//Mostramos en consola el error
+        })
+    }
         function abrirmodalconcentradoferromex(){
             showModal.value = !showModal.value //Cambia el valor de la variable que muestra el modal 
             bloquear.value = false //Cambiamos la variable a falso para desbloquear los inputs que esten bloqueados
             limpiarconcentradoferromex() //Llamamos la funcion para limpiar los campos correspondientes
+        }
+        function abrirmodaloperativos(){
+            showModalReporteDia.value = !showModalReporteDia.value //Cambia el valor de la variable que muestra el modal 
         }
         //Declaracion de cierre de modales 
         const cerramodalconcentradoferromex = (modal) => {
             console.log(modal)
             showModal.value = modal
             limpiarconcentradoferromex()
+        }
+        //Declaracion de cierre de modales 
+        const cerramodaloperativos = (modal) => {
+            console.log(modal)
+            showModalReporteDia.value = modal
         }
         //Funcion para limpiar los campos del modal cruces totales
         function limpiarconcentradoferromex(){
@@ -123,12 +194,12 @@ export default {
             bloquear.value = true // bloqueamos los campos
             bloquearbutton.value = false
         }
-       function concentradoFerromexver(dias,meses,semana){
-           let urldias = ""
+        function concentradoFerromexver(dias,meses,semana){
+            let urldias = ""
             let urlmeses = ""
             let urlsemana = ""
             if(dias == ''){
-               urldias = " "
+            urldias = " "
             }else if(dias != ''){
                 urldias = dias
             }
@@ -143,7 +214,7 @@ export default {
                 urlsemana = semana
             }
             if(urldias == " " && urlmeses == " " && urlsemana == " "){
-                  notify({
+                notify({
                     title:'Sin parametros',
                     text:'Para ver un reporte se necesita seleccionar un parametro',
                     type: 'error'
@@ -156,12 +227,12 @@ export default {
             }
             }
         function concentradoFerromexdescargar(dias,meses,semana){
-           let urldias = ""
+            let urldias = ""
             let urlmeses = ""
             let urlsemana = ""
             nombrearchivo.value = ""
             if(dias == ''){
-               urldias = " "
+                urldias = " "
             }else if(dias != ''){
                 urldias = dias
                 nombrearchivo.value = dias + ' AuditoriaIntermodal.pdf'
@@ -179,7 +250,7 @@ export default {
                 nombrearchivo.value = semana + ' AuditoriaIntermodal.pdf'
             }
             if(urldias == " " && urlmeses == " " && urlsemana == " "){
-                  notify({
+                notify({
                     title:'Sin parametros',
                     text:'Para descargar un reporte se necesita seleccionar un parametro',
                     type: 'error'
@@ -195,11 +266,16 @@ export default {
             modulos,
             carriles, 
             showModal,
+            showModalReporteDia,
             bloquear,
             cerramodalconcentradoferromex,
+            cerramodaloperativos,
             limpiarconcentradoferromex,
             bloquearinputs,
             abrirmodalconcentradoferromex,
+            abrirmodaloperativos,
+            ...toRefs(reportedia),
+            carrilesExistentes,
             concentradoFerromexdescargar,
             concentradoferromex,
             bloquearbutton,
