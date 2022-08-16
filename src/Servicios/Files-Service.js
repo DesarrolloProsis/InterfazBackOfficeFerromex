@@ -4,7 +4,7 @@ import {ref} from 'vue';
 
 export const file = () => {
   const loading = ref(false);
-function xml_hhtp_request(urlToFile,tipo,name){   
+function xml_hhtp_request(urlToFile,tipo,name){  
     loading.value = true; 
     var oReq = new XMLHttpRequest();  
     oReq.open("GET", urlToFile, true);    

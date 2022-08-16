@@ -102,7 +102,7 @@
                         </select>
                     </div>
                     <div>
-                        <select class="input" v-model="reportecf"  placeholder="XXXXX">
+                        <select class="input" v-model="tiportedia"  placeholder="XXXXX">
                         <option value="undefined" disabled>Seleccione una opción</option>
                         <option value="1">Operativo Detalle</option>
                         <option value="2">Opertativo Concentrado</option>
@@ -113,8 +113,8 @@
             </div>
             <div class="flex flex-col w-full items-center justify-center mt-10 mb-8">
                 <div>
-                    <button class="border w-40 bg-ferromex text-white ferromex-color" :class="{'cursor-not-allowed' : bloquearbutton}" @click="concentradoFerromexver(concentradoferromex.diascfe,concentradoferromex.mesescfe,concentradoferromex.semanacfe)">Vista previa</button>
-                    <button class="border w-40 bg-ferromex text-white ferromex-color ml-8" :class="{'cursor-not-allowed' : bloquearbutton}" @click="concentradoFerromexdescargar(concentradoferromex.diascfe,concentradoferromex.mesescfe,concentradoferromex.semanacfe)">Descargar Reporte</button>
+                    <button class="border w-40 bg-ferromex text-white ferromex-color" :class="{'cursor-not-allowed' : bloquearbutton}" @click="reporteverdia(fecha,carril,tiportedia)">Vista previa</button>
+                    <button class="border w-40 bg-ferromex text-white ferromex-color ml-8" :class="{'cursor-not-allowed' : bloquearbutton}" @click="reportedescargardia(fecha,carril,tiportedia)">Descargar Reporte</button>
                 </div>
             </div>
     </Modal>
@@ -155,6 +155,7 @@ export default {
         const bloquear = ref(false)
         const bloquearbutton = ref(true)
         const nombrearchivo = ref("")
+        const tiportedia = ref("undefined")
         const concentradoferromex = reactive({
             diascfe: '',
             mesescfe: '',
@@ -276,6 +277,79 @@ export default {
                 //cerramodalconcentradoferromex(false)
             }
         }
+        function reporteverdia(fecha,carril,tipo){
+            let urlfecha = ""
+            let urlcarril = ""
+            nombrearchivo.value = ""
+            if(carril == ''){
+                urlcarril = " "
+            }
+            if(fecha == ''){
+                urlfecha = " "
+            }
+            if(urlfecha == " "){
+                notify({
+                    title:'Sin parametros',
+                    text:'Para descargar un reporte se necesita seleccionar un parametro',
+                    type: 'error'
+                });
+            }else if(tipo == "undefined"){
+                notify({
+                    title:'No se a seleccionado el tipo de reporte',
+                    text:'Para poder descargar un reporte debes seleccionar uno',
+                    type: 'error'
+                });
+            }else{
+                const rutadetalle = encodeURI(`${API}/Ferromex/Download/pdf/reporteOperativo/detalles/${urlcarril}/${urlfecha}`)
+                const rutaconcentrado = encodeURI(`${API}/Ferromex/Download/pdf/reporteOperativo/concentrado/${urlcarril}/${urlfecha}`)
+                if(tipo == 1){
+                    xml_hhtp_request(rutadetalle,1)
+                }else if(tipo == 2){
+                    xml_hhtp_request(rutaconcentrado,1)
+                }else if(tipo == 3){
+                    xml_hhtp_request(rutadetalle,1)
+                    xml_hhtp_request(rutaconcentrado,1)
+                }
+                //cerramodalconcentradoferromex(false)
+            }
+        }
+        function reportedescargardia(fecha,carril,tipo){
+            let urlfecha = ""
+            let urlcarril = ""
+            nombrearchivo.value = ""
+            if(carril == ''){
+                urlcarril = " "
+            }
+            if(fecha == ''){
+                urlfecha = " "
+            }
+            if(urlfecha == " "){
+                notify({
+                    title:'Sin parametros',
+                    text:'Para descargar un reporte se necesita seleccionar un parametro',
+                    type: 'error'
+                });
+            }else if(tipo == "undefined"){
+                notify({
+                    title:'No se a seleccionado el tipo de reporte',
+                    text:'Para poder descargar un reporte debes seleccionar uno',
+                    type: 'error'
+                });
+            }else{
+                const rutadetalle = encodeURI(`${API}/Ferromex/Download/pdf/reporteOperativo/detalles/${urlcarril}/${urlfecha}`)
+                const rutaconcentrado = encodeURI(`${API}/Ferromex/Download/pdf/reporteOperativo/concentrado/${urlcarril}/${urlfecha}`)
+                if(tipo == 1){
+                    xml_hhtp_request(rutadetalle,2,'OperativoDetalle' + fecha + '.pdf')
+                }else if(tipo == 2){
+                    xml_hhtp_request(rutadetalle,2,'OperativoConcentrado' + fecha + '.pdf')
+                }else if(tipo == 3){
+                    xml_hhtp_request(rutadetalle,2,'OperativoDetalle' + fecha + '.pdf')
+                    xml_hhtp_request(rutaconcentrado,2,'OperativoConcentrado' + fecha + '.pdf')
+                }
+                //cerramodalconcentradoferromex(false)
+            }
+            
+        }
         return {
             modulos,
             loading,
@@ -283,6 +357,8 @@ export default {
             showModal,
             showModalReporteDia,
             bloquear,
+            reporteverdia,
+            reportedescargardia,
             cerramodalconcentradoferromex,
             cerramodaloperativos,
             limpiarconcentradoferromex,
@@ -296,6 +372,7 @@ export default {
             bloquearbutton,
             nombrearchivo,
             concentradoFerromexver,
+            tiportedia
             }
     }
 }
