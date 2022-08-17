@@ -85,7 +85,7 @@
                         <label for="">ViA</label>
                     </div>
                     <div>
-                        <label>Tipo de Reporte</label>
+                        <label>Tipo de Reporte*</label>
                     </div> 
                 </div>
                 <div class="flex flex-col gap-10">
