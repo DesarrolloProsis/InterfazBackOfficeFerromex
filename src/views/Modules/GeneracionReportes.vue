@@ -196,6 +196,7 @@ export default {
         const cerramodaloperativos = (modal) => {
             console.log(modal)
             showModalReporteDia.value = modal
+            limpiarreportedia()
         }
         //Funcion para limpiar los campos del modal cruces totales
         function limpiarconcentradoferromex(){
@@ -203,6 +204,11 @@ export default {
             concentradoferromex.mesescfe = ''
             concentradoferromex.semanacfe = ''
             bloquearbutton.value = true
+        }
+        function limpiarreportedia(){
+            reportedia.carril = undefined
+            reportedia.fecha = ''
+            tiportedia.value = undefined
         }
         //Funcion para bloquear los inputs de mes y semana en caso de ser seleccionado el de dia
         function bloquearinputs(){
@@ -281,16 +287,20 @@ export default {
             let urlfecha = ""
             let urlcarril = ""
             nombrearchivo.value = ""
-            if(carril == ''){
+            if(carril == undefined){
                 urlcarril = " "
+            }else{
+                urlcarril = carril
             }
             if(fecha == ''){
                 urlfecha = " "
+            }else{
+                urlfecha = fecha
             }
             if(urlfecha == " "){
                 notify({
-                    title:'Sin parametros',
-                    text:'Para descargar un reporte se necesita seleccionar un parametro',
+                    title:'Sin Fecha',
+                    text:'No puedes generar el reporte sin fecha',
                     type: 'error'
                 });
             }else if(tipo == "undefined"){
@@ -317,16 +327,20 @@ export default {
             let urlfecha = ""
             let urlcarril = ""
             nombrearchivo.value = ""
-            if(carril == ''){
+            if(carril == undefined){
                 urlcarril = " "
+            }else{
+                urlcarril = carril
             }
             if(fecha == ''){
                 urlfecha = " "
+            }else{
+                urlfecha = fecha
             }
             if(urlfecha == " "){
                 notify({
-                    title:'Sin parametros',
-                    text:'Para descargar un reporte se necesita seleccionar un parametro',
+                    title:'Sin Fecha',
+                    text:'No puedes generar el reporte sin fecha',
                     type: 'error'
                 });
             }else if(tipo == "undefined"){
@@ -361,6 +375,7 @@ export default {
             reportedescargardia,
             cerramodalconcentradoferromex,
             cerramodaloperativos,
+            limpiarreportedia,
             limpiarconcentradoferromex,
             bloquearinputs,
             abrirmodalconcentradoferromex,
