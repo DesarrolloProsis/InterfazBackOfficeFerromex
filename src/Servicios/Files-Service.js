@@ -1,6 +1,7 @@
 import saveAs from "file-saver";
 import ServiceToken from '../Servicios/Token-Services'
 import {ref} from 'vue';
+import { notify } from "@kyvg/vue3-notification";
 
 export const file = () => {
   const loading = ref(false);
@@ -28,11 +29,19 @@ function xml_hhtp_request(urlToFile,tipo,name){
         }
         }else{
           loading.value = false; 
-          alert("No se pudo generar el reporte por favor intentelo mas tarde");
+          notify({
+            title:'Archivo Vacio',
+            text:'No se pudo generar el reporte por favor intentelo mas tarde',
+            type: 'error'
+          });
         }
       }else {
         loading.value = false; 
-        alert("No se pudo generar el reporte por favor intentelo mas tarde");
+        notify({
+          title:'Archivo Dañado',
+          text:'No se pudo generar el reporte por favor intentelo mas tarde',
+          type: 'error'
+        });
       }
       //saveAs(file, nameFile);  
     };            

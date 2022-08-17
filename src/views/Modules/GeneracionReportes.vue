@@ -40,13 +40,13 @@
             <div class="flex w-full justify-center gap-20 mt-10">
                 <div class="flex flex-col gap-10">
                     <div>
-                        <label for="">Dia</label>
+                        <label for="">Dia*</label>
                     </div>
                     <div>
-                        <label for="">Año/Mes</label>
+                        <label for="">Año/Mes*</label>
                     </div>
                     <div>
-                        <label for="">Semana</label>
+                        <label for="">Semana*</label>
                     </div>
                 </div>
                 <div class="flex flex-col gap-10">
@@ -68,6 +68,8 @@
                     <button class="border w-40 bg-ferromex text-white ferromex-color" :class="{'cursor-not-allowed' : bloquearbutton}" @click="concentradoFerromexdescargar(concentradoferromex.diascfe,concentradoferromex.mesescfe,concentradoferromex.semanacfe)">Descargar Reporte</button>
                 </div>
             </div>
+            <h1 class="text-xl font-bold font-titulo text-center mt-2">* Campo Obligatorio</h1>
+            <h1 class="text-xl font-bold font-titulo text-center mt-2 mb-4">Solo se puede seleccionar ya sea dia,año/mes o semana</h1>
     </Modal>
     <Modal :show="showModalReporteDia" @cerrarmodal="cerramodaloperativos">
         <h1 class="text-4xl font-bold font-titulo text-center mt-4">Reporte Dia</h1>
@@ -91,7 +93,7 @@
                         <label for="">Manzanillo</label>
                     </div>
                     <div>
-                        <input type="date" class="input" v-model="fecha">
+                        <input type="date" class="input" v-model="fecha" @change="bloquearinputsreportedia()">
                     </div>
                     <div>
                         <select v-model="carril" class="flex-none text-black rounded" name="select" placeholder="Selecciona">
@@ -117,6 +119,7 @@
                     <button class="border w-40 bg-ferromex text-white ferromex-color ml-8" :class="{'cursor-not-allowed' : bloquearbutton}" @click="reportedescargardia(fecha,carril,tiportedia)">Descargar Reporte</button>
                 </div>
             </div>
+            <h1 class="text-xl font-bold font-titulo text-center mt-2 mb-4">* Campo Obligatorio</h1>
     </Modal>
     <Spinner :modalLoading="loading"/>
 </template>
@@ -215,6 +218,10 @@ export default {
             bloquear.value = true // bloqueamos los campos
             bloquearbutton.value = false
         }
+        function bloquearinputsreportedia(){
+            bloquear.value = true // bloqueamos los campos
+            bloquearbutton.value = false
+        }
         function concentradoFerromexver(dias,meses,semana){
             let urldias = ""
             let urlmeses = ""
@@ -303,7 +310,14 @@ export default {
                     text:'No puedes generar el reporte sin fecha',
                     type: 'error'
                 });
-            }else if(tipo == "undefined"){
+            }else if(urlfecha != " " && tipo == "undefined"){
+                notify({
+                    title:'No se a seleccionado el tipo de reporte',
+                    text:'Para poder descargar un reporte debes seleccionar uno',
+                    type: 'error'
+                });
+            }
+            else if(tipo == "undefined"){
                 notify({
                     title:'No se a seleccionado el tipo de reporte',
                     text:'Para poder descargar un reporte debes seleccionar uno',
@@ -343,7 +357,15 @@ export default {
                     text:'No puedes generar el reporte sin fecha',
                     type: 'error'
                 });
-            }else if(tipo == "undefined"){
+            }
+            else if(urlfecha != " " && tipo == "undefined"){
+                notify({
+                    title:'No se a seleccionado el tipo de reporte',
+                    text:'Para poder descargar un reporte debes seleccionar uno',
+                    type: 'error'
+                });
+            }
+            else if(tipo == "undefined"){
                 notify({
                     title:'No se a seleccionado el tipo de reporte',
                     text:'Para poder descargar un reporte debes seleccionar uno',
@@ -378,6 +400,7 @@ export default {
             limpiarreportedia,
             limpiarconcentradoferromex,
             bloquearinputs,
+            bloquearinputsreportedia,
             abrirmodalconcentradoferromex,
             abrirmodaloperativos,
             ...toRefs(reportedia),

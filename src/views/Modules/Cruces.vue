@@ -31,13 +31,13 @@
             <div class="flex w-full justify-center gap-20 mt-10">
                 <div class="flex flex-col gap-10">
                     <div>
-                        <label for="">Dia</label>
+                        <label for="">Dia*</label>
                     </div>
                     <div>
-                        <label for="">Año/Mes</label>
+                        <label for="">Año/Mes*</label>
                     </div>
                     <div>
-                        <label for="">Semana</label>
+                        <label for="">Semana*</label>
                     </div>
                 </div>
                 <div class="flex flex-col gap-10">
@@ -58,13 +58,15 @@
                     <button class="rounded-lg w-18 bg-ferromex text-white p-10 ml-6" @click="generarreportetotaldescargar(dias,meses,semana)">Descargar Reporte</button>
                 </div>
             </div>
+            <h1 class="text-xl font-bold font-titulo text-center mt-2">* Campo Obligatorio</h1>
+            <h1 class="text-xl font-bold font-titulo text-center mt-2 mb-4">Solo se puede seleccionar ya sea dia,año/mes o semana</h1>
     </Modal>
     <Modal :show="showModalTurno" @cerrarmodal="cerramodalcruceferromex">
         <h1 class="text-4xl font-bold font-titulo text-center mt-4">Cruces Intermodal</h1>
             <div class="flex w-full justify-center gap-20 mt-10">
                 <div class="flex flex-col gap-11">
                     <div>
-                        <label for="">Dia*</label>
+                        <label for="">Dia<b class="font-bold">*</b></label>
                     </div>
                     <div>
                         <label for="">Año/Mes*</label>
@@ -112,6 +114,8 @@
                     <button class="rounded-lg w-18 bg-ferromex text-white p-10 ml-6"  @click="generarreportecruceferromexdescargar(diascf,mesescf,semanacf,reportecf,tipo,tag)">Descargar Reporte</button>
                 </div>
             </div>
+            <h1 class="text-xl font-bold font-titulo text-center mt-2">* Campo Obligatorio</h1>
+            <h1 class="text-xl font-bold font-titulo text-center mt-2 mb-4">Solo se puede seleccionar ya sea dia,año/mes o semana</h1>
     </Modal>
     <Spinner :modalLoading="loading"/>
 </template>
