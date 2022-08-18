@@ -42,11 +42,11 @@
     <div>
       <p class="text-gray-900 font-bold text-2xl -mt-8 mb-8 text-center">Agregar Nuevo Perfil</p>     
       <div class="grid grid-cols-2 mt-2">
-        <p class="text-sm mb-1 font-semibold text-gray-700 text-center sm:-ml-6">Nombre Perfil</p>
+        <p class="text-sm mb-1 font-semibold text-gray-700 text-center sm:-ml-6">Nombre Perfil*:</p>
         <input v-model="newRol.nombre" type="text" class="border mx-auto w-52 rounded-lg" :class="{'border border-red-400': vacio}" @input="vacio = false">
       </div>
       <div class="grid grid-cols-2 mt-2">
-        <p class="text-sm mb-1 text-center font-semibold text-gray-700 mt-2 sm:-ml-6">Módulos</p>
+        <p class="text-sm mb-1 text-center font-semibold text-gray-700 mt-2 sm:-ml-6">Módulos*:</p>
         <Multiselect
           v-model="newRol.vistas" 
           label="text"
@@ -65,6 +65,7 @@
       <div class="mt-10 text-center mx-auto mb-4">
         <button @click="craer_nuevo_rol" class="rounded-lg w-18 bg-ferromex text-white p-10">Guardar</button>
       </div>
+      <h1 class="text-xl font-bold font-titulo text-center -mt-2">* Campo Obligatorio</h1>
     </div>
   </Modal>
   <!-- MODAL CARGANDO -->
