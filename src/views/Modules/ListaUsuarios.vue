@@ -77,6 +77,7 @@
       <div class="mt-10 text-center mx-auto mb-4">
         <button @click="guardar()" class="rounded-lg w-18 bg-ferromex text-white p-10">Guardar</button>
       </div>
+      <h1 class="text-xl font-bold font-titulo text-center -mt-2">* Campo Obligatorio</h1>
     </div>
   </Modal>
   <!-- MODAL CARGANDO -->

@@ -81,6 +81,7 @@
       <div class="mt-10 text-center mx-auto mb-4">
         <button @click="cambiarPass()" class="rounded-lg w-18 bg-ferromex text-white p-10">Cambiar Contraseña</button>
       </div>
+      <h1 class="text-xl font-bold font-titulo text-center -mt-2">* Campo Obligatorio</h1>
     </div>
   </Modal>
   <!-- FIN MODAL-->
@@ -102,9 +103,9 @@
     <div>
       <p class="text-gray-900 font-bold text-2xl -mt-8 mb-8 text-center">Editar Usuario</p>
       <div class="grid grid-cols-2 mt-2">
-        <p class="text-sm mb-1 mx-auto font-semibold text-gray-700">Nombre</p>
+        <p class="text-sm mb-1 mx-auto font-semibold text-gray-700">Nombre*:</p>
         <input v-model="usuario.nombre" class="border rounded-lg w-56" type="text" :class="{'border border-red-500': usuario.nombre.trim() == ''}">
-        <p class="text-sm mb-1 font-semibold text-gray-700 mx-auto">Apellido(s)</p>
+        <p class="text-sm mb-1 font-semibold text-gray-700 mx-auto">Apellido(s)*:</p>
         <input v-model="usuario.apellidos" class="border rounded-lg w-56" type="text" :class="{'border border-red-500': usuario.apellidos.trim() == ''}">
       </div>
       <span v-if="usuario.nombre.trim() == '' || usuario.apellidos.trim() == ''" class="text-xs text-center text-red-300 mx-auto">
@@ -113,6 +114,7 @@
       <div class="mt-10 text-center mx-auto mb-4">
         <button class="rounded-lg w-18 bg-ferromex text-white p-10" @click="editarUsuario(usuario)">Guardar</button>
       </div>
+      <h1 class="text-xl font-bold font-titulo text-center -mt-2">* Campo Obligatorio</h1>
     </div>
   </Modal>
   <!-- FIN MODAL-->
@@ -122,7 +124,7 @@
       <p class="text-gray-900 font-bold text-2xl -mt-8 mb-8 text-center -mx-6">Cambiar Perfil a {{ usuario.nombre +' '+ usuario.apellidos }}</p>
       <p class="text-gray-900 font-bold text-2xl -mt-8 mb-8 text-center">con Perfil {{ usuario.rol }}</p>
       <div class="grid grid-cols-2 mt-2">      
-        <p class="text-sm mb-1 font-semibold text-gray-700  text-center sm:-ml-6">Perfil</p>
+        <p class="text-sm mb-1 font-semibold text-gray-700  text-center sm:-ml-6">Perfil*:</p>
         <Multiselect
           v-model="seleccionado.rol"
           placeholder="Seleccione un Rol"
@@ -140,6 +142,7 @@
       <div class="mt-10 text-center mx-auto mb-4">
         <button @click="cambiarRol(usuario)" class="rounded-lg w-18 bg-ferromex text-white p-10">Guardar</button>
       </div>
+      <h1 class="text-xl font-bold font-titulo text-center -mt-2">* Campo Obligatorio</h1>
     </div>
   </Modal>
   <!-- FIN MODAL-->
@@ -285,7 +288,7 @@ export default {
           emit('refrescarTabla', true)//Se realiza el emit al componente padre, para refrescar la tabla con los cambios realizados
           notify({//Notifiación que se le muestra al usuario si se hizo el cmabio correcto
             title:'Cambio Exitoso',
-            text:`Se cambió el estatus al usuario ${usuario.nombre + ' ' + usuario.apellidos}`,
+            text:`Se editó correctamente el usuario ${usuario.nombre + ' ' + usuario.apellidos}`,
             type: 'success'
           });
         })
@@ -293,7 +296,7 @@ export default {
           console.log(error.request.response);//Mostramos el error en la consola
           notify({//Notifiación que se le muestra al usuario si no se hace el cambio
             title:'Cambio Exitoso',
-            text:`No se pudo cambiar el estatus al usuario ${usuario.nombre + ' ' + usuario.apellidos}`,
+            text:`No se pudo editar el usuario ${usuario.nombre + ' ' + usuario.apellidos}`,
             type: 'error'
           });
         })
@@ -353,7 +356,7 @@ export default {
           emit('refrescarTabla', true)//Se realiza el emit al componente padre, para refrescar la tabla con los cambios realizados
           notify({
             title:'Cambio Exitoso',
-            text:`Se cambió el rol del usuario ${usuario.nombre + ' ' + usuario.apellidos}`,
+            text:`Se cambió el perfil del usuario ${usuario.nombre + ' ' + usuario.apellidos}`,
             type: 'success'
           });
         }).catch((error) => {
