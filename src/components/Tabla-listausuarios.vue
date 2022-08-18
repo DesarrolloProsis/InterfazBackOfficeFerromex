@@ -49,7 +49,7 @@
       <p class="text-gray-900 font-bold text-xl -mt-8 mb-8 text-center">Cambiar Contraseña a {{ seleccionado.nombre + ' ' + seleccionado.apellidos }}</p>
       <div class="mt-2">
         <div class="grid grid-cols-2">
-          <p class="mx-auto">Nueva Contraseña:</p>
+          <p class="mx-auto">Nueva Contraseña*:</p>
           <div class="w-full inline-flex relative flex-row-reverse">
             <input v-model="pass" class="border border-gray-300 rounded-lg mx-16 w-full " :type="tipoInput" :class="{'border-red-600': !mayuscula}" @input="mayuscula = true">
             <span @click="tipoInput == 'password' ? tipoInput = 'text' : tipoInput = 'password'" class="absolute mx-16 mt-1 curor-pointer">
@@ -64,7 +64,7 @@
           </span>
         </div>
         <div class="grid grid-cols-2">
-        <p class="mx-auto">Confirmar Contraseña:</p>
+        <p class="mx-auto">Confirmar Contraseña*:</p>
         <div class="w-full inline-flex relative flex-row-reverse">
           <input v-model="passConfirm" class="border border-gray-300 rounded-lg mx-16 w-full " :type="tipoInputConfirm" :class="{'border-red-600': passConfirm != pass}">
           <span @click="tipoInputConfirm == 'password' ? tipoInputConfirm = 'text' : tipoInputConfirm = 'password'" class="absolute mx-16 mt-1 curor-pointer">
@@ -252,6 +252,14 @@ export default {
         notify({//notificación de que el usuario se inserto correctamente
           title:'Nuevo Usuario',//titulo de la notificaci{on}
           text:`Todos los campos son obligatorios`,//texto de la notificación 
+          duration: 20000,//duración de la notificación
+          closeonclick:true,//si le damos click se cierra la notificación
+          type: 'warn'//el tipo de notificación, si es success el color será verde
+        });
+      }else if(passConfirm.value != pass.value){
+        notify({//notificación de que el usuario se inserto correctamente
+          title:'Nuevo Usuario',//titulo de la notificaci{on}
+          text:`Las contraseñas tienen que coincidir`,//texto de la notificación 
           duration: 20000,//duración de la notificación
           closeonclick:true,//si le damos click se cierra la notificación
           type: 'warn'//el tipo de notificación, si es success el color será verde
