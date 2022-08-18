@@ -1,5 +1,5 @@
 <template>
-  <div class="responsive-table overflow-auto">          
+  <div class="responsive-table">          
     <table class="tftable">
       <tr class="h-10">
         <th>
