@@ -4,7 +4,7 @@
     <h1 class="title-center font-titulo font-bold pb-4">Transacciones Intermodal</h1>
     <div class="flex flex-wrap ferromex-color p-1 rounded-lg">
       <div class="flex-none my-auto text-white font-md p-2 ml-20 md:ml-1">
-        Fecha:<input v-model="fecha" type="date" class="rounded text-black ml-2 md:w-10 xl:w-44" />
+        Fecha:<input v-model="fecha" type="date" class="rounded text-black ml-2 md:w-10 xl:w-32" />
       </div>
       <div class="flex-none my-auto text-white text-center font-md p-2">
         <select v-model="tipo" class="text-gray-800 w-32 rounded">
@@ -12,7 +12,7 @@
           <option value="B">No Economico</option>
           <option value="C">No Placa</option>
         </select>
-        <input v-model="tag" type="text" class="rounded text-black ml-2 md:w-10 xl:w-32" />
+        <input v-model.trim="tag" type="text" class="rounded text-black ml-2 md:w-10 xl:w-32" />
       </div>
       <div class="flex-none my-auto text-white font-md p-2">
         ViA:
