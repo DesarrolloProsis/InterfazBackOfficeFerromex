@@ -42,10 +42,10 @@
       <p class="text-gray-900 font-bold text-2xl -mt-8 mb-8 text-center">Actualizar Módulos del Perfil {{ perfilSelected.nombreRol }}</p>
       <div class="grid grid-cols-2 mt-2" v-for="(modulo, index) in modulosExistentes" :key="index">
       <div class="mx-auto w-full">
-           <p class="text-center">{{ modulo.label }}</p>
+          <p class="text-center">{{ modulo.label }}</p>
       </div>
       <div class="mx-auto">
-         <!-- <div class="relative inline-block w-16 mr-2 align-middle select-none transition duration-200 ease-in">
+        <!-- <div class="relative inline-block w-16 mr-2 align-middle select-none transition duration-200 ease-in">
             <input type="checkbox" :value="modulo.value" v-model="asignarModulos" name="toggle" id="toggle" class="toggle-checkbox absolute w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer"/>
             <label for="toggle" class="toggle-label block overflow-hidden h-6 rounded-full bg-gray-300 cursor-pointer"></label>
           </div> -->

@@ -59,6 +59,7 @@ export default {
         modalLoading.value = true//Activamos la bandera que abre el spinner de la pantalla de carga
         axios.post(`${API}/identity/login`, data) //Se consume el endpoint, se le madna un JSON con los datos necesarios
         .then((result) => { //Si el endpoint tiene una respuesta correcta
+          console.log(result)
           message.value = ''//Dejamos vacio el mensaje de error
           serviceToken.guardarToken(result.data.access_token) //Guardamos el token utiizando un servicio
           axios.defaults.headers.common['Authorization'] = 'Bearer ' + result.data.access_token //Enviamos el token en la cabecera llamada Authorization porque todos los endpoints lo piden

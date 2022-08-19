@@ -51,13 +51,13 @@
                 </div>
                 <div class="flex flex-col gap-10">
                     <div>
-                        <input type="date" class="input" v-model="concentradoferromex.diascfe" @change="bloquearinputs()">
+                        <input type="date" class="input" v-model="concentradoferromex.diascfe" :disabled="bloquear" :class="{'cursor-not-allowed' : bloquear}" @change="bloquearinputs()">
                     </div>
                     <div>
-                        <input type="month" class="input" v-model="concentradoferromex.mesescfe" :disabled="bloquear" :class="{'cursor-not-allowed' : bloquear}" @change="bloquearinputs()">
+                        <input type="month" class="input" v-model="concentradoferromex.mesescfe" :disabled="bloquearmes" :class="{'cursor-not-allowed' : bloquearmes}" @change="bloquearinputmes()">
                     </div>
                     <div>
-                        <input type="week" class="input" v-model="concentradoferromex.semanacfe" :disabled="bloquear" :class="{'cursor-not-allowed' : bloquear}" @change="bloquearinputs()">
+                        <input type="week" class="input" v-model="concentradoferromex.semanacfe" :disabled="bloquearsemana" :class="{'cursor-not-allowed' : bloquearsemana}" @change="bloquearinputsemana()">
                     </div>
                     
                 </div>
@@ -156,6 +156,8 @@ export default {
         const showModal = ref(false)
         const showModalReporteDia = ref(false)
         const bloquear = ref(false)
+        const bloquearmes = ref(false)
+        const bloquearsemana = ref(false)
         const bloquearbutton = ref(true)
         const nombrearchivo = ref("")
         const tiportedia = ref("undefined")
@@ -176,7 +178,21 @@ export default {
         axios.get(ruta)//Hacemos una petición http al API con la ruta previamente encriptada
             .then((result) => {//Si el endpoint responde de manera correcta
             console.log(result);
-            carriles.value = result.data //Asignamos los valores de la respuesta del endpoint para mostrarlos en el header para los filtros
+            let resultado = []
+            resultado = result.data
+            //resultado.sort()
+            resultado.sort(function (a, b) {
+                if (a.id > b.id) {
+                    return 1;
+                }
+                if (a.id < b.id) {
+                    return -1;
+                }
+                // a must be equal to b
+                return 0;
+            });
+            console.log(resultado);
+            carriles.value = resultado //Asignamos los valores de la respuesta del endpoint para mostrarlos en el header para los filtros
         }).catch((error) => {//Si el endpoint tiene un error en la respuesta
             console.log(error.request.response);//Mostramos en consola el error
         })
@@ -184,6 +200,8 @@ export default {
         function abrirmodalconcentradoferromex(){
             showModal.value = !showModal.value //Cambia el valor de la variable que muestra el modal 
             bloquear.value = false //Cambiamos la variable a falso para desbloquear los inputs que esten bloqueados
+            bloquearmes.value = false
+            bloquearsemana.value = false
             limpiarconcentradoferromex() //Llamamos la funcion para limpiar los campos correspondientes
         }
         function abrirmodaloperativos(){
@@ -215,6 +233,17 @@ export default {
         }
         //Funcion para bloquear los inputs de mes y semana en caso de ser seleccionado el de dia
         function bloquearinputs(){
+            bloquearsemana.value = true
+            bloquearmes.value = true
+            bloquearbutton.value = false
+        }
+        function bloquearinputsemana(){
+            bloquear.value = true
+            bloquearmes.value = true // bloqueamos los campos
+            bloquearbutton.value = false
+        }
+        function bloquearinputmes(){
+            bloquearsemana.value = true
             bloquear.value = true // bloqueamos los campos
             bloquearbutton.value = false
         }
@@ -377,7 +406,7 @@ export default {
                 if(tipo == 1){
                     xml_hhtp_request(rutadetalle,2,'OperativoDetalle' + fecha + '.pdf')
                 }else if(tipo == 2){
-                    xml_hhtp_request(rutadetalle,2,'OperativoConcentrado' + fecha + '.pdf')
+                    xml_hhtp_request(rutaconcentrado,2,'OperativoConcentrado' + fecha + '.pdf')
                 }else if(tipo == 3){
                     xml_hhtp_request(rutadetalle,2,'OperativoDetalle' + fecha + '.pdf')
                     xml_hhtp_request(rutaconcentrado,2,'OperativoConcentrado' + fecha + '.pdf')
@@ -393,6 +422,8 @@ export default {
             showModal,
             showModalReporteDia,
             bloquear,
+            bloquearmes,
+            bloquearsemana, 
             reporteverdia,
             reportedescargardia,
             cerramodalconcentradoferromex,
@@ -410,7 +441,9 @@ export default {
             bloquearbutton,
             nombrearchivo,
             concentradoFerromexver,
-            tiportedia
+            tiportedia,
+            bloquearinputsemana,
+            bloquearinputmes
             }
     }
 }

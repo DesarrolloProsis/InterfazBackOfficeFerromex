@@ -96,7 +96,7 @@
                         <input type="week" class="input"  :disabled="bloquearsemana" :class="{'cursor-not-allowed' : bloquearsemana}" v-model="semanacf" @change="bloquearinputsemana()">
                     </div>
                     <div>
-                        <input id="tag" v-model="tag" class="input" placeholder="Buscar" type="text" />
+                        <input id="tag" v-model.trim="tag" class="input" placeholder="Buscar" type="text" />
                     </div>
                     <div>
                         <select class="input" v-model="reportecf"  placeholder="XXXXX">

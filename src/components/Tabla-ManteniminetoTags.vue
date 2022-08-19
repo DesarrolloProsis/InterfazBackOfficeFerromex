@@ -90,15 +90,23 @@ export default {
     }//Cerramos funcion
     //Funcion que determina la accion del modal de advertencia
       function accion(texto){ //Se abre la funcion con el parametro del texto esta la utilizamos para decidir que accion realizar
+        console.log(infotag.value);
+        console.log(texto);
         const tag = { //Declaracion del objeto a enviar
             "tag" : infotag.value.tag,
             "insertionDate": infotag.value.insertionDate,
-            "active": infotag.value.active = !infotag.value.active
+            "active": infotag.value.active = !infotag.value.active,
+            "idUser": "",
+            "vehiclePlate" : infotag.value.vehiclePlate,
+            "economicNumber" :  infotag.value.economicNumber
         }
         const ruta = encodeURI(`${API}/Ferromex/editartag`) //Deeclaramos la ruta edl enpoint y la codificamos con encodeURI
-        if(texto == "habilitar" || texto == "deshabilitar"){ //si es texto es habilitar o deshabilitar debemos modificar el estatus del tag
+        console.log(ruta);
+        console.log(tag);
+        if(texto == "activar" || texto == "desactivar"){ //si es texto es habilitar o deshabilitar debemos modificar el estatus del tag
           axios.put(ruta,tag) //Llamamos Axios enviandole la ruta y el obejto del tag 
-          .then(()=>{        //En caso de que sea exitosa entra aqui 
+          .then((res)=>{        //En caso de que sea exitosa entra aqui 
+          console.log(res);
           emit("actualizartabla",true) //Actualizamos los resultados de la tabla
           notify({                //Enviamos una notificacion de que el estatus se modifico de manera correcta 
             title:'Tag Modificado',
@@ -107,6 +115,7 @@ export default {
           });
           })
           .catch((err) =>{// si hay error entra aqui
+          console.log(err);
             notify({ //Enviamos una notificacion
             title:'Upps ocurrio un error ' + err.request.status, //mostramos el numero del error en el titulo
             text: err.request.responseText, //Mostramos el error ocurrido
@@ -155,7 +164,7 @@ export default {
           }
       return filtroOpciones  //Regresamos la lista de acciones filtrada
     }
-     function acciones_mapper(item){//Asignación de funciones de la lista de opciones que hay en el menú de acciones
+    function acciones_mapper(item){//Asignación de funciones de la lista de opciones que hay en el menú de acciones
       if(select.value == '0'){ //Apartir del value del multiselect asignamos un valor al texto 
         showModalAdvertencia.value = !showModalAdvertencia.value //Abrimos nuestro modal de advertencia
         texto.value = "activar"//Si es 0 el texto sera habilitar
@@ -165,9 +174,9 @@ export default {
         texto.value = "desactivar"//Si es 1 el texto sera deshabilitar
         infotag.value = item//Asignamos la informacion del tag a nuestra varible reactiva de vue
       }if(select.value == '2'){
-       showModalAdvertencia.value = !showModalAdvertencia.value //Abrimos nuestro modal de advertencia
-       texto.value = "eliminar"//Si es 1 el texto sera eliminar
-       infotag.value = item//Asignamos la informacion del tag a nuestra varible reactiva de vue
+        showModalAdvertencia.value = !showModalAdvertencia.value //Abrimos nuestro modal de advertencia
+        texto.value = "eliminar"//Si es 1 el texto sera eliminar
+        infotag.value = item//Asignamos la informacion del tag a nuestra varible reactiva de vue
       }
       select.value = ""//Limpiamos el multiselect
     }
