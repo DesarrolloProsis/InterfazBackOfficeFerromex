@@ -1,17 +1,37 @@
 <template>
   <Navbar></Navbar>
-  <div class="">
     <div class="container mx-auto px-auto pt-32 my-32">
       <div class="flex flex-wrap">
         <ModulosComp
-      v-for="(modulo, index) in modulos"
-      :key="index"
-      :imagen="modulo.imagen"
-      :ruta="modulo.ruta"
-      :nombre="modulo.nombre"
-    ></ModulosComp>
-      </div>
-    
+        v-for="(modulo, index) in modulos"
+        :key="index"
+        :imagen="modulo.imagen"
+        :ruta="modulo.ruta"
+        :nombre="modulo.nombre"
+        ></ModulosComp>
+        <div class=" mx-auto p-4 border border-gray-300 rounded-lg dark:border-gray-600 ferromex-color" role="alert">
+          <div class="flex items-center">
+            <svg aria-hidden="true" class="w-5 h-5 mr-2 text-white" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
+            <span class="sr-only text-white">Info</span>
+            <h3 class="text-xl font-medium text-white">No cuentas con Modulos</h3>
+            
+          </div>
+          <div class="mt-2 mb-4 text-sm text-white">
+            <p class="mb-3 font-normal">Estás pueden ser las posibles causas:</p>
+            <li class="mb-3 font-normal">Actualmente no cuentas con algun modulo activado.</li>
+            <li class="mb-3 font-normal">Tu Rol a sido desactivado.</li>
+            <p class="mb-3 font-bold">Consultalo con tu Supervisor</p>
+          </div>
+          <div class="flex w-full justify-end">
+            <router-link class="" to="/" tag="div">
+              <button class="text-white ferromex-color hover:bg-gray-800 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-xs px-3 py-1.5 mr-2 text-center inline-flex items-center border" @click="logout()">
+                <fa icon="arrow-right-from-bracket" class="-ml-0.5 mr-2 h-4 w-4 text-white"/>
+                Salir
+              </button>
+            </router-link>
+          </div>
+        </div>
+      
     <Spinner :modalLoading="modalLoading"/>
   </div>
   </div>
