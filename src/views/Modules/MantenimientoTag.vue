@@ -12,7 +12,7 @@
                   <option value="B">No Economico</option>
                   <option value="C">No Placa</option>
                 </select>
-                  <input id="tag" v-model="tag" class="my-auto bg-white flex border border-gray-200 rounded ml-2 h-6 w-40" placeholder="Buscar" type="text" />
+                  <input id="tag" v-model.trim ="tag" class="my-auto bg-white flex border border-gray-200 rounded ml-2 h-6 w-40" placeholder="Buscar" type="text" />
               </div>
               <div class="w-full inline-flex flex-2 justify-center">
                 <label for="tag" class="text-white my-auto">Estatus:</label>
@@ -88,14 +88,14 @@
                     </div>
                     <div>
                         <input type="text" class="input" :class="{'border-red-600': validarTag}" v-model="numeroplaca" @input="limpiarvalidacion()">
-                        <span v-if="validarTag" class="flex items-center font-medium tracking-wide text-red-500 text-xs mt-1 ml-1">
-                        {{validarTagTexto}}
+                        <span v-if="validarPlaca" class="flex items-center font-medium tracking-wide text-red-500 text-xs mt-1 ml-1">
+                        {{validarPlacaTexto}}
                         </span>
                     </div>
                     <div>
                         <input type="text" class="input" :class="{'border-red-600': validarTag}" v-model="numeroeconomico" @input="limpiarvalidacion()">
-                        <span v-if="validarTag" class="flex items-center font-medium tracking-wide text-red-500 text-xs mt-1 ml-1">
-                        {{validarTagTexto}}
+                        <span v-if="validarNoEconomico" class="flex items-center font-medium tracking-wide text-red-500 text-xs mt-1 ml-1">
+                        {{validarNoEconomicoTexto}}
                         </span>
                     </div>
                 </div>
@@ -152,6 +152,10 @@ export default {
       estatus: undefined,
       fecha: ""
     })
+    const validarNoEconomico = ref(false) //Variable que maneja la validacion del input del tag
+    const validarNoEconomicoTexto = ref(false) //Varible que maneja el texto a mostrar de la validacion del tag
+    const validarPlaca = ref(false) //Variable que maneja la validacion del input del tag
+    const validarPlacaTexto = ref(false) //Varible que maneja el texto a mostrar de la validacion del tag
     //DEclaracion del metodo onMounted que se ocuapa para montar los resultados de los tags
     onMounted(()=>{
         hoy.value = new Date().toISOString().split("T")[0]; //Asignamos el valor de la fecha del dia de hoy
@@ -196,6 +200,10 @@ export default {
     function limpiarvalidacion() {
       validarTag.value = false //Volvemos falsa la bandera que lleva el control del tag
       validarTagTexto.value = '' //Limpiamos el texto a mostrar de la validacion 
+      validarPlaca.value = false //Volvemos falsa la bandera que lleva el control del tag
+      validarPlacaTexto.value = '' //Limpiamos el texto a mostrar de la validacion 
+      validarNoEconomico.value = false //Volvemos falsa la bandera que lleva el control del tag
+      validarNoEconomicoTexto.value = '' //Limpiamos el texto a mostrar de la validacion 
     }
     //Emit para saber si se cierra el modal
     const cerralmodalpadre = (modal) => {
@@ -414,10 +422,20 @@ export default {
     }
     //Funcion para agregar tag 
     function agregarTag(tag,np,ne){
+      if(tag == "" || np == "" || ne == "") {
         if(tag == ""){ //Comprobamos si el tag viene vacio
           validarTag.value = true //Si es asi declaramos en true nuestra bandera para mostrar el span 
-          validarTagTexto.value = 'El campo del tag no puede ir vacio' //Incluimos el texto del span o por que se esta dando el error
-        }else{ // Si es falso procederemos a dar de alta el tag
+          validarTagTexto.value = 'El Tag no puede ir vacio' //Incluimos el texto del span o por que se esta dando el error
+        }
+        if(np == ""){ //Comprobamos si el tag viene vacio
+          validarPlaca.value = true //Si es asi declaramos en true nuestra bandera para mostrar el span 
+          validarPlacaTexto.value = 'El campo Numero de placa no puede ir vacio' //Incluimos el texto del span o por que se esta dando el error
+        }
+        if(ne == ""){ //Comprobamos si el tag viene vacio
+          validarNoEconomico.value = true //Si es asi declaramos en true nuestra bandera para mostrar el span 
+          validarNoEconomicoTexto.value = 'El campo Numero Economico no puede ir vacio' //Incluimos el texto del span o por que se esta dando el error
+        }
+      }else{ // Si es falso procederemos a dar de alta el tag
           const tiempoTranscurrido = Date.now(); //Conseguimos la fecha y hora del dia de hoy
           const hoy = new Date(tiempoTranscurrido).toISOString(); //Damos formato iso 86001
           const tagcompleto = { // Creamos objeto para enviar el tag completo 
@@ -425,11 +443,13 @@ export default {
             "insertionDate": hoy, //Asignamos la fecha y hora ya con su formato
             "active": true, //Mandamos por default el valor de activo
             "vehiclePlate": np,
+            "idUser": "string",
             "economicNumber": ne
           }
           const ruta = encodeURI(`${API}/Ferromex/agregartag`) // codificamos la ruta para que tenga el formato URL
           axios.post(ruta,tagcompleto) //Mandamos a llamar el endpoint
-          .then(() =>{
+          .then((res) =>{
+            console.log(res);
             notify({//Notificamos que se agrego de manera correcta el tag
               title:'TAG AGREGADO EXITOSAMENTE',
               text:'El tag se agrego de forma correcta' ,
@@ -440,6 +460,7 @@ export default {
             numeroeconomico.value = ''
             cargatags()//Mandamos a llamar a la funcion de la carga de todos los tags
           }).catch((error) =>{
+            console.log(error);
             notify({//Enviamos una notificacion
             title:'Upps ocurrio un error ' + error.request.status, //mostramos el numero del error en el titulo
             text: error.request.responseText, //Mostramos el error ocurrido
@@ -607,7 +628,11 @@ export default {
       modalLoading,
       showModal,
       agregarTag,
-      searchchange
+      searchchange,
+      validarNoEconomico,
+      validarNoEconomicoTexto, 
+      validarPlaca,
+      validarPlacaTexto, 
       }
   }
 }
