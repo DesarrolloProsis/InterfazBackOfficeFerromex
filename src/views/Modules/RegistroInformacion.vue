@@ -131,7 +131,20 @@ export default {
       const ruta = (encodeURI(`${API}/ferromex/carriles`))//Constante que guarda la ruta encriptada para la consulta en el API
       axios.get(ruta)//Hacemos una petición http al API con la ruta previamente encriptada
       .then((result) => {//Si el endpoint responde de manera correcta
-        carriles.value = result.data //Asignamos los valores de la respuesta del endpoint para mostrarlos en el header para los filtros
+        let resultado = []
+            resultado = result.data
+            //resultado.sort()
+            resultado.sort(function (a, b) {
+                if (a.id > b.id) {
+                    return 1;
+                }
+                if (a.id < b.id) {
+                    return -1;
+                }
+                // a must be equal to b
+                return 0;
+            });
+        carriles.value = resultado //Asignamos los valores de la respuesta del endpoint para mostrarlos en el header para los filtros
       }).catch((error) => {//Si el endpoint tiene un error en la respuesta
         console.log(error.request.response);//Mostramos en consola el error
       })
