@@ -409,7 +409,7 @@ export default {
               filtroOpciones.push(options[1])
               filtroOpciones.push(options[4])
             }
-            if(infoUser.role == "AdminFerromex") //Si el usuario solo es AdminFerromex solo el podra cambiar las contraseñas
+            if(infoUser.role == "AdminIntermodal") //Si el usuario solo es AdminIntermodal solo el podra cambiar las contraseñas
               filtroOpciones.push(options[2])
           }
       return filtroOpciones  //Regresamos la lista de acciones filtrada
