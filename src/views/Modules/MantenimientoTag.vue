@@ -173,7 +173,6 @@ export default {
         const ruta = encodeURI(`${API}/Ferromex/mantenimientotags/${page.value}/${numRespuesta.value}/${tagruta}/${estatusruta}/${fecharuta}/${noPlacaRuta}/${noEconomico}`)//Declaramos la ruta a consummir
         axios.get(ruta)//Mandamos a llamar la ruta a consumir
         .then((result)=>{
-          console.log(result)
         if(result.status == 200){ //En caso de que la respuesta sea correcta
           modalLoading.value = false//Quitamos el spinner
           totalPaginas.value = result.data.paginas_totales //Asignamos el numero total de paginas
@@ -215,7 +214,6 @@ export default {
     }
     //Función que busca los tags
     function search(tag, estatus, fecha,tipo){
-      console.log(tipo)
       modalLoading.value = true //Abrimos el spinner
       cruces.value = [] // Declaramos el arreglo en vacio
       if(tag == ""){ //Validamos si el campo llega vacio le damos un espacio en blanco 
@@ -271,7 +269,6 @@ export default {
           numeroeconomico = " "
         }
         const ruta = encodeURI(`${API}/ferromex/mantenimientotags/${page.value}/${numRespuesta.value}/${tagRuta}/${estatusurl}/${fechaurl}/${numeroplaca}/${numeroeconomico}`) //Ciframos la url para mandarla en el axios
-        console.log(ruta);
         modalLoading.value = false //Cerramos el spiiner
         axios.get(ruta) //Mandamos a llamar el axios
         .then((result)=>{
@@ -448,8 +445,7 @@ export default {
           }
           const ruta = encodeURI(`${API}/Ferromex/agregartag`) // codificamos la ruta para que tenga el formato URL
           axios.post(ruta,tagcompleto) //Mandamos a llamar el endpoint
-          .then((res) =>{
-            console.log(res);
+          .then(() =>{
             notify({//Notificamos que se agrego de manera correcta el tag
               title:'TAG AGREGADO EXITOSAMENTE',
               text:'El tag se agrego de forma correcta' ,
@@ -528,7 +524,6 @@ export default {
         }
         }
        const ruta = encodeURI(`${API}/ferromex/mantenimientotags/${page}/${numRespuesta.value}/${tagurl}/${estatusurl}/${fechaurl}/${numeroplaca}/${numeroeconomico}`) //Codificamos la url para el end point
-        console.log(ruta)
         modalLoading.value = false //cerramos el spinner
         axios.get(ruta) //Mandamos a llamar el End point
         .then((result)=>{

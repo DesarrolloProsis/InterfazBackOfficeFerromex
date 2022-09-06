@@ -177,9 +177,7 @@ export default {
       const ruta = (encodeURI(`${API}/ferromex/registroInformacion/1/${numRespuesta.value}/${fechaRuta}/${tagRuta}/${carrilRuta}/${cuerpoRuta}/${NoPlacaRuta}/${NoEconomicoRuta}/${claseRuta}`))//Constante almacena la ruta encriptada para hacer la petición al API
       axios.get(ruta)//Hacemos la petición https al API con la ruta encriptada anteriormente
       .then((result) => {//Si el endpoint tiene una respuesta correcta
-        console.log(result.data)
         cruces.value = result.data.cruces//Asignamos el valor de los resultados del endpoint para mostrarlos en la tabla
-        console.log(cruces.value)
         totalPaginas.value = result.data.paginas_totales//Asignamos el valor del número de páginas totales para la paginación
         paginaActual.value = result.data.pagina_actual//Asignamos el valor de la página actual, para saber en que página estamos en el componente de páginación
         modalLoading.value = false//Desactivamos la bandera que muestra el spinner de la pantalla de carga
@@ -234,11 +232,9 @@ export default {
           NoEconomico = " "
         }
         const ruta = (encodeURI(`${API}/ferromex/registroInformacion/${paginaActual.value}/${numRespuesta.value}/${fecha}/${tagenviar}/${carril}/${cuerpo}/${NoPlaca}/${NoEconomico}/${clase}`))//Constante que almacena la ruta encriptada para hacer la petición al API
-        console.log(ruta)
         axios.get(ruta)//Realizamos la petición http al API
         .then((result) => {//Si el endpoint tiene una respuesta correcta
           cruces.value = result.data.cruces//Asignamos los valores del resultado a la constrante que se va a mostrar en la tabla
-          console.log(cruces.value)
           totalPaginas.value = result.data.paginas_totales//Asignamos el valor de las páginas totales para saber el limite de páginas en el componente de paginación
           paginaActual.value = result.data.pagina_actual//Asignamos el valor de la página actual para enviarlo al componente de paginación
           modalLoading.value = false
@@ -289,11 +285,9 @@ export default {
           NoEconomico = " "
         }
       const ruta = (encodeURI(`${API}/ferromex/registroInformacion/${paginaActual.value}/${numRespuesta.value}/${fecha}/${tagenviar}/${carril}/${cuerpo}/${NoPlaca}/${NoEconomico}/${clase}`))//Constante que almacena la ruta encriptada para hacer la petición al API
-      console.log(ruta)
       axios.get(ruta)//Realizamos la petición http al API
         .then((result) => {//Si el endpoint tiene una respuesta correcta
           cruces.value = result.data.cruces//Asignamos los valores del resultado a la constrante que se va a mostrar en la tabla
-          console.log(cruces.value)
           totalPaginas.value = result.data.paginas_totales//Asignamos el valor de las páginas totales para saber el limite de páginas en el componente de paginación
           paginaActual.value = result.data.pagina_actual//Asignamos el valor de la página actual para enviarlo al componente de paginación
           modalLoading.value = false
@@ -359,11 +353,9 @@ export default {
         NoEconomico = " "
       }
       const ruta = (encodeURI(`${API}/ferromex/registroInformacion/${page}/${numRespuesta.value}/${fechaVacia}/${tagenviar}/${header.carril}/${header.cuerpo}/${NoPlaca}/${NoEconomico}/${claseRuta}`))//Constante que almacena la ruta encriptada para hacer la petición al API
-      console.log(ruta);
       axios.get(ruta)
       .then((result) => {//Si el endpoint contiene una respuesta correcta
         cruces.value = result.data.cruces//Asignamos el valor de los resultados del endpoint para mostrarlos en la tabla
-        console.log(cruces.value)
         totalPaginas.value = result.data.paginas_totales//Asignamos el valor de las páginas totales para saber el limite de páginas en el componente de paginación
         paginaActual.value = result.data.pagina_actual//Asignamos el valor de la página actual para enviarlo al componente de paginación
         modalLoading.value = false

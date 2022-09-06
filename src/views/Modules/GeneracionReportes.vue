@@ -177,7 +177,6 @@ export default {
         const ruta = (encodeURI(`${API}/ferromex/carriles`))//Constante que guarda la ruta encriptada para la consulta en el API
         axios.get(ruta)//Hacemos una petición http al API con la ruta previamente encriptada
             .then((result) => {//Si el endpoint responde de manera correcta
-            console.log(result);
             let resultado = []
             resultado = result.data
             //resultado.sort()
@@ -191,7 +190,6 @@ export default {
                 // a must be equal to b
                 return 0;
             });
-            console.log(resultado);
             carriles.value = resultado //Asignamos los valores de la respuesta del endpoint para mostrarlos en el header para los filtros
         }).catch((error) => {//Si el endpoint tiene un error en la respuesta
             console.log(error.request.response);//Mostramos en consola el error
@@ -209,13 +207,11 @@ export default {
         }
         //Declaracion de cierre de modales 
         const cerramodalconcentradoferromex = (modal) => {
-            console.log(modal)
             showModal.value = modal
             limpiarconcentradoferromex()
         }
         //Declaracion de cierre de modales 
         const cerramodaloperativos = (modal) => {
-            console.log(modal)
             showModalReporteDia.value = modal
             limpiarreportedia()
         }
@@ -278,7 +274,6 @@ export default {
                 });
             }else{
                 const ruta = encodeURI(`${API}/Ferromex/Download/pdf/concentradosferromex/${urldias}/${urlmeses}/${urlsemana}`)
-                console.log(ruta)
                 xml_hhtp_request(ruta,1)
                 //cerramodalconcentradoferromex(false)
             }
@@ -314,7 +309,6 @@ export default {
                 });
             }else{
                 const ruta = encodeURI(`${API}/Ferromex/Download/pdf/concentradosferromex/${urldias}/${urlmeses}/${urlsemana}`)
-                console.log(ruta)
                 xml_hhtp_request(ruta,2,nombrearchivo.value)
                 //cerramodalconcentradoferromex(false)
             }

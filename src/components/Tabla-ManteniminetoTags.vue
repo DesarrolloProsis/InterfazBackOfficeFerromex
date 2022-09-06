@@ -90,8 +90,6 @@ export default {
     }//Cerramos funcion
     //Funcion que determina la accion del modal de advertencia
       function accion(texto){ //Se abre la funcion con el parametro del texto esta la utilizamos para decidir que accion realizar
-        console.log(infotag.value);
-        console.log(texto);
         const tag = { //Declaracion del objeto a enviar
             "tag" : infotag.value.tag,
             "insertionDate": infotag.value.insertionDate,
@@ -101,12 +99,9 @@ export default {
             "economicNumber" :  infotag.value.economicNumber
         }
         const ruta = encodeURI(`${API}/Ferromex/editartag`) //Deeclaramos la ruta edl enpoint y la codificamos con encodeURI
-        console.log(ruta);
-        console.log(tag);
         if(texto == "activar" || texto == "desactivar"){ //si es texto es habilitar o deshabilitar debemos modificar el estatus del tag
           axios.put(ruta,tag) //Llamamos Axios enviandole la ruta y el obejto del tag 
-          .then((res)=>{        //En caso de que sea exitosa entra aqui 
-          console.log(res);
+          .then(()=>{        //En caso de que sea exitosa entra aqui 
           emit("actualizartabla",true) //Actualizamos los resultados de la tabla
           notify({                //Enviamos una notificacion de que el estatus se modifico de manera correcta 
             title:'Tag Modificado',

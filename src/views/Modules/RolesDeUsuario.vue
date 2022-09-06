@@ -139,7 +139,6 @@ export default {
             }
             axios.post(`${API}/Ferromex/addRoleModules`, data) //llamada al endpoint que inserta los modulos al rol correspondiente
             .then((result)=>{
-              console.log(result);
               if(result.status == 200)//Validamos que la respuesta sea correcta
               {
                 modalLoading.value = false//Desactivamos el spinner

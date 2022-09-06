@@ -166,13 +166,11 @@ export default {
         
         onMounted(()=>{
             hoy.value = new Date().toISOString().split("T")[0];
-            console.log(hoy.value);
             let now = new Date();
             let año = now.getFullYear()
             let onejan = new Date(now.getFullYear(), 0, 1);
             let week = Math.ceil((((now.getTime() - onejan.getTime()) / 86400000) + onejan.getDay() + 1) / 7);
             semana.value = año + "-" + "W" + (week - 1)
-            console.log(semana.value)
         })
         //Declaracion de los modulos que se van a mostrar en pantalla
         modulos.value = [
@@ -273,7 +271,6 @@ export default {
                 });
             }else{
                 const ruta = encodeURI(`${API}/Ferromex/Download/pdf/crucestotales/reporteCruces/${urldias}/${urlmeses}/${urlsemana}`)
-                console.log(ruta)
                 xml_hhtp_request(ruta,1)
             }
         }
@@ -367,8 +364,6 @@ export default {
                 }
                 const rutadescuentolletalle = encodeURI(`${API}/Ferromex/Download/pdf/crucesferromex/descuentodetallesamarre/${urldias}/${urlmeses}/${urlsemana}/${tagRuta}/${numeroplaca}/${numeroeconomico}`)
                 const rutadescuentoamerreresumen = encodeURI(`${API}/Ferromex/Download/pdf/crucesferromex/descuentoamarreresumen/${urldias}/${urlmeses}/${urlsemana}/${tagRuta}/${numeroplaca}/${numeroeconomico}`)
-                console.log(rutadescuentolletalle);
-                console.log(rutadescuentoamerreresumen);
                 if(reporte == "1"){
                     xml_hhtp_request(rutadescuentolletalle,1)
                 }else if( reporte == "2"){
@@ -439,8 +434,6 @@ export default {
                 }
             const rutadescuentolletalle = encodeURI(`${API}/Ferromex/Download/pdf/crucesferromex/descuentodetallesamarre/${urldias}/${urlmeses}/${urlsemana}/${tagRuta}/${numeroplaca}/${numeroeconomico}`)
             const rutadescuentoamerreresumen = encodeURI(`${API}/Ferromex/Download/pdf/crucesferromex/descuentoamarreresumen/${urldias}/${urlmeses}/${urlsemana}/${tagRuta}/${numeroplaca}/${numeroeconomico}`)
-                console.log(rutadescuentolletalle);
-                console.log(rutadescuentoamerreresumen);
                 if(reporte == "1"){
                     xml_hhtp_request(rutadescuentolletalle,2,'descuentodetalle' + hoy.value + '.pdf')
                 }else if( reporte == "2"){

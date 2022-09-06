@@ -121,7 +121,6 @@ export default {
     function modulosExistente(){//Función para obtener todos los modulos registrados
       axios.get(`${API}/Ferromex/modules`)//Endpoint que trae todos los modulos que existen
       .then((result)=>{//Si el endpoint tiene una respuesta correcta
-      console.log(result.data.content);
       let modulosexistentes = result.data.content;
       modulosexistentes.forEach((e) => {//reiteracion y comprobacion si es un submodulo
         if({}.hasOwnProperty.call(e,'parentModule') == false){
@@ -135,11 +134,9 @@ export default {
     }
     function traerModulos(rol){//Función que trae los modulos asignados a un rol en especifico
       modulosExistente()//Llamamos a la función que trae todos los roles, para llenar el multiselect
-      console.log(modulosExistentes.value);
       modulos.value = []
       axios.get(`${API}/Ferromex/modules?roleName=${rol.nombreRol}`)//Endpoint que trae los módulos asignados a un rol en especificio, si no le mandamos ningún rol, trae todos los módulos
       .then((result)=>{//Si el endpoint tiene una respuesta correcta
-        console.log(result);
         for(let i=0; i<result.data.content.length; i++){ //recorremos la respuesta, y cada que recorremos sumamos un 1 para el siguiente rol
           modulos.value.push({'value':result.data.content[i].id, 'label':result.data.content[i].nameModule})//asignamos los roles existentes a la variable roles, para mostrarlos en el multiselect
         }
@@ -150,7 +147,6 @@ export default {
       })
     }
     function editarModulos(rol, modulos){//Función que permite agregar o quitar módulos a un rol en especifico, recibe el nombre del rol y un array con los módulos a asignar
-      console.log(modulos);
       if(modulos.length === 0){// Si no se ha seleccionado ningún módulo, no nos va a permitir actualizarlos
         vacio.value = true
         notify({//Notificación que se muestra cuando no se puede hacer el cambio de manera correcta
@@ -164,10 +160,8 @@ export default {
           'roleName': rol,
           'modules': modulos
         }
-        console.log(data);
         axios.post(`${API}/Ferromex/addRoleModules`, data)//Enpoint que asigna los módulos a un rol en especifico
-        .then((resp)=> {//Si el endpoint tiene una respuesta correcta
-          console.log(resp);
+        .then(()=> {//Si el endpoint tiene una respuesta correcta
           modalModulos.value = false //cerramos el modal de asignación de módulos
           notify({//Notifiación que se muestra cuando se realiza el cambio de una manera correcta
             title:'Cambio Exitoso',

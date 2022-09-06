@@ -64,9 +64,7 @@ export default {
       modalLoading.value = true //habilitamos el spinner para esperar a que cargue los modulos que podrá ver el rol
       axios.get(`${API}/Ferromex/modules?roleName=${rol}`) //enpoint que trae los modulos que puede ver el rol del usuario
       .then((result) => {
-        console.log(result);
         let modules = result.data.content //literal que almacena el contenido o resuesta del endpoint
-        console.log(modules);
         let proxy = new Proxy(modules ,{ //literal que obtiene la información del evento proxy, que almacena la respuesta del endpoint
           get : function(target, property){
             return property === 'length' ?

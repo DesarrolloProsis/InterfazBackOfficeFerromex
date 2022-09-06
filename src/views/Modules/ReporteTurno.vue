@@ -82,13 +82,12 @@ setup(){
   })
   const rutapdf = ref('')
   function generareportever(idturno,fechareporte,reporte){
-    console.log(reporte)
     if((idturno == undefined && fechareporte == undefined) || idturno == undefined || fechareporte == undefined || reporte== undefined){
-     notify({
+    notify({
             title:'Sin parametros',
             text:'Para generar un reporte debes llenar los parametros necesarios' ,
             type: 'error'
-     });
+    });
     }else{
     //Generamos la ruta que hara la llamada a la generacion de los reportes
     if(reporte == "1"){
