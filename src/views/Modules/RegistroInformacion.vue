@@ -31,20 +31,20 @@
         </select>
       </div>
       <div class="flex-none my-auto text-white font-md p-2">
-        Resultados:
-        <select v-model="numRespuesta" class="text-gray-800 w-16 rounded" @change="buscarchange(fecha,tag,carril,cuerpo,tipo,clase)">
-          <option value="10">10</option>
-          <option value="30">30</option>
-          <option value="50">50</option>
-        </select>
-      </div>
-      <div class="flex-none my-auto text-white font-md p-2">
         Clase:
         <select v-model="clase" class="flex-none text-black rounded" name="select" placeholder="Selecciona">
           <option :value="undefined">Seleccione Clase</option>
           <option v-for="(clase ,index) in clases" :key="index" :value="clase.clase">
               {{ clase.clase }}
           </option>
+        </select>
+      </div>
+      <div class="flex-none my-auto text-white font-md p-2">
+        Resultados:
+        <select v-model="numRespuesta" class="text-gray-800 w-16 rounded" @change="buscarchange(fecha,tag,carril,cuerpo,tipo,clase)">
+          <option value="10">10</option>
+          <option value="30">30</option>
+          <option value="50">50</option>
         </select>
       </div>
       <div class="flex-none my-auto text-white font-md p-2">
