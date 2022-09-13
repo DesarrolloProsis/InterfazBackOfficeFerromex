@@ -3,14 +3,14 @@
     <div class="flex-none">
       <router-link to="/inicio" class="inline-block pl-5 pt-1 text-white text-xl" tag="div">
       <img class="logo inline rounded-full" src="~@/assets/ferromex.jpg">
-      Intermodal 
+      Intermodal México
       </router-link>
     </div>
     <span class="text-white mt-2">Bienvenido {{ nombre.toUpperCase() }}</span>
     
     <div class="flex">
       <div class="-mt-2 animacion">
-         <router-link class="" to="/parametros" tag="div">
+      <router-link class="" to="/parametros" tag="div">
           <fa icon="gear" class="w-12 h-8 mt-3 mr-2 text-white" :class="{'hidden': ocultarparametros}"/>
       </router-link>
       </div>
