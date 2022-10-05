@@ -14,6 +14,7 @@ import ReporteCajero from '../views/Modules/ReporteCajero.vue'
 import Cruces from '../views/Modules/Cruces.vue'
 import Servicio from '../Servicios/Token-Services'
 import Parametros from '@/views/Modules/Parametros.vue'
+import ActividadUsuarios from '@/views/Modules/ActividadUsuario.vue'
 
 
 const routes = [{
@@ -137,6 +138,14 @@ const routes = [{
       requiresCookie: true
     }
   },
+  {
+    path: "/actividad-usuarios",
+    name: "ActividadUsuarios",
+    component: ActividadUsuarios,
+    meta: {
+      requiresCookie: true
+    }  
+  }
 ];
 
 const router = createRouter({
