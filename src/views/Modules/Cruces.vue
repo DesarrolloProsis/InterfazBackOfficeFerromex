@@ -2,7 +2,19 @@
     <Navbar/>
     <h1 class="title font-bold font-titulo my-8">Cruces Telepeaje</h1>
     <div class="container mx-auto px-auto px-48 my-32 pt-10">
-        <div class="flex flex-wrap">
+        <div class="flex flex-wrap justify-center">
+        <ModuloGeneracionReportes
+            v-for="(modulo, index) in modulos"
+            :key="index"
+            :nombre="modulo.nameModule"
+            :img_src="modulo.image"
+            :ruta="modulo.route"
+            :exitSubModulo="exitSubModulo"                        
+            @abrir-modal-cruces-totales="abrirmodalcrucestotales"
+            @abrir-modal-cruces-ferromex="abrirmodalcrucesferromex"
+        ></ModuloGeneracionReportes>
+        </div>
+        <!-- <div class="flex flex-wrap">
             <button class=" p-7 -mt-12 w-1/2" @click="abrirmodalcrucestotales()">
                     <div class="rounded-lg  animacion flex flex-col bg-ferromex border-2 border-gray-900" >
                         <div class="text-center">
@@ -23,7 +35,7 @@
                         </div>
                     </div>
             </button>
-        </div>
+        </div> -->
     </div>
     <Footer/>
     <Modal :show="showModal" @cerrarmodal="cerralmodalcrucestotales">
@@ -127,22 +139,27 @@ import { ref,reactive,toRefs,onMounted } from 'vue'
 import Navbar from "../../components/Navbar.vue";
 import Footer from "../../components/Footer";
 import Modal from "../../components/Modal.vue";
+import ModuloGeneracionReportes from "../../components/Modulo-generacionreportes.vue";
 import { file }  from '../../Servicios/Files-Service'
 import { notify } from "@kyvg/vue3-notification";
 import Spinner from '../../components/Spinner.vue'
+import ModulesService from '@/Servicios/Modules-Service'
+import TokenService from '@/Servicios/Token-Services'
+import { useRoute } from 'vue-router'
+import { inject } from 'vue'
 
 export default {
     components: {
         Navbar,
         Footer,
         Modal,
-        Spinner
+        Spinner,
+        ModuloGeneracionReportes
     },
     setup(){
         const { xml_hhtp_request,loading } = file();
         const showModal = ref(false)
-        const showModalTurno = ref(false)
-        const modulos = ref([])
+        const showModalTurno = ref(false)        
         const bloqueardia = ref(false)
         const bloquearsemana = ref(false)
         const bloquearmes = ref(false)
@@ -163,6 +180,19 @@ export default {
             tag:'',
             reportecf:undefined
         })
+
+        const modulos = ref([])
+        const axios = inject('axios')
+        const route = useRoute()
+        const decoded = TokenService.obtenerInfoUser()
+
+        axios.get(`${API}/Ferromex/modules?roleName=${decoded.role}`) //enpoint que trae los modulos que puede ver el rol del usuario
+        .then((result) => {        
+          let  { subModulos } = ModulesService.test(result.data.content)      
+          console.log(subModulos)      
+          modulos.value = subModulos.filter(x => x.parentModule == route.params.id)                
+        })
+        .catch((err)=>{console.log(err);})
         
         onMounted(()=>{
             hoy.value = new Date().toISOString().split("T")[0];
@@ -171,22 +201,7 @@ export default {
             let onejan = new Date(now.getFullYear(), 0, 1);
             let week = Math.ceil((((now.getTime() - onejan.getTime()) / 86400000) + onejan.getDay() + 1) / 7);
             semana.value = año + "-" + "W" + (week - 1)
-        })
-        //Declaracion de los modulos que se van a mostrar en pantalla
-        modulos.value = [
-            {
-                img_src: "Menu/capacidad-de-almacenamiento.png",
-                nombre: "Cajero",
-                ruta: "/inicio/bitacora-antifraude",
-                color: "red"
-            },
-            {
-                img_src: "Menu/monitoreo-servicios.png",
-                nombre: "Turno",
-                ruta: "/inicio/bitacora-listas",
-                color: "red"
-            },
-        ]
+        })         
         //Funcion para abrir el modal de cruces totales
         function abrirmodalcrucestotales(){
             showModal.value = !showModal.value //Cambia el valor de la variable que muestra el modal 

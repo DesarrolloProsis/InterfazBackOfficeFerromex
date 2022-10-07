@@ -8,6 +8,7 @@
           :imagen="modulo.image"
           :ruta="modulo.route"
           :nombre="modulo.nameModule"
+          :exitSubModulo="exitSubModulo"
         ></ModulosComp>
 
         <div v-if="modules.length == 0" class=" mx-auto p-4 border border-gray-300 rounded-lg dark:border-gray-600 bg-gray-400 opacity-75" role="alert">
@@ -47,7 +48,7 @@ import Spinner from '../components/Spinner.vue' //Importamos el componente spinn
 import ModulosComp from "../components/Moldulo-menu"; //Importamos el componente de Menú para poder poner cada uno de los modulos que tiene el rol
 import Servicio from '../Servicios/Token-Services'; //Importamos el Servicio de Toke, para obtener información del usuario con base en el token
 import Footer from "../components/Footer";//Importamos el footer para mostrar en la vista
-import { onMounted,ref,inject } from 'vue' //Importamos onMounted para recibir una respuesta de una llamada cuando se monta el modulo, y ref para hacer referencia al tipo de dato que estamos utilizando y volvemos reactiva la constante
+import { onMounted, ref, inject } from 'vue' //Importamos onMounted para recibir una respuesta de una llamada cuando se monta el modulo, y ref para hacer referencia al tipo de dato que estamos utilizando y volvemos reactiva la constante
 import ModulesService from '../Servicios/Modules-Service'
 export default {
   components: {
@@ -65,9 +66,10 @@ export default {
 
     function obtenerModulos(){ //Función que nos va a permitir obtener los modulos que va a ver el rol asignado al usuario que inicio sesión      
       modalLoading.value = true //habilitamos el spinner para esperar a que cargue los modulos que podrá ver el rol
+      
       axios.get(`${API}/Ferromex/modules?roleName=${decoded.role}`) //enpoint que trae los modulos que puede ver el rol del usuario
       .then((result) => {        
-        let  { modulos } = ModulesService.test(result)        
+        let  { modulos } = ModulesService.test(result.data.content)            
         modules.value = modulos
         modalLoading.value = false
       })

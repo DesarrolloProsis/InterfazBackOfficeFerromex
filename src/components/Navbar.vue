@@ -10,7 +10,7 @@
     
     <div class="flex">
       <div class="-mt-2 animacion">
-      <router-link class="" to="/parametros" tag="div">
+      <router-link class="" to="/parametros/14" tag="div">
           <fa icon="gear" class="w-12 h-8 mt-3 mr-2 text-white" :class="{'hidden': ocultarparametros}"/>
       </router-link>
       </div>

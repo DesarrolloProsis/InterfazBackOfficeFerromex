@@ -3,7 +3,7 @@
     <h1 class="title font-bold font-titulo">Reportes Intermodal</h1>
     <div class="container mx-auto px-auto px-48 pt-10 my-32">
         <div class="flex flex-wrap ">
-            <button class="p-7 -mt-12 w-1/3" @click="abrirmodaloperativos()">
+            <!-- <button class="p-7 -mt-12 w-1/3" @click="abrirmodaloperativos()">
                     <div class="rounded-lg  animacion flex flex-col bg-ferromex border-2 border-gray-900" >
                     <div>
                             <img class="img" src="@/assets/Menu/capacidad-de-almacenamiento.png" />
@@ -12,17 +12,20 @@
                             <h1>Operativos</h1>
                         </div>
                     </div>
-            </button>
+            </button> -->
             <ModuloGeneracionReportes
                 v-for="(modulo, index) in modulos"
                 :key="index"
-                :nombre="modulo.nombre"
-                :img_src="modulo.img_src"
-                :ruta="modulo.ruta"
+                :nombre="modulo.nameModule"
+                :img_src="modulo.image"
+                :ruta="modulo.route"
+                :exitSubModulo="exitSubModulo"
                 :mostrar="carriles"
                 :color="modulo.color"
+                @abrir-modal-operativos="abrirmodaloperativos"
+                @abrir-modal-concentrado-ferromex="abrirmodalconcentradoferromex"
             ></ModuloGeneracionReportes>
-            <button class="p-7 -mt-12 w-1/3" @click="abrirmodalconcentradoferromex">
+            <!-- <button class="p-7 -mt-12 w-1/3" @click="abrirmodalconcentradoferromex">
                     <div class="rounded-lg  animacion flex flex-col bg-ferromex border-2 border-gray-900" >
                     <div>
                             <img class="img" src="@/assets/Menu/almacenamiento-de-base-de-datos.png" />
@@ -31,7 +34,7 @@
                             <h1>Auditoria Intermodal</h1>
                         </div>
                     </div>
-            </button>
+            </button> -->
         </div>
     </div>
     <Footer/>
@@ -132,6 +135,9 @@ import Modal from "../../components/Modal.vue"
 import { file }  from '../../Servicios/Files-Service'
 import { notify } from "@kyvg/vue3-notification";
 import Spinner from '../../components/Spinner.vue'
+import ModulesService from '@/Servicios/Modules-Service'
+import TokenService from '@/Servicios/Token-Services'
+import { useRoute } from 'vue-router'
 
 import ModuloGeneracionReportes from "../../components/Modulo-generacionreportes";
 export default {
@@ -145,13 +151,7 @@ export default {
     setup() {
         const axios = inject('axios')
         const { xml_hhtp_request,loading } = file();
-        const modulos = ref([
-                {
-                    img_src: "Menu/monitoreo-servicios.png",
-                    nombre: "Cruces Telepeaje",
-                    ruta: "/inicio/Cruces",
-                    color: "red"
-                }])
+        const modulos = ref([])
         const carriles = ref([])
         const showModal = ref(false)
         const showModalReporteDia = ref(false)
@@ -161,6 +161,8 @@ export default {
         const bloquearbutton = ref(true)
         const nombrearchivo = ref("")
         const tiportedia = ref("undefined")
+        const decoded = TokenService.obtenerInfoUser()
+        const route = useRoute()
         const concentradoferromex = reactive({
             diascfe: '',
             mesescfe: '',
@@ -170,6 +172,15 @@ export default {
             carril: undefined,
             fecha:''
         })
+
+        axios.get(`${API}/Ferromex/modules?roleName=${decoded.role}`) //enpoint que trae los modulos que puede ver el rol del usuario
+        .then((result) => {        
+          let  { subModulos } = ModulesService.test(result.data.content)
+          console.log(subModulos)            
+          modulos.value = subModulos.filter(x => x.parentModule == route.params.id)      
+        })
+        .catch((err)=>{console.log(err);})
+
     onMounted( ()=> 
         carrilesExistentes()
     )

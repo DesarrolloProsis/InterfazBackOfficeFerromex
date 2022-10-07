@@ -1,12 +1,22 @@
 
-
-function test(resultModules) {    
-    let modules = resultModules.data.content  
+function test(_modules) {    
     let modulos, subModulos = []
-    
-    modulos = modules.filter(x => x.parentModule == null)
-    subModulos = modules.filter(x => x.parentModule != null)
-    
+    let _subModulo = _modules.filter(x => x.parentModule != null)    
+    subModulos = _modules
+        .filter(x => x.parentModule != null)
+        .map(x => {
+            let exitSubModulo = _subModulo.some(item => item.parentModule == x.id)            
+            if(exitSubModulo) x.route = x.route + '/' + x.id
+            return { ...x, exitSubModulo }                        
+        })
+
+    modulos = _modules
+        .filter(x => x.parentModule == null)
+        .map(x => {
+            let exitSubModulo = subModulos.some(item => item.parentModule == x.id)
+            if(exitSubModulo) x.route = x.route + '/' + x.id
+            return { ...x, exitSubModulo }                        
+        })        
     return { modulos, subModulos }
 }
 

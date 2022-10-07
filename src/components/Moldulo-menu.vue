@@ -2,8 +2,8 @@
   <div class="w-69 mx-auto">
     <div class="ferromex-color border border-black  rounded-3xl animacion">
       <router-link :to="ruta" tag="div" class="">
-      <img class="imagen-modulo" :src="require('@/assets/' + imagen)" />
-    </router-link>
+        <img class="imagen-modulo" :src="require('@/assets/' + imagen)" />
+      </router-link>
     <h1 class="text-center text-white text-xl py-5 font-titulo">{{ nombre }}</h1>
     </div>
   </div>
@@ -11,7 +11,7 @@
 <script>
 export default {
   name: "ModulosComp",
-  props: ["imagen", "ruta", "nombre",],//Propiedades que corresponderan a los datos de cada modelo, vienen desde el Modulo de Menu
+  props: ["imagen", "ruta", "nombre","exitSubModulo"]
 };
 </script>
 <style scoped>

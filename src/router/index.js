@@ -43,6 +43,41 @@ const routes = [{
     }
   },
   {
+    path: "/parametros/:id",
+    name: "parametros",
+    component: Parametros,
+    meta: {
+      requiresCookie: true
+    }
+  },
+  {
+    path: "/gestion-usuarios/:id",
+    name: "Gestión de usuarios",
+    component: GestiónUsuarios,
+    meta: {
+      requiresCookie: true,
+      nombre:"Gestión de usuarios"
+    }
+  },
+  {
+    path: "/generacion-reportes/:id",
+    name: "Generación de Reportes",
+    component: GeneracionReportes,
+    meta: {
+      requiresCookie: true,
+      nombre:"Generación de Reportes"
+    }
+  },
+  {
+    path: "/inicio/Cruces/:id",
+    name: "Cruces",
+    component: Cruces,
+    meta: {
+      requiresCookie: true,
+      nombre:"Cruces"
+    }
+  },
+  {
     path: "/inicio/registro-informacion-telepeaje",
     name: "RegistroDeInformacionDeTelepeaje",
     component: RegistroDeInformacionDeTelepeaje,
@@ -86,34 +121,7 @@ const routes = [{
       requiresCookie: true,
       nombre:"Reporte Cajero"
     }
-  },
-  {
-    path: "/inicio/Cruces",
-    name: "Cruces",
-    component: Cruces,
-    meta: {
-      requiresCookie: true,
-      nombre:"Cruces"
-    }
-  },
-  {
-    path: "/generacion-reportes",
-    name: "Generación de Reportes",
-    component: GeneracionReportes,
-    meta: {
-      requiresCookie: true,
-      nombre:"Generación de Reportes"
-    }
-  },
-  {
-    path: "/gestion-usuarios",
-    name: "Gestión de usuarios",
-    component: GestiónUsuarios,
-    meta: {
-      requiresCookie: true,
-      nombre:"Gestión de usuarios"
-    }
-  },
+  },  
   {
     path: "/gestion-usuarios/administracion-perfiles",
     name: "AdministracionPerfilUsuario",
@@ -126,14 +134,6 @@ const routes = [{
     path: "/gestion-usuarios/lista-usuarios",
     name: "ListaUsuarios",
     component: ListaUsuarios,
-    meta: {
-      requiresCookie: true
-    }
-  },
-  {
-    path: "/parametros",
-    name: "parametros",
-    component: Parametros,
     meta: {
       requiresCookie: true
     }
