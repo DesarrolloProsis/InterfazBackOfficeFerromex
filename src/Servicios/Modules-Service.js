@@ -1,5 +1,4 @@
-
-function test(_modules) {    
+function GetMolduleAndSubModule(_modules) {    
     let modulos, subModulos = []
     let _subModulo = _modules.filter(x => x.parentModule != null)    
     subModulos = _modules
@@ -20,6 +19,31 @@ function test(_modules) {
     return { modulos, subModulos }
 }
 
+function ValidSubModule(_modulo, _subModulos){    
+    let arraySubModule = []
+    //if(_modulo.exitSubModulo){
+        let subModule = _subModulos.filter(x => x.parentModule == _modulo.id)         
+        //if(subModule.some(x => x.exitSubModulo == true)) {              
+            subModule            
+            .forEach(item => {
+                let subModuleItem = ValidSubModule(item, _subModulos)
+                //let newSubModule = { modulo: item, arraySubModule: subModuleItem }                
+                arraySubModule.push(subModuleItem)
+            });
+            return { modulo: _modulo, arraySubModule }
+        //}
+        //arraySubModule = subModule
+        //return { modulo: _modulo, arraySubModule }       
+    //}   
+    //return { modulo: _modulo, arraySubModule }
+}
+
+function GetModulosWhitSubModulo(_modules) {
+    let { modulos, subModulos } = GetMolduleAndSubModule(_modules)    
+    return modulos.map(item => ValidSubModule(item, subModulos))
+}
+
 export default {
-    test
+    GetMolduleAndSubModule,
+    GetModulosWhitSubModulo
 }

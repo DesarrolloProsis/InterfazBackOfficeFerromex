@@ -3,39 +3,17 @@
     <h1 class="title font-bold font-titulo my-8">Cruces Telepeaje</h1>
     <div class="container mx-auto px-auto px-48 my-32 pt-10">
         <div class="flex flex-wrap justify-center">
-        <ModuloGeneracionReportes
-            v-for="(modulo, index) in modulos"
-            :key="index"
-            :nombre="modulo.nameModule"
-            :img_src="modulo.image"
-            :ruta="modulo.route"
-            :exitSubModulo="exitSubModulo"                        
-            @abrir-modal-cruces-totales="abrirmodalcrucestotales"
-            @abrir-modal-cruces-ferromex="abrirmodalcrucesferromex"
-        ></ModuloGeneracionReportes>
-        </div>
-        <!-- <div class="flex flex-wrap">
-            <button class=" p-7 -mt-12 w-1/2" @click="abrirmodalcrucestotales()">
-                    <div class="rounded-lg  animacion flex flex-col bg-ferromex border-2 border-gray-900" >
-                        <div class="text-center">
-                            <fa icon="calendar-check" class="text-white h-32 p-2"/>
-                        </div>
-                        <div class="text-center py-5 font-titulo font-bold text-white">
-                            <h1>Cruces Totales</h1>
-                        </div>
-                    </div>
-            </button>
-            <button class="p-7 -mt-12 w-1/2" @click="abrirmodalcrucesferromex()">
-                    <div class="rounded-lg  animacion flex flex-col bg-ferromex border-2 border-gray-900" >
-                        <div class="text-center">
-                            <fa icon="calendar-day" class="text-white h-32 p-2"/>
-                        </div>
-                        <div class="text-center py-5 font-titulo font-bold text-white ">
-                            <h1>Cruces Intermodal</h1>
-                        </div>
-                    </div>
-            </button>
-        </div> -->
+            <ModuloGeneracionReportes
+                v-for="(modulo, index) in modulos"
+                :key="index"
+                :nombre="modulo.nameModule"
+                :img_src="modulo.image"
+                :ruta="modulo.route"
+                :exitSubModulo="exitSubModulo"                        
+                @abrir-modal-cruces-totales="abrirmodalcrucestotales"
+                @abrir-modal-cruces-ferromex="abrirmodalcrucesferromex"
+            ></ModuloGeneracionReportes>
+        </div> 
     </div>
     <Footer/>
     <Modal :show="showModal" @cerrarmodal="cerralmodalcrucestotales">
@@ -133,8 +111,6 @@
 </template>
 <script>
 const API = process.env.VUE_APP_URL_API_PRODUCCION
-//import Servicio from '../../Servicios/Token-Services';
-//import jwt_decode from "jwt-decode";
 import { ref,reactive,toRefs,onMounted } from 'vue'
 import Navbar from "../../components/Navbar.vue";
 import Footer from "../../components/Footer";
@@ -188,7 +164,7 @@ export default {
 
         axios.get(`${API}/Ferromex/modules?roleName=${decoded.role}`) //enpoint que trae los modulos que puede ver el rol del usuario
         .then((result) => {        
-          let  { subModulos } = ModulesService.test(result.data.content)      
+          let  { subModulos } = ModulesService.GetMolduleAndSubModule(result.data.content)      
           console.log(subModulos)      
           modulos.value = subModulos.filter(x => x.parentModule == route.params.id)                
         })

@@ -44,10 +44,9 @@ export default {
            
     axios.get(`${API}/Ferromex/modules?roleName=${decoded.role}`) //enpoint que trae los modulos que puede ver el rol del usuario
     .then((result) => {        
-      let  { subModulos } = ModulesService.test(result.data.content)    
+      let  { subModulos } = ModulesService.GetMolduleAndSubModule(result.data.content)    
       console.log(subModulos)        
-      modules.value = subModulos.filter(x => x.parentModule == route.params.id)
-      //modalLoading.value = false
+      modules.value = subModulos.filter(x => x.parentModule == route.params.id)      
     })
     .catch((err)=>{console.log(err);})
 

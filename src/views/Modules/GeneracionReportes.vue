@@ -3,16 +3,6 @@
     <h1 class="title font-bold font-titulo">Reportes Intermodal</h1>
     <div class="container mx-auto px-auto px-48 pt-10 my-32">
         <div class="flex flex-wrap ">
-            <!-- <button class="p-7 -mt-12 w-1/3" @click="abrirmodaloperativos()">
-                    <div class="rounded-lg  animacion flex flex-col bg-ferromex border-2 border-gray-900" >
-                    <div>
-                            <img class="img" src="@/assets/Menu/capacidad-de-almacenamiento.png" />
-                        </div>
-                        <div class="text-center py-5 font-titulo font-bold text-white ">
-                            <h1>Operativos</h1>
-                        </div>
-                    </div>
-            </button> -->
             <ModuloGeneracionReportes
                 v-for="(modulo, index) in modulos"
                 :key="index"
@@ -25,16 +15,6 @@
                 @abrir-modal-operativos="abrirmodaloperativos"
                 @abrir-modal-concentrado-ferromex="abrirmodalconcentradoferromex"
             ></ModuloGeneracionReportes>
-            <!-- <button class="p-7 -mt-12 w-1/3" @click="abrirmodalconcentradoferromex">
-                    <div class="rounded-lg  animacion flex flex-col bg-ferromex border-2 border-gray-900" >
-                    <div>
-                            <img class="img" src="@/assets/Menu/almacenamiento-de-base-de-datos.png" />
-                        </div>
-                        <div class="text-center py-5 font-titulo font-bold text-white ">
-                            <h1>Auditoria Intermodal</h1>
-                        </div>
-                    </div>
-            </button> -->
         </div>
     </div>
     <Footer/>
@@ -175,7 +155,7 @@ export default {
 
         axios.get(`${API}/Ferromex/modules?roleName=${decoded.role}`) //enpoint que trae los modulos que puede ver el rol del usuario
         .then((result) => {        
-          let  { subModulos } = ModulesService.test(result.data.content)
+          let  { subModulos } = ModulesService.GetMolduleAndSubModule(result.data.content)
           console.log(subModulos)            
           modulos.value = subModulos.filter(x => x.parentModule == route.params.id)      
         })

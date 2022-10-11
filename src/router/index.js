@@ -41,9 +41,63 @@ const routes = [{
     meta: {
       requiresCookie: true,
     }
+  },  
+  {
+    path: "/gestion-usuarios",
+    name: "Gestión de usuarios",
+    component: GestiónUsuarios,
+    meta: {
+      requiresCookie: true,
+      nombre:"Gestión de usuarios"
+    }
+  }, 
+  {
+    path: "/gestion-usuarios/:id",
+    name: "Gestión de usuarios Id",
+    component: GestiónUsuarios,
+    meta: {
+      requiresCookie: true,
+      nombre:"Gestión de usuarios Id"
+    }
   },
   {
-    path: "/parametros/:id",
+    path: "/generacion-reportes",
+    name: "Generación de Reportes",
+    component: GeneracionReportes,
+    meta: {
+      requiresCookie: true,
+      nombre:"Generación de Reportes"
+    }
+  }, 
+  {
+    path: "/generacion-reportes/:id",
+    name: "Generación de Reportes Id",
+    component: GeneracionReportes,
+    meta: {
+      requiresCookie: true,
+      nombre:"Generación de Reportes Id"
+    }
+  },
+  {
+    path: "/inicio/Cruces",
+    name: "Cruces",
+    component: Cruces,
+    meta: {
+      requiresCookie: true,
+      nombre:"Cruces"
+    }
+  },
+  {
+    path: "/inicio/Cruces/:id",
+    name: "Cruces Id",
+    component: Cruces,
+    meta: {
+      requiresCookie: true,
+      nombre:"Cruces Id"
+    }
+  },
+  {
+    path: "/parametros",
     name: "parametros",
     component: Parametros,
     meta: {
@@ -51,30 +105,11 @@ const routes = [{
     }
   },
   {
-    path: "/gestion-usuarios/:id",
-    name: "Gestión de usuarios",
-    component: GestiónUsuarios,
+    path: "/parametros/:id",
+    name: "parametros Id",
+    component: Parametros,
     meta: {
-      requiresCookie: true,
-      nombre:"Gestión de usuarios"
-    }
-  },
-  {
-    path: "/generacion-reportes/:id",
-    name: "Generación de Reportes",
-    component: GeneracionReportes,
-    meta: {
-      requiresCookie: true,
-      nombre:"Generación de Reportes"
-    }
-  },
-  {
-    path: "/inicio/Cruces/:id",
-    name: "Cruces",
-    component: Cruces,
-    meta: {
-      requiresCookie: true,
-      nombre:"Cruces"
+      requiresCookie: true
     }
   },
   {

@@ -68,8 +68,9 @@ export default {
       modalLoading.value = true //habilitamos el spinner para esperar a que cargue los modulos que podrá ver el rol
       
       axios.get(`${API}/Ferromex/modules?roleName=${decoded.role}`) //enpoint que trae los modulos que puede ver el rol del usuario
-      .then((result) => {        
-        let  { modulos } = ModulesService.test(result.data.content)            
+      .then((result) => {             
+        let  { modulos } = ModulesService.GetMolduleAndSubModule(result.data.content)       
+        console.log(ModulesService.GetModulosWhitSubModulo(result.data.content))     
         modules.value = modulos
         modalLoading.value = false
       })
