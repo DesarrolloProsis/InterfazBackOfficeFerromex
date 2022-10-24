@@ -50,25 +50,33 @@
             </label>
         </div>           
           <div v-if="item.arraySubModule.length > 0" class="col-span-2 text-right"  >
-            <div class="grid grid-cols-2 mt-2" v-for="(item2, index2) in item.arraySubModule" :key="index2">                                  
-              <div class="mx-auto w-full ml-20">
-                  <p class="text-left">{{ item2.modulo.nameModule }}</p>
-              </div>
-              <div class="mx-auto">
-                  <label for="toogle-switch">
-                    <input :disabled="block_checbox_edit_modules(item2.modulo.id)" :class="{'border border-red-500': block_checbox_edit_modules(item2.modulo.id)}" @change="validar_check_sub_module(item2.modulo.id)" type="checkbox" :value="item2.modulo.id" v-model="asignarModulos" id='toogle-switch' class="cursor-pointer h-6 w-12 rounded-full appearance-none bg-gray-200 checked:bg-green-600 transition duration-200 relative">
-                  </label>
-              </div>                                      
-              <div v-if="item2.arraySubModule.length > 0" class="col-span-2 text-right"  >
-                <div class="grid grid-cols-2 mt-2" v-for="(item3, index3) in item2.arraySubModule" :key="index3">                                  
-                  <div class="mx-auto w-full  ml-28">
-                      <p class="text-left">{{ item3.modulo.nameModule }}</p>
+            <div class="grid grid-cols-2" v-for="(item2, index2) in item.arraySubModule" :key="index2"> 
+              <transition-group name="slide-fade">    
+                <div v-if="!block_checbox_edit_modules(item2.modulo.id)" class="col-span-2 grid grid-cols-2 mt-2">
+                  <div class="mx-auto w-full ml-20">
+                      <p class="text-left">{{ item2.modulo.nameModule }}</p>
                   </div>
                   <div class="mx-auto">
                       <label for="toogle-switch">
-                        <input :disabled="block_checbox_edit_modules(item3.modulo.id)" :class="{'border border-red-500': block_checbox_edit_modules(item3.modulo.id)}" @change="validar_check_sub_module(item3.modulo.id)" type="checkbox" :value="item3.modulo.id" v-model="asignarModulos" id='toogle-switch' class="cursor-pointer h-6 w-12 rounded-full appearance-none bg-gray-200 checked:bg-green-600 transition duration-200 relative">
+                        <input :disabled="block_checbox_edit_modules(item2.modulo.id)"  @change="validar_check_sub_module(item2.modulo.id)" type="checkbox" :value="item2.modulo.id" v-model="asignarModulos" id='toogle-switch' class="cursor-pointer h-6 w-12 rounded-full appearance-none bg-gray-200 checked:bg-green-600 transition duration-200 relative">
                       </label>
-                  </div>  
+                  </div>                 
+                </div>                                                                      
+              </transition-group>
+              <div v-if="item2.arraySubModule.length > 0" class="col-span-2 text-right"  >
+                <div class="grid grid-cols-2" v-for="(item3, index3) in item2.arraySubModule" :key="index3">  
+                  <transition-group name="slide-fade">           
+                    <div v-if="!block_checbox_edit_modules(item3.modulo.id)" class="col-span-2 grid grid-cols-2 mt-2">
+                      <div class="mx-auto w-full ml-28">
+                          <p class="text-left">{{ item3.modulo.nameModule }}</p>
+                      </div>
+                      <div class="mx-auto">
+                          <label for="toogle-switch">
+                            <input :disabled="block_checbox_edit_modules(item3.modulo.id)" @change="validar_check_sub_module(item3.modulo.id)" type="checkbox" :value="item3.modulo.id" v-model="asignarModulos" id='toogle-switch' class="cursor-pointer h-6 w-12 rounded-full appearance-none bg-gray-200 checked:bg-green-600 transition duration-200 relative">
+                          </label>
+                      </div>                 
+                    </div>                      
+                  </transition-group>
                 </div>          
               </div>            
             </div>  
@@ -318,12 +326,19 @@ export default {
   border-bottom-color: #a1a1a1;
   border-left-color: white;
   border-right-color: white;
-  text-align: center;
-  
+  text-align: center;  
 }
-</style>
-<style>
-/* CHECKBOX TOGGLE SWITCH */
-/* @apply rules for documentation, these do not work as inline style */
+
+.slide-fade-enter-active {
+  transition: all .20s ease;
+}
+.slide-fade-leave-active {
+  transition: all .3s cubic-bezier(1.0, 0.5, 0.8, 1.0);
+}
+.slide-fade-enter, .slide-fade-leave-to
+/* .slide-fade-leave-active below version 2.1.8 */ {
+  transform: translateX(100px);
+  opacity: 0;
+}
 
 </style>
