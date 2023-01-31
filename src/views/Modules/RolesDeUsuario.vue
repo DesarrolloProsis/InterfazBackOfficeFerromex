@@ -42,11 +42,11 @@
     <div>
       <p class="text-gray-900 font-bold text-2xl -mt-8 mb-8 text-center">Agregar Nuevo Perfil</p>     
       <div class="grid grid-cols-2 mt-2">
-        <p class="text-sm mb-1 font-semibold text-gray-700 text-center sm:-ml-6">Nombre Perfil</p>
+        <p class="text-sm mb-1 font-semibold text-gray-700 text-center sm:-ml-6">Nombre Perfil*:</p>
         <input v-model="newRol.nombre" type="text" class="border mx-auto w-52 rounded-lg" :class="{'border border-red-400': vacio}" @input="vacio = false">
       </div>
       <div class="grid grid-cols-2 mt-2">
-        <p class="text-sm mb-1 text-center font-semibold text-gray-700 mt-2 sm:-ml-6">Módulos</p>
+        <p class="text-sm mb-1 text-center font-semibold text-gray-700 mt-2 sm:-ml-6">Módulos*:</p>
         <Multiselect
           v-model="newRol.vistas" 
           label="text"
@@ -65,6 +65,7 @@
       <div class="mt-10 text-center mx-auto mb-4">
         <button @click="craer_nuevo_rol" class="rounded-lg w-18 bg-ferromex text-white p-10">Guardar</button>
       </div>
+      <h1 class="text-xl font-bold font-titulo text-center -mt-2">* Campo Obligatorio</h1>
     </div>
   </Modal>
   <!-- MODAL CARGANDO -->
@@ -112,9 +113,12 @@ export default {
       modulosExistentes.value = []//Vaciamos la constante que obtine los módulos existentes
       axios.get(`${API}/Ferromex/modules`)//Endpoint que trae todos los modulos que existen
       .then((result)=>{//Si el endpoint tiene una respuesta correcta
-        for(let i=0; i<result.data.content.length; i++){ //recorremos la respuesta, y cada que recorremos sumamos un 1 para el siguiente rol
-          modulosExistentes.value.push({'text':result.data.content[i].nameModule, 'value':result.data.content[i].id,})//asignamos los roles existentes a la variable roles, para mostrarlos en el multiselect
+        console.log(result);
+        result.data.content.forEach((e) => {//reiteracion y comprobacion si es un submodulo
+        if({}.hasOwnProperty.call(e,'parentModule') == false){
+        modulosExistentes.value.push({'text':e.nameModule, 'value':e.id,})//asignamos los roles existentes a la variable roles, para mostrarlos en el multiselect
         }
+      })
       })
     }
     const cerralmodalpadre = (modal) => {//constante que emite el cierre del modal para agregar roles, y limpia los valores del modal
@@ -138,7 +142,6 @@ export default {
             }
             axios.post(`${API}/Ferromex/addRoleModules`, data) //llamada al endpoint que inserta los modulos al rol correspondiente
             .then((result)=>{
-              console.log(result);
               if(result.status == 200)//Validamos que la respuesta sea correcta
               {
                 modalLoading.value = false//Desactivamos el spinner

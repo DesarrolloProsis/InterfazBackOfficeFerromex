@@ -1,4 +1,4 @@
-<template>
+<!-- <template>
 <Navbar/>
 <div class="grid justify-items-center p-18 mt-6 2xl:p-36">
 <div class="bg-white w-96 h-69 rounded-lg shadow-md 2xl:w-80 2xl:h-80">
@@ -90,13 +90,13 @@
 </template>
 
 <script>
-const API = process.env.VUE_APP_URL_API_PRODUCCION
+//const API = process.env.VUE_APP_URL_API_PRODUCCION
 import Navbar from "../../components/Navbar.vue";
 import Footer from "../../components/Footer";
 import Modal from "../../components/Modal.vue"
 import { notify } from "@kyvg/vue3-notification";
 import { reactive, ref,onMounted, toRefs,inject } from 'vue'
-import ServiceFiles from '../../Servicios/Files-Service'
+//import ServiceFiles from '../../Servicios/Files-Service'
 import moment from 'moment'
 export default {
 components: {
@@ -133,8 +133,8 @@ setup(){
      });
     }else{
       //Generamos la ruta que hara la llamada a las bolsas
-    const ruta = encodeURI(`${API}/Ferromex/reportecajero/bolsascajero/${nocajero}/${idturno}/${fechareporte}`)
-    axios.get(ruta)
+    //const ruta = encodeURI(`${API}/Ferromex/reportecajero/bolsascajero/${nocajero}/${idturno}/${fechareporte}`)
+    //axios.get(ruta)
     //En el then se deben llenar las las bolsas pertenecientes
     .then((res)=>{
       console.log(res)
@@ -155,8 +155,8 @@ setup(){
     }
   //Funcion que genera los reportes
     function generarbolsa(idbolsa){
-      ServiceFiles.xml_hhtp_request(`${API}/Ferromex/Download/pdf/reporteOperativo/reporteCajero/concentrado/${idbolsa}`, 'CajeroContrado.pdf'); //Con el servicio importado mandamos la ruta y el nombre
-      ServiceFiles.xml_hhtp_request(`${API}/Ferromex/Download/pdf/reporteOperativo/reporteCajero/transacciones/${idbolsa}`, 'TransaccionesCajero.pdf');//Con el servicio importado mandamos la ruta y el nombre
+      //ServiceFiles.xml_hhtp_request(`${API}/Ferromex/Download/pdf/reporteOperativo/reporteCajero/concentrado/${idbolsa}`, 'CajeroContrado.pdf'); //Con el servicio importado mandamos la ruta y el nombre
+      //ServiceFiles.xml_hhtp_request(`${API}/Ferromex/Download/pdf/reporteOperativo/reporteCajero/transacciones/${idbolsa}`, 'TransaccionesCajero.pdf');//Con el servicio importado mandamos la ruta y el nombre
       //Devolvemos los valores a su valor por default
       bolsas.value = [];
       showModal.value = false
@@ -184,4 +184,4 @@ return {showModal,generareporte,cerralmodalpadre,generarbolsa,bolsas,hoy,vnocaje
   background-color: #BB2028;
   padding: 10px 5px;
 }
-</style>
+</style> -->

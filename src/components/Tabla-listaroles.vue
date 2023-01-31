@@ -40,32 +40,48 @@
   <Modal :show="modalModulos" @cerrarmodal="modalModulos = false, vacio = false">
     <div>
       <p class="text-gray-900 font-bold text-2xl -mt-8 mb-8 text-center">Actualizar Módulos del Perfil {{ perfilSelected.nombreRol }}</p>
-      <div class="grid grid-cols-2 mt-2" v-for="(modulo, index) in modulosExistentes" :key="index">
-      <div class="mx-auto w-full">
-           <p class="text-center">{{ modulo.label }}</p>
-      </div>
-      <div class="mx-auto">
-         <!-- <div class="relative inline-block w-16 mr-2 align-middle select-none transition duration-200 ease-in">
-            <input type="checkbox" :value="modulo.value" v-model="asignarModulos" name="toggle" id="toggle" class="toggle-checkbox absolute w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer"/>
-            <label for="toggle" class="toggle-label block overflow-hidden h-6 rounded-full bg-gray-300 cursor-pointer"></label>
-          </div> -->
-          <label for="toogle-switch">
-            <input type="checkbox" :value="modulo.value" v-model="asignarModulos" id='toogle-switch' class="cursor-pointer h-6 w-12 rounded-full appearance-none bg-gray-200 checked:bg-green-600 transition duration-200 relative">
-          </label>
-      </div>
-      </div>
-      <!-- <div class="grid grid-cols-2 mt-6">      
-        <p class="text-sm mb-1 font-semibold text-gray-700 text-center ">Modulos a Asignar</p>
-        <Multiselect
-          placeholder="Seleccione los modulos para este rol"
-          mode="multiple"
-          :searchable="true"
-          :options="modulosExistentes"
-          :close-on-select="false"
-          class="w-52"
-          :class="{'border border-red-400': vacio}"
-        />
-      </div> -->
+      <div class="grid grid-cols-2 mt-2" v-for="(item, index) in modulosExistentesMap" :key="index">
+        <div class="mx-auto w-full ml-10">
+            <p class="text-left">{{ item.modulo.nameModule }}</p>
+        </div>
+        <div class="mx-auto">
+            <label for="toogle-switch">
+              <input @change="validar_check_sub_module(item.modulo.id)" type="checkbox" :value="item.modulo.id" v-model="asignarModulos" id='toogle-switch' class="cursor-pointer h-6 w-12 rounded-full appearance-none bg-gray-200 checked:bg-green-600 transition duration-200 relative">
+            </label>
+        </div>           
+          <div v-if="item.arraySubModule.length > 0" class="col-span-2 text-right"  >
+            <div class="grid grid-cols-2" v-for="(item2, index2) in item.arraySubModule" :key="index2"> 
+              <transition-group name="slide-fade">    
+                <div v-if="!block_checbox_edit_modules(item2.modulo.id)" class="col-span-2 grid grid-cols-2 mt-2">
+                  <div class="mx-auto w-full ml-20">
+                      <p class="text-left">{{ item2.modulo.nameModule }}</p>
+                  </div>
+                  <div class="mx-auto">
+                      <label for="toogle-switch">
+                        <input :disabled="block_checbox_edit_modules(item2.modulo.id)"  @change="validar_check_sub_module(item2.modulo.id)" type="checkbox" :value="item2.modulo.id" v-model="asignarModulos" id='toogle-switch' class="cursor-pointer h-6 w-12 rounded-full appearance-none bg-gray-200 checked:bg-green-600 transition duration-200 relative">
+                      </label>
+                  </div>                 
+                </div>                                                                      
+              </transition-group>
+              <div v-if="item2.arraySubModule.length > 0" class="col-span-2 text-right"  >
+                <div class="grid grid-cols-2" v-for="(item3, index3) in item2.arraySubModule" :key="index3">  
+                  <transition-group name="slide-fade">           
+                    <div v-if="!block_checbox_edit_modules(item3.modulo.id)" class="col-span-2 grid grid-cols-2 mt-2">
+                      <div class="mx-auto w-full ml-28">
+                          <p class="text-left">{{ item3.modulo.nameModule }}</p>
+                      </div>
+                      <div class="mx-auto">
+                          <label for="toogle-switch">
+                            <input :disabled="block_checbox_edit_modules(item3.modulo.id)" @change="validar_check_sub_module(item3.modulo.id)" type="checkbox" :value="item3.modulo.id" v-model="asignarModulos" id='toogle-switch' class="cursor-pointer h-6 w-12 rounded-full appearance-none bg-gray-200 checked:bg-green-600 transition duration-200 relative">
+                          </label>
+                      </div>                 
+                    </div>                      
+                  </transition-group>
+                </div>          
+              </div>            
+            </div>  
+          </div>        
+      </div>      
       <div class="mt-10 text-center mx-auto mb-4">
         <button @click="editarModulos(perfilSelected.nombreRol, asignarModulos)" class="rounded-lg w-18 bg-ferromex text-white p-10">Guardar</button>
       </div>
@@ -76,7 +92,8 @@
 import Servicio from '../Servicios/Token-Services'; //Importamos el Servicio de Toke, para obtener información del usuario con base en el token
 import Multiselect from '@vueform/multiselect' //Importamos el componente Multiselect para utilizarlo en la columna Acciones o en el modal de asignar módulos
 import Modal from '../components/Modal.vue'
-import { ref,inject } from 'vue'
+import ModulesService from '../Servicios/Modules-Service'
+import { ref, inject } from 'vue'
 import { notify } from "@kyvg/vue3-notification"; //Componente para generar notificaciones
 const API = process.env.VUE_APP_URL_API_PRODUCCION //Constante que nos almacena la cadena de conexión a la API
 export default {
@@ -94,6 +111,7 @@ export default {
     const modulos = ref([])//Constante que almacena todos los módulos que tiene asignados a un rol en especifico
     const asignarModulos = ref([])//Constante que almacena el array de módulos que se van a asignar a un rol en especifico
     const modulosExistentes = ref([])//Constante que almacena todos los módulos existentes
+    const modulosExistentesMap = ref([])//Constante que almacena todos los módulos existentes
     const infoUser = Servicio.obtenerInfoUser() //Constante que obtiene la información del usuario
     const vacio = ref(false)
     function cambiarEstatus (rol){//Funciòn praa cambiar el estatus del rol
@@ -121,36 +139,22 @@ export default {
     function modulosExistente(){//Función para obtener todos los modulos registrados
       axios.get(`${API}/Ferromex/modules`)//Endpoint que trae todos los modulos que existen
       .then((result)=>{//Si el endpoint tiene una respuesta correcta
-      console.log(result.data.content);
-      let modulosexistentes = result.data.content;
-      modulosexistentes.forEach((e) => {//reiteracion y comprobacion si es un submodulo
-        if({}.hasOwnProperty.call(e,'parentModule') == false){
-        modulosExistentes.value.push({'value':e.id, 'label':e.nameModule})//asignamos los roles existentes a la variable roles, para mostrarlos en el multiselect
-      }
-      })
-        // for(let i=0; i<result.data.content.length; i++){ //recorremos la respuesta, y cada que recorremos sumamos un 1 para el siguiente rol
-        //   modulosExistentes.value.push({'value':result.data.content[i].id, 'label':result.data.content[i].nameModule})//asignamos los roles existentes a la variable roles, para mostrarlos en el multiselect
-        // }
+          console.log(result)
+          console.log(ModulesService.GetModulosWhitSubModulo(result.data.content))
+          modulosExistentes.value = result.data.content
+          modulosExistentesMap.value = ModulesService.GetModulosWhitSubModulo(result.data.content)  
       })
     }
     function traerModulos(rol){//Función que trae los modulos asignados a un rol en especifico
       modulosExistente()//Llamamos a la función que trae todos los roles, para llenar el multiselect
-      console.log(modulosExistentes.value);
-      modulos.value = []
+      //modulos.value = []
       axios.get(`${API}/Ferromex/modules?roleName=${rol.nombreRol}`)//Endpoint que trae los módulos asignados a un rol en especificio, si no le mandamos ningún rol, trae todos los módulos
-      .then((result)=>{//Si el endpoint tiene una respuesta correcta
-        console.log(result);
-        for(let i=0; i<result.data.content.length; i++){ //recorremos la respuesta, y cada que recorremos sumamos un 1 para el siguiente rol
-          modulos.value.push({'value':result.data.content[i].id, 'label':result.data.content[i].nameModule})//asignamos los roles existentes a la variable roles, para mostrarlos en el multiselect
-        }
-        let idroles = modulos.value.map(function(x) {  //Creamos un nuevo arreglo solo con los id correspondientes
-          return x.value;
-        });                                   
-        asignarModulos.value = idroles; //Pasamos ese valor al vmodel correspondiente para que lo lea y si es asi sea marcadado en la casilla
+      .then((result)=>{//Si el endpoint tiene una respuesta correcta                               
+        console.log(result)
+        asignarModulos.value = result.data.content.map(x => x.id); //Pasamos ese valor al vmodel correspondiente para que lo lea y si es asi sea marcadado en la casilla
       })
     }
     function editarModulos(rol, modulos){//Función que permite agregar o quitar módulos a un rol en especifico, recibe el nombre del rol y un array con los módulos a asignar
-      console.log(modulos);
       if(modulos.length === 0){// Si no se ha seleccionado ningún módulo, no nos va a permitir actualizarlos
         vacio.value = true
         notify({//Notificación que se muestra cuando no se puede hacer el cambio de manera correcta
@@ -160,14 +164,13 @@ export default {
           duration:5000,
         });
       }else{//Si se seleccionó mínimo un módulo, se puede hacer la actualización
+      console.log(modulos)
         let data = {//literal que alamacena el nombre del rol y los módulos, para enviarlo en le body del endpoint
           'roleName': rol,
-          'modules': modulos
+          'modules': modulos.map(x => x)
         }
-        console.log(data);
         axios.post(`${API}/Ferromex/addRoleModules`, data)//Enpoint que asigna los módulos a un rol en especifico
-        .then((resp)=> {//Si el endpoint tiene una respuesta correcta
-          console.log(resp);
+        .then(()=> {//Si el endpoint tiene una respuesta correcta
           modalModulos.value = false //cerramos el modal de asignación de módulos
           notify({//Notifiación que se muestra cuando se realiza el cambio de una manera correcta
             title:'Cambio Exitoso',
@@ -219,8 +222,38 @@ export default {
         }
       return filtroOpciones //Regresamos el array con las opciones ya filtradas
     }
+    function validar_check_sub_module(idModulo){    
+      if(!asignarModulos.value.includes(idModulo)){ //si existe ese id es que se debe seleccionar los checkbox
+        let contentSubModule = modulosExistentes.value.filter(x => x.parentModule == idModulo)      
+        if(contentSubModule.length > 0){
+          contentSubModule.forEach(x => {  
+            let _subModules = modulosExistentes.value.filter(itemSub => itemSub.parentModule == x.id)  
+            if(_subModules.length > 0){
+              _subModules.forEach(x => {                
+                asignarModulos.value = asignarModulos.value.filter(item => item != x.id)                                                                
+              })              
+            }                
+            asignarModulos.value = asignarModulos.value.filter(item => item != x.id)                        
+          })
+        }   
+      }
+    }
+    function block_checbox_edit_modules(idModulo){
 
-    return { modalModulos, perfilSelected, value, modulos, asignarModulos, modulosExistentes, infoUser, vacio, cambiarEstatus, modulosExistente, traerModulos,editarModulos, acciones_mapper, opticones_select_acciones }
+      let moduleParam = modulosExistentes.value.find(x => x.id == idModulo)
+      if(asignarModulos.value.includes(moduleParam.parentModule)){
+        return false
+      }      
+      else if (asignarModulos.value.includes(idModulo)){
+        return false
+      }
+      else{
+        return true
+      }
+      //return true
+    }
+      
+    return { modalModulos, block_checbox_edit_modules, perfilSelected, value, modulos, asignarModulos, modulosExistentes, modulosExistentesMap, infoUser, vacio, cambiarEstatus, modulosExistente, traerModulos, validar_check_sub_module, editarModulos, acciones_mapper, opticones_select_acciones }
   }
 };
 </script>
@@ -293,12 +326,19 @@ export default {
   border-bottom-color: #a1a1a1;
   border-left-color: white;
   border-right-color: white;
-  text-align: center;
-  
+  text-align: center;  
 }
-</style>
-<style>
-/* CHECKBOX TOGGLE SWITCH */
-/* @apply rules for documentation, these do not work as inline style */
+
+.slide-fade-enter-active {
+  transition: all .20s ease;
+}
+.slide-fade-leave-active {
+  transition: all .3s cubic-bezier(1.0, 0.5, 0.8, 1.0);
+}
+.slide-fade-enter, .slide-fade-leave-to
+/* .slide-fade-leave-active below version 2.1.8 */ {
+  transform: translateX(100px);
+  opacity: 0;
+}
 
 </style>

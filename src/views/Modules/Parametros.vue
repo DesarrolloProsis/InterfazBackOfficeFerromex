@@ -5,11 +5,12 @@
     <div class="container mx-auto px-auto px-48 pt-10 my-32">
         <div class="flex flex-wrap">
             <ModulosComp
-            v-for="(modulo, index) in modulos"
+            v-for="(modulo, index) in modules"
             :key="index"
-            :imagen="modulo.imagen"
-            :ruta="modulo.ruta"
-            :nombre="modulo.nombre"
+            :imagen="modulo.image"
+            :ruta="modulo.route"
+            :nombre="modulo.nameModule"
+            :exitSubModulo="exitSubModulo"
             ></ModulosComp>
         </div>
     </div>
@@ -19,38 +20,38 @@
 </template>
 
 <script>
+const API = process.env.VUE_APP_URL_API_PRODUCCION //constante que hace referencia a la ip donde está montada el API, se utiliza para hacer peticiones
 import Navbar from "../../components/Navbar.vue"; //Importamos el componnete Navbar para mostrar en la vista
 import ModulosComp from "../../components/Moldulo-menu.vue"; //Importamos el componente de Menú para poder poner cada uno de los modulos que tiene el rol
 import Footer from "../../components/Footer.vue";//Importamos el footer para mostrar en la vista
-import { ref } from 'vue' //Importamos onMounted para recibir una respuesta de una llamada cuando se monta el modulo, y ref para hacer referencia al tipo de dato que estamos utilizando y volvemos reactiva la constante
-
+import Servicio from '@/Servicios/Token-Services'; //Importamos el Servicio de Toke, para obtener información del usuario con base en el token
+import { ref, inject } from 'vue' //Importamos onMounted para recibir una respuesta de una llamada cuando se monta el modulo, y ref para hacer referencia al tipo de dato que estamos utilizando y volvemos reactiva la constante
+import ModulesService from '@/Servicios/Modules-Service'
+import { useRoute } from 'vue-router'
 export default {
   components: {
     Navbar,
     ModulosComp,
     Footer
   },
-  setup(){
-    
-    const modulos = ref([]) //Constante que va a almacenar el array de modulos que se van a mostrar
-
-    modulos.value = [
-                {
-                    imagen: "Menu/gestion-usuarios.png",
-                    nombre: "Gestion de Usuarios",
-                    ruta: "/gestion-usuarios",
-                    color: "red"
-                },
-                {
-                    imagen:"Menu/mantenimiento-tag.png",
-                    nombre: "Gestión de Tags",
-                    ruta: "/inicio/mantenimiento-tag",
-                    color: "red"
-                },
-            ]  
+  setup(){      
+    const axios = inject('axios')
+    const decoded = Servicio.obtenerInfoUser() //variable que obtiene la información del usuario
+    const route = useRoute()
+    const modules = ref([]) //Constante que va a almacenar el array de modulos que se van a mostrar
+    let idModulo = route.params.id
+    console.log(idModulo)
+           
+    axios.get(`${API}/Ferromex/modules?roleName=${decoded.role}`) //enpoint que trae los modulos que puede ver el rol del usuario
+    .then((result) => {        
+      let  { subModulos } = ModulesService.GetMolduleAndSubModule(result.data.content)    
+      console.log(subModulos)        
+      modules.value = subModulos.filter(x => x.parentModule == route.params.id)      
+    })
+    .catch((err)=>{console.log(err);})
 
     
-    return {modulos}
+    return {modules}
   }
 };
 </script>

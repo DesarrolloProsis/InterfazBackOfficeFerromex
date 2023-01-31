@@ -4,7 +4,7 @@
     <h1 class="title-center font-titulo font-bold pb-4">Transacciones Intermodal</h1>
     <div class="flex flex-wrap ferromex-color p-1 rounded-lg">
       <div class="flex-none my-auto text-white font-md p-2 ml-20 md:ml-1">
-        Fecha:<input v-model="fecha" type="date" class="rounded text-black ml-2 md:w-10 xl:w-44" />
+        Fecha:<input v-model="fecha" type="date" class="rounded text-black ml-2 md:w-10 xl:w-32" />
       </div>
       <div class="flex-none my-auto text-white text-center font-md p-2">
         <select v-model="tipo" class="text-gray-800 w-32 rounded">
@@ -12,7 +12,7 @@
           <option value="B">No Economico</option>
           <option value="C">No Placa</option>
         </select>
-        <input v-model="tag" type="text" class="rounded text-black ml-2 md:w-10 xl:w-32" />
+        <input v-model.trim="tag" type="text" class="rounded text-black ml-2 md:w-10 xl:w-32" />
       </div>
       <div class="flex-none my-auto text-white font-md p-2">
         ViA:
@@ -31,20 +31,20 @@
         </select>
       </div>
       <div class="flex-none my-auto text-white font-md p-2">
-        Resultados:
-        <select v-model="numRespuesta" class="text-gray-800 w-16 rounded" @change="buscarchange(fecha,tag,carril,cuerpo,tipo,clase)">
-          <option value="10">10</option>
-          <option value="30">30</option>
-          <option value="50">50</option>
-        </select>
-      </div>
-      <div class="flex-none my-auto text-white font-md p-2">
         Clase:
         <select v-model="clase" class="flex-none text-black rounded" name="select" placeholder="Selecciona">
           <option :value="undefined">Seleccione Clase</option>
           <option v-for="(clase ,index) in clases" :key="index" :value="clase.clase">
               {{ clase.clase }}
           </option>
+        </select>
+      </div>
+      <div class="flex-none my-auto text-white font-md p-2">
+        Resultados:
+        <select v-model="numRespuesta" class="text-gray-800 w-16 rounded" @change="buscarchange(fecha,tag,carril,cuerpo,tipo,clase)">
+          <option value="10">10</option>
+          <option value="30">30</option>
+          <option value="50">50</option>
         </select>
       </div>
       <div class="flex-none my-auto text-white font-md p-2">
@@ -131,7 +131,20 @@ export default {
       const ruta = (encodeURI(`${API}/ferromex/carriles`))//Constante que guarda la ruta encriptada para la consulta en el API
       axios.get(ruta)//Hacemos una petición http al API con la ruta previamente encriptada
       .then((result) => {//Si el endpoint responde de manera correcta
-        carriles.value = result.data //Asignamos los valores de la respuesta del endpoint para mostrarlos en el header para los filtros
+        let resultado = []
+            resultado = result.data
+            //resultado.sort()
+            resultado.sort(function (a, b) {
+                if (a.id > b.id) {
+                    return 1;
+                }
+                if (a.id < b.id) {
+                    return -1;
+                }
+                // a must be equal to b
+                return 0;
+            });
+        carriles.value = resultado //Asignamos los valores de la respuesta del endpoint para mostrarlos en el header para los filtros
       }).catch((error) => {//Si el endpoint tiene un error en la respuesta
         console.log(error.request.response);//Mostramos en consola el error
       })
@@ -164,9 +177,7 @@ export default {
       const ruta = (encodeURI(`${API}/ferromex/registroInformacion/1/${numRespuesta.value}/${fechaRuta}/${tagRuta}/${carrilRuta}/${cuerpoRuta}/${NoPlacaRuta}/${NoEconomicoRuta}/${claseRuta}`))//Constante almacena la ruta encriptada para hacer la petición al API
       axios.get(ruta)//Hacemos la petición https al API con la ruta encriptada anteriormente
       .then((result) => {//Si el endpoint tiene una respuesta correcta
-        console.log(result.data)
         cruces.value = result.data.cruces//Asignamos el valor de los resultados del endpoint para mostrarlos en la tabla
-        console.log(cruces.value)
         totalPaginas.value = result.data.paginas_totales//Asignamos el valor del número de páginas totales para la paginación
         paginaActual.value = result.data.pagina_actual//Asignamos el valor de la página actual, para saber en que página estamos en el componente de páginación
         modalLoading.value = false//Desactivamos la bandera que muestra el spinner de la pantalla de carga
@@ -221,11 +232,9 @@ export default {
           NoEconomico = " "
         }
         const ruta = (encodeURI(`${API}/ferromex/registroInformacion/${paginaActual.value}/${numRespuesta.value}/${fecha}/${tagenviar}/${carril}/${cuerpo}/${NoPlaca}/${NoEconomico}/${clase}`))//Constante que almacena la ruta encriptada para hacer la petición al API
-        console.log(ruta)
         axios.get(ruta)//Realizamos la petición http al API
         .then((result) => {//Si el endpoint tiene una respuesta correcta
           cruces.value = result.data.cruces//Asignamos los valores del resultado a la constrante que se va a mostrar en la tabla
-          console.log(cruces.value)
           totalPaginas.value = result.data.paginas_totales//Asignamos el valor de las páginas totales para saber el limite de páginas en el componente de paginación
           paginaActual.value = result.data.pagina_actual//Asignamos el valor de la página actual para enviarlo al componente de paginación
           modalLoading.value = false
@@ -276,11 +285,9 @@ export default {
           NoEconomico = " "
         }
       const ruta = (encodeURI(`${API}/ferromex/registroInformacion/${paginaActual.value}/${numRespuesta.value}/${fecha}/${tagenviar}/${carril}/${cuerpo}/${NoPlaca}/${NoEconomico}/${clase}`))//Constante que almacena la ruta encriptada para hacer la petición al API
-      console.log(ruta)
       axios.get(ruta)//Realizamos la petición http al API
         .then((result) => {//Si el endpoint tiene una respuesta correcta
           cruces.value = result.data.cruces//Asignamos los valores del resultado a la constrante que se va a mostrar en la tabla
-          console.log(cruces.value)
           totalPaginas.value = result.data.paginas_totales//Asignamos el valor de las páginas totales para saber el limite de páginas en el componente de paginación
           paginaActual.value = result.data.pagina_actual//Asignamos el valor de la página actual para enviarlo al componente de paginación
           modalLoading.value = false
@@ -346,11 +353,9 @@ export default {
         NoEconomico = " "
       }
       const ruta = (encodeURI(`${API}/ferromex/registroInformacion/${page}/${numRespuesta.value}/${fechaVacia}/${tagenviar}/${header.carril}/${header.cuerpo}/${NoPlaca}/${NoEconomico}/${claseRuta}`))//Constante que almacena la ruta encriptada para hacer la petición al API
-      console.log(ruta);
       axios.get(ruta)
       .then((result) => {//Si el endpoint contiene una respuesta correcta
         cruces.value = result.data.cruces//Asignamos el valor de los resultados del endpoint para mostrarlos en la tabla
-        console.log(cruces.value)
         totalPaginas.value = result.data.paginas_totales//Asignamos el valor de las páginas totales para saber el limite de páginas en el componente de paginación
         paginaActual.value = result.data.pagina_actual//Asignamos el valor de la página actual para enviarlo al componente de paginación
         modalLoading.value = false

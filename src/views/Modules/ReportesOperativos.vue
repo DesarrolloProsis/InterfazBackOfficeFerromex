@@ -39,7 +39,6 @@ export default {
     components: {
         Navbar,
         Footer,
-      
     },
     setup(){
        

@@ -14,6 +14,7 @@ import ReporteCajero from '../views/Modules/ReporteCajero.vue'
 import Cruces from '../views/Modules/Cruces.vue'
 import Servicio from '../Servicios/Token-Services'
 import Parametros from '@/views/Modules/Parametros.vue'
+import ActividadUsuarios from '@/views/Modules/ActividadUsuario.vue'
 
 
 const routes = [{
@@ -39,6 +40,76 @@ const routes = [{
     component: Menu,
     meta: {
       requiresCookie: true,
+    }
+  },  
+  {
+    path: "/gestion-usuarios",
+    name: "Gestión de usuarios",
+    component: GestiónUsuarios,
+    meta: {
+      requiresCookie: true,
+      nombre:"Gestión de usuarios"
+    }
+  }, 
+  {
+    path: "/gestion-usuarios/:id",
+    name: "Gestión de usuarios Id",
+    component: GestiónUsuarios,
+    meta: {
+      requiresCookie: true,
+      nombre:"Gestión de usuarios Id"
+    }
+  },
+  {
+    path: "/generacion-reportes",
+    name: "Generación de Reportes",
+    component: GeneracionReportes,
+    meta: {
+      requiresCookie: true,
+      nombre:"Generación de Reportes"
+    }
+  }, 
+  {
+    path: "/generacion-reportes/:id",
+    name: "Generación de Reportes Id",
+    component: GeneracionReportes,
+    meta: {
+      requiresCookie: true,
+      nombre:"Generación de Reportes Id"
+    }
+  },
+  {
+    path: "/inicio/Cruces",
+    name: "Cruces",
+    component: Cruces,
+    meta: {
+      requiresCookie: true,
+      nombre:"Cruces"
+    }
+  },
+  {
+    path: "/inicio/Cruces/:id",
+    name: "Cruces Id",
+    component: Cruces,
+    meta: {
+      requiresCookie: true,
+      nombre:"Cruces Id"
+    }
+  },
+  {
+    path: "/parametros",
+    name: "parametros",
+    component: Parametros,
+    meta: {
+      requiresCookie: true
+    }
+  },
+  {
+    path: "/parametros/:id",
+    name: "parametros Id",
+    component: Parametros,
+    meta: {
+      requiresCookie: true
     }
   },
   {
@@ -85,34 +156,7 @@ const routes = [{
       requiresCookie: true,
       nombre:"Reporte Cajero"
     }
-  },
-  {
-    path: "/inicio/Cruces",
-    name: "Cruces",
-    component: Cruces,
-    meta: {
-      requiresCookie: true,
-      nombre:"Cruces"
-    }
-  },
-  {
-    path: "/generacion-reportes",
-    name: "Generación de Reportes",
-    component: GeneracionReportes,
-    meta: {
-      requiresCookie: true,
-      nombre:"Generación de Reportes"
-    }
-  },
-  {
-    path: "/gestion-usuarios",
-    name: "Gestión de usuarios",
-    component: GestiónUsuarios,
-    meta: {
-      requiresCookie: true,
-      nombre:"Gestión de usuarios"
-    }
-  },
+  },  
   {
     path: "/gestion-usuarios/administracion-perfiles",
     name: "AdministracionPerfilUsuario",
@@ -130,13 +174,13 @@ const routes = [{
     }
   },
   {
-    path: "/parametros",
-    name: "parametros",
-    component: Parametros,
+    path: "/actividad-usuarios",
+    name: "ActividadUsuarios",
+    component: ActividadUsuarios,
     meta: {
       requiresCookie: true
-    }
-  },
+    }  
+  }
 ];
 
 const router = createRouter({

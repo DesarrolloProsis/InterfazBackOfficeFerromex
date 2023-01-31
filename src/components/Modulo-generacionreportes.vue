@@ -1,6 +1,6 @@
 <template>
     <div class="p-7 -mt-12 w-1/3" :class="{'ml-20': mostrar == 'false'}">
-        <router-link :to="ruta" tag="div">
+        <router-link  v-if="ruta.includes('/')" :to="ruta" tag="div">
             <div class="rounded-lg animacion flex flex-col bg-ferromex border-2 border-gray-900" >
                 <div>
                     <img class="img" :src="require('@/assets/' + img_src)" />
@@ -10,6 +10,14 @@
                 </div>
             </div>
         </router-link>
+        <div v-else @click="this.$emit(ruta)" class="rounded-lg animacion flex flex-col bg-ferromex border-2 border-gray-900" >
+            <div>
+                <img class="img" :src="require('@/assets/' + img_src)" />
+            </div>
+            <div class="text-center py-5 font-titulo font-bold text-white">
+                <h1>{{ nombre }}</h1>
+            </div>
+        </div>
     </div>
 </template>
 <script>

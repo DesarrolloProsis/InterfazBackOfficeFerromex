@@ -2,28 +2,18 @@
     <Navbar/>
     <h1 class="title font-bold font-titulo my-8">Cruces Telepeaje</h1>
     <div class="container mx-auto px-auto px-48 my-32 pt-10">
-        <div class="flex flex-wrap">
-            <button class=" p-7 -mt-12 w-1/2" @click="abrirmodalcrucestotales()">
-                    <div class="rounded-lg  animacion flex flex-col bg-ferromex border-2 border-gray-900" >
-                        <div class="text-center">
-                            <fa icon="calendar-check" class="text-white h-32 p-2"/>
-                        </div>
-                        <div class="text-center py-5 font-titulo font-bold text-white">
-                            <h1>Cruces Totales</h1>
-                        </div>
-                    </div>
-            </button>
-            <button class="p-7 -mt-12 w-1/2" @click="abrirmodalcrucesferromex()">
-                    <div class="rounded-lg  animacion flex flex-col bg-ferromex border-2 border-gray-900" >
-                        <div class="text-center">
-                            <fa icon="calendar-day" class="text-white h-32 p-2"/>
-                        </div>
-                        <div class="text-center py-5 font-titulo font-bold text-white ">
-                            <h1>Cruces Intermodal</h1>
-                        </div>
-                    </div>
-            </button>
-        </div>
+        <div class="flex flex-wrap justify-center">
+            <ModuloGeneracionReportes
+                v-for="(modulo, index) in modulos"
+                :key="index"
+                :nombre="modulo.nameModule"
+                :img_src="modulo.image"
+                :ruta="modulo.route"
+                :exitSubModulo="exitSubModulo"                        
+                @abrir-modal-cruces-totales="abrirmodalcrucestotales"
+                @abrir-modal-cruces-ferromex="abrirmodalcrucesferromex"
+            ></ModuloGeneracionReportes>
+        </div> 
     </div>
     <Footer/>
     <Modal :show="showModal" @cerrarmodal="cerralmodalcrucestotales">
@@ -31,13 +21,13 @@
             <div class="flex w-full justify-center gap-20 mt-10">
                 <div class="flex flex-col gap-10">
                     <div>
-                        <label for="">Dia</label>
+                        <label for="">Dia*</label>
                     </div>
                     <div>
-                        <label for="">Año/Mes</label>
+                        <label for="">Año/Mes*</label>
                     </div>
                     <div>
-                        <label for="">Semana</label>
+                        <label for="">Semana*</label>
                     </div>
                 </div>
                 <div class="flex flex-col gap-10">
@@ -58,19 +48,21 @@
                     <button class="rounded-lg w-18 bg-ferromex text-white p-10 ml-6" @click="generarreportetotaldescargar(dias,meses,semana)">Descargar Reporte</button>
                 </div>
             </div>
+            <h1 class="text-xl font-bold font-titulo text-center mt-2">* Campo Obligatorio</h1>
+            <h1 class="text-xl font-bold font-titulo text-center mt-2 mb-4">Solo se puede seleccionar ya sea dia,año/mes o semana</h1>
     </Modal>
     <Modal :show="showModalTurno" @cerrarmodal="cerramodalcruceferromex">
         <h1 class="text-4xl font-bold font-titulo text-center mt-4">Cruces Intermodal</h1>
             <div class="flex w-full justify-center gap-20 mt-10">
                 <div class="flex flex-col gap-11">
                     <div>
-                        <label for="">Dia</label>
+                        <label for="">Dia<b class="font-bold">*</b></label>
                     </div>
                     <div>
-                        <label for="">Año/Mes</label>
+                        <label for="">Año/Mes*</label>
                     </div>
                     <div>
-                        <label for="">Semana</label>
+                        <label for="">Semana*</label>
                     </div>
                     <div>
                         <select v-model="tipo" class="input">
@@ -80,7 +72,7 @@
                         </select>
                     </div>
                     <div>
-                        <label>Tipo de Reporte</label>
+                        <label>Tipo de Reporte*</label>
                     </div>  
                 </div>
                 <div class="flex flex-col gap-10">
@@ -94,47 +86,57 @@
                         <input type="week" class="input"  :disabled="bloquearsemana" :class="{'cursor-not-allowed' : bloquearsemana}" v-model="semanacf" @change="bloquearinputsemana()">
                     </div>
                     <div>
-                        <input id="tag" v-model="tag" class="input" placeholder="Buscar" type="text" />
+                        <input id="tag" v-model.trim="tag" class="input" placeholder="Buscar" type="text" />
                     </div>
                     <div>
                         <select class="input" v-model="reportecf"  placeholder="XXXXX">
                         <option value="undefined" disabled>Seleccione una opción</option>
                         <option value="1">Descuento Detalles Amarre</option>
                         <option value="2">Descuento Amarre Resumen</option>
-                        <option value="3">Ambos</option>
+                        <option v-if="!check_vista_previa_button(diascf,mesescf,semanacf)" value="3">Ambos</option>
                         </select>
                     </div>
                 </div>
             </div>
             <div class="flex w-full justify-center mt-10 mb-8">
                 <div>
-                    <button class="rounded-lg w-18 bg-ferromex text-white p-10"  @click="generarreportecruceferromexver(diascf,mesescf,semanacf,reportecf,tipo,tag)">Vista previa</button>
+                    <button class="rounded-lg w-18 text-white p-10 bg-ferromex"  @click="generarreportecruceferromexver(diascf,mesescf,semanacf,reportecf,tipo,tag)">Vista previa</button>
                     <button class="rounded-lg w-18 bg-ferromex text-white p-10 ml-6"  @click="generarreportecruceferromexdescargar(diascf,mesescf,semanacf,reportecf,tipo,tag)">Descargar Reporte</button>
                 </div>
             </div>
+            <h1 class="text-xl font-bold font-titulo text-center mt-2">* Campo Obligatorio</h1>
+            <h1 class="text-xl font-bold font-titulo text-center mt-2 mb-4">Solo se puede seleccionar ya sea dia,año/mes o semana</h1>
     </Modal>
+    <Spinner :modalLoading="loading"/>
 </template>
 <script>
 const API = process.env.VUE_APP_URL_API_PRODUCCION
-//import Servicio from '../../Servicios/Token-Services';
-//import jwt_decode from "jwt-decode";
 import { ref,reactive,toRefs,onMounted } from 'vue'
 import Navbar from "../../components/Navbar.vue";
 import Footer from "../../components/Footer";
 import Modal from "../../components/Modal.vue";
-import ServiceFiles from '../../Servicios/Files-Service';
+import ModuloGeneracionReportes from "../../components/Modulo-generacionreportes.vue";
+import { file }  from '../../Servicios/Files-Service'
 import { notify } from "@kyvg/vue3-notification";
+import Spinner from '../../components/Spinner.vue'
+import ModulesService from '@/Servicios/Modules-Service'
+import TokenService from '@/Servicios/Token-Services'
+import { useRoute } from 'vue-router'
+import { inject } from 'vue'
+import moment from 'moment';
 
 export default {
     components: {
         Navbar,
         Footer,
-        Modal
+        Modal,
+        Spinner,
+        ModuloGeneracionReportes
     },
     setup(){
+        const { xml_hhtp_request,loading } = file();
         const showModal = ref(false)
-        const showModalTurno = ref(false)
-        const modulos = ref([])
+        const showModalTurno = ref(false)        
         const bloqueardia = ref(false)
         const bloquearsemana = ref(false)
         const bloquearmes = ref(false)
@@ -155,32 +157,28 @@ export default {
             tag:'',
             reportecf:undefined
         })
+
+        const modulos = ref([])
+        const axios = inject('axios')
+        const route = useRoute()
+        const decoded = TokenService.obtenerInfoUser()
+
+        axios.get(`${API}/Ferromex/modules?roleName=${decoded.role}`) //enpoint que trae los modulos que puede ver el rol del usuario
+        .then((result) => {        
+          let  { subModulos } = ModulesService.GetMolduleAndSubModule(result.data.content)      
+          console.log(subModulos)      
+          modulos.value = subModulos.filter(x => x.parentModule == route.params.id)                
+        })
+        .catch((err)=>{console.log(err);})
         
         onMounted(()=>{
             hoy.value = new Date().toISOString().split("T")[0];
-            console.log(hoy.value);
             let now = new Date();
             let año = now.getFullYear()
             let onejan = new Date(now.getFullYear(), 0, 1);
             let week = Math.ceil((((now.getTime() - onejan.getTime()) / 86400000) + onejan.getDay() + 1) / 7);
             semana.value = año + "-" + "W" + (week - 1)
-            console.log(semana.value)
-        })
-        //Declaracion de los modulos que se van a mostrar en pantalla
-        modulos.value = [
-            {
-                img_src: "Menu/capacidad-de-almacenamiento.png",
-                nombre: "Cajero",
-                ruta: "/inicio/bitacora-antifraude",
-                color: "red"
-            },
-            {
-                img_src: "Menu/monitoreo-servicios.png",
-                nombre: "Turno",
-                ruta: "/inicio/bitacora-listas",
-                color: "red"
-            },
-        ]
+        })         
         //Funcion para abrir el modal de cruces totales
         function abrirmodalcrucestotales(){
             showModal.value = !showModal.value //Cambia el valor de la variable que muestra el modal 
@@ -238,239 +236,200 @@ export default {
 
         }
         //Funcion para generar reporte cruces totales
-        function generarreportetotalver(dias,meses,semana){
-            let urldias = ""
-            let urlmeses = ""
-            let urlsemana = ""
-            if(dias == ''){
-            urldias = " "
-            }else if(dias != ''){
-                urldias = dias
-            }
-            if(meses == ''){
-                urlmeses = " "
-            }else if(meses != ''){
-                urlmeses = meses
-            }
-            if(semana == ''){
-                urlsemana = " "
-            }else if(semana != ''){
-                urlsemana = semana
-            }
-            if(urldias == " " && urlmeses == " " && urlsemana == " "){
+        function  taskReporteTotalPdfDownload(fechaTest, vistaPrevia, i) {
+            setTimeout(function() {
+                let urlWhitSpace = " "
+                console.log(fechaTest)      
+                let ruta = encodeURI(`${API}/Ferromex/Download/pdf/crucestotales/reporteCruces/${fechaTest}/${urlWhitSpace}/${urlWhitSpace}`)                                   
+                vistaPrevia == 1 
+                    ? xml_hhtp_request(ruta,vistaPrevia)    
+                    : xml_hhtp_request(ruta,vistaPrevia, fechaTest + ' CrucesTotales.pdf')     
+            }, 2000 * i);
+        }        
+        function generarreportetotalver(dia,mes,semana){                         
+            if(dia == "" && mes == "" && semana == ""){
                 notify({
                     title:'Sin parametros',
                     text:'Para generar un reporte se necesita seleccionar un parametro',
                     type: 'error'
                 });
-            }else{
-                const ruta = encodeURI(`${API}/Ferromex/Download/pdf/crucestotales/reporteCruces/${urldias}/${urlmeses}/${urlsemana}`)
-                console.log(ruta)
-                ServiceFiles.xml_hhtp_request(ruta, 'TransaccionesFerromexDetalle.pdf')
             }
-        }
-        function generarreportetotaldescargar(dias,meses,semana){
-            let urldias = ""
-            let urlmeses = ""
-            let urlsemana = ""
-            nombrearchivo.value = ""
-            if(dias == ''){
-                urldias = " "
-            }else if(dias != ''){
-                urldias = dias
-                nombrearchivo.value = dias + ' CrucesTotales.pdf'
+            if(dia != ''){                                                  
+                taskReporteTotalPdfDownload(dia, 1, 0)   
             }
-            if(meses == ''){
-                urlmeses = " "
-            }else if(meses != ''){
-                urlmeses = meses
-                nombrearchivo.value = meses + ' CrucesTotales.pdf'
+            if(mes != ''){                                
+                let diasMes = moment(mes, "YYYY-MM").daysInMonth()                                                            
+                for(let i = 0;  i < diasMes; i++){                                                           
+                    taskReporteTotalPdfDownload(moment(mes, 'YYYY-MM').add(i, 'days').format('YYYY-MM-DD'), 1, i)
+                }  
             }
-            if(semana == ''){
-                urlsemana = " "
-            }else if(semana != ''){
-                urlsemana = semana
-                nombrearchivo.value = semana + ' CrucesTotales.pdf'
-            }
-            if(urldias == " " && urlmeses == " " && urlsemana == " "){
+            if(semana != ''){                                               
+                for(let i = 0;  i <= 6; i++){   
+                    let diaSemanaInicio = moment(semana.split('-')[0]).add(semana.split('W')[1], 'weeks').startOf('isoweek')                                                                                      
+                    taskReporteTotalPdfDownload(diaSemanaInicio.add(i, 'days').format('YYYY-MM-DD'), 1, i)              
+                }                
+            }       
+        }        
+        function generarreportetotaldescargar(dia,mes,semana){   
+                    
+            if(dia == " " && mes == " " && semana == " "){
                 notify({
                     title:'Sin parametros',
                     text:'Para generar un reporte se necesita seleccionar un parametro',
                     type: 'error'
                 });
-            }else{
-                const ruta = encodeURI(`${API}/Ferromex/Download/pdf/crucestotales/reporteCruces/${urldias}/${urlmeses}/${urlsemana}`)
-                ServiceFiles.descargararchivo(ruta, nombrearchivo.value)
             }
+
+            if(dia != ''){                                
+                taskReporteTotalPdfDownload(dia, 2, 0)                        
+            }
+            if(mes != ''){                                
+                let diasMes = moment(mes, "YYYY-MM").daysInMonth()                                                            
+                for(let i = 0;  i < diasMes; i++){                                                                                      
+                    taskReporteTotalPdfDownload(moment(mes, "YYYY-MM").add(i, 'days').format('YYYY-MM-DD'), 2, i)
+                }  
+            }
+            if(semana != ''){                
+
+                for(let i = 0;  i <= 6; i++){   
+                    let diaSemanaInicio = moment(semana.split('-')[0]).add(semana.split('W')[1], 'weeks').startOf('isoweek')                                                                        
+                    taskReporteTotalPdfDownload(diaSemanaInicio.add(i, 'days').format('YYYY-MM-DD'), 2, i)              
+                }   
+            }    
         }
-        function generarreportecruceferromexver(dias,meses,semana,reporte,tipo,tag){
-            let urldias = ""
-            let urlmeses = ""
-            let urlsemana = ""
-            let urltag = ""
-            if(dias == ''){
-                urldias = " "
-            }else if(dias != ''){
-                urldias = dias
-            }
-            if(meses == ''){
-                urlmeses = " "
-            }else if(meses != ''){
-                urlmeses = meses
-            }
-            if(semana == ''){
-                urlsemana = " "
-            }else if(semana != ''){
-                urlsemana = semana
-            }
-            if(tag == ''){
-                urltag = ' '
-            }else if(tag != ''){
-                urltag = tag
-            }
-            if(urldias == " " && urlmeses == " " && urlsemana == " " && urltag == " " || reporte == undefined){
+        function taskCrucesTotalesPdfDownload(dia, tag, tipoReporte, tipoABC, vistaPrevia, i){
+            setTimeout(() => {
+                let selectTipoPdf = function(){  
+                    if(tag != ""){              
+                        if(tipoABC == 'A'){
+                            return { tagRuta: tag, numeroplaca: " ", numeroeconomico: " " }
+                        }
+                        else if(tipoABC == 'B'){
+                            return { tagRuta: " ", numeroplaca: " ", numeroeconomico: tag }               
+                        }
+                        else if(tipoABC == 'C'){
+                            return { tagRuta: " ", numeroplaca: tag, numeroeconomico: " " }
+                        }
+                    }
+                    return { tagRuta: " ", numeroplaca: " ", numeroeconomico: " " }
+                }
+
+                let urlWhitSpace = " "               
+                let { tagRuta, numeroplaca, numeroeconomico } = selectTipoPdf()                     
+                console.log(`${API}/Ferromex/Download/pdf/crucesferromex/descuentodetallesamarre/${dia}/${urlWhitSpace}/${urlWhitSpace}/${tagRuta}/${numeroplaca}/${numeroeconomico}`)
+                let rutadescuentolletalle = encodeURI(`${API}/Ferromex/Download/pdf/crucesferromex/descuentodetallesamarre/${dia}/${urlWhitSpace}/${urlWhitSpace}/${tagRuta}/${numeroplaca}/${numeroeconomico}`)
+                let rutadescuentoamerreresumen = encodeURI(`${API}/Ferromex/Download/pdf/crucesferromex/descuentoamarreresumen/${dia}/${urlWhitSpace}/${urlWhitSpace}/${tagRuta}/${numeroplaca}/${numeroeconomico}`)
+                if(tipoReporte == "1"){
+                    vistaPrevia == 1 
+                        ? xml_hhtp_request(rutadescuentolletalle,vistaPrevia)
+                        : xml_hhtp_request(rutadescuentolletalle,vistaPrevia, 'descuentodetallesamarre' + dia + '.pdf')
+                }
+                else if( tipoReporte == "2"){                
+                    vistaPrevia == 1 
+                        ? xml_hhtp_request(rutadescuentoamerreresumen,vistaPrevia)
+                        : xml_hhtp_request(rutadescuentoamerreresumen,vistaPrevia, 'descuentoamarreresumen' + dia + '.pdf')
+                }
+                else if(tipoReporte == "3"){
+                    
+                    vistaPrevia == 1 
+                        ? xml_hhtp_request(rutadescuentoamerreresumen,vistaPrevia)
+                        : xml_hhtp_request(rutadescuentoamerreresumen,vistaPrevia, 'descuentodetallesamarre' + dia + '.pdf')
+
+                    vistaPrevia == 1 
+                        ? xml_hhtp_request(rutadescuentolletalle,vistaPrevia)
+                        : xml_hhtp_request(rutadescuentolletalle,vistaPrevia, 'descuentoamarreresumen' + dia + '.pdf')                                        
+                }
+            }, 2000 * i);    
+        }
+        function generarreportecruceferromexver(dia,mes,semana,reporte,tipoABC,tag){
+
+            if(dia == "" && mes == "" && semana == "" && tag == "" || reporte == undefined){
                 notify({
                     title:'Sin parametros',
                     text:'Para generar un reporte se necesita seleccionar un parametro' ,
                     type: 'error'
                 });
-            }else{
-            let numeroplaca = "";
-            let numeroeconomico = "";
-            let tagRuta = ""
-            if(urltag != ' '){
-                    if(tipo == 'A'){
-                        tagRuta = urltag
-                        numeroplaca = " "
-                        numeroeconomico = " "
-                    }else if(tipo == 'B'){
-                        tagRuta = " "
-                        numeroplaca = " "
-                        numeroeconomico = urltag
-                    }else if(tipo == 'C'){
-                        tagRuta = " "
-                        numeroplaca = urltag
-                        numeroeconomico = " "
-                    }
-                }else if(urltag == ' '){
-                    tagRuta = " "
-                    numeroplaca = " "
-                    numeroeconomico = " "
-                }
-                const rutadescuentolletalle = encodeURI(`${API}/Ferromex/Download/pdf/crucesferromex/descuentodetallesamarre/${urldias}/${urlmeses}/${urlsemana}/${tagRuta}/${numeroplaca}/${numeroeconomico}`)
-                const rutadescuentoamerreresumen = encodeURI(`${API}/Ferromex/Download/pdf/crucesferromex/descuentoamarreresumen/${urldias}/${urlmeses}/${urlsemana}/${tagRuta}/${numeroplaca}/${numeroeconomico}`)
-                console.log(rutadescuentolletalle);
-                console.log(rutadescuentoamerreresumen);
-                if(reporte == "1"){
-                    ServiceFiles.xml_hhtp_request(rutadescuentolletalle)
-                }else if( reporte == "2"){
-                    ServiceFiles.xml_hhtp_request(rutadescuentoamerreresumen)
-                }else if( reporte == "3"){
-                    ServiceFiles.xml_hhtp_request(rutadescuentolletalle)
-                    ServiceFiles.xml_hhtp_request(rutadescuentoamerreresumen)
-                }
-                //cerramodalcruceferromex(false)
             }
+
+            if(dia != ''){                                                                    
+                taskCrucesTotalesPdfDownload(dia, tag, reporte, tipoABC, 1, 0)                                
+            }
+            if(mes != ''){
+            let diasMes = moment(mes, "YYYY-MM").daysInMonth()                                                            
+                for(let i = 0;  i < diasMes; i++){                                                                                    
+                    taskCrucesTotalesPdfDownload(moment(mes, "YYYY-MM").add(i, 'days').format('YYYY-MM-DD'), tag, reporte, tipoABC, 1, i)    
+                }                    
+            }
+            if(semana != ''){
+                let diaSemanaInicio = moment(semana.split('-')[0]).add(semana.split('W')[1], 'weeks').startOf('isoweek')
+                for(let i = 0;  i <= 6; i++){                                                                
+                    taskCrucesTotalesPdfDownload(diaSemanaInicio.add(i, 'days').format('YYYY-MM-DD'), tag, reporte, tipoABC, 1, i)  
+                }  
+            }
+                                  
         }
-        function generarreportecruceferromexdescargar(dias,meses,semana,reporte,tipo,tag){
-            let urldias = ""
-            let urlmeses = ""
-            let urlsemana = ""
-            let urltag = ""
-            if(dias == ''){
-                urldias = " "
-            }else if(dias != ''){
-                urldias = dias
-                nombrearchivo.value = dias + ' CrucesIntermodal.pdf'
-            }
-            if(meses == ''){
-                urlmeses = " "
-            }else if(meses != ''){
-                urlmeses = meses
-                nombrearchivo.value = meses + ' CrucesIntermodal.pdf'
-            }
-            if(semana == ''){
-                urlsemana = " "
-            }else if(semana != ''){
-                urlsemana = semana
-                nombrearchivo.value = semana + ' CrucesIntermodal.pdf'
-            }
-            if(tag == ''){
-                urltag = ' '
-            }else if(tag != ''){
-                urltag = tag
-            }
-            if(urldias == " " && urlmeses == " " && urlsemana == " "){
+        function generarreportecruceferromexdescargar(dia,mes,semana,reporte,tipoABC,tag){
+
+            if(dia == "" && mes == "" && semana == "" && tag == "" || reporte == undefined){
                 notify({
                     title:'Sin parametros',
                     text:'Para generar un reporte se necesita seleccionar un parametro' ,
                     type: 'error'
                 });
-            }else{
-            let numeroplaca = "";
-            let numeroeconomico = "";
-            let tagRuta = ""
-                if(urltag != ' '){
-                    if(tipo == 'A'){
-                        tagRuta = urltag
-                        numeroplaca = " "
-                        numeroeconomico = " "
-                    }else if(tipo == 'B'){
-                        tagRuta = " "
-                        numeroplaca = " "
-                        numeroeconomico = urltag
-                    }else if(tipo == 'C'){
-                        tagRuta = " "
-                        numeroplaca = urltag
-                        numeroeconomico = " "
-                    }
-                }else{
-                    tagRuta = " "
-                    numeroplaca = " "
-                    numeroeconomico = " "
-                }
-            const rutadescuentolletalle = encodeURI(`${API}/Ferromex/Download/pdf/crucesferromex/descuentodetallesamarre/${urldias}/${urlmeses}/${urlsemana}/${tagRuta}/${numeroplaca}/${numeroeconomico}`)
-            const rutadescuentoamerreresumen = encodeURI(`${API}/Ferromex/Download/pdf/crucesferromex/descuentoamarreresumen/${urldias}/${urlmeses}/${urlsemana}/${tagRuta}/${numeroplaca}/${numeroeconomico}`)
-                console.log(rutadescuentolletalle);
-                console.log(rutadescuentoamerreresumen);
-                if(reporte == "1"){
-                    ServiceFiles.descargararchivo(rutadescuentolletalle,'descuentodetalle' + hoy.value + '.pdf')
-                }else if( reporte == "2"){
-                    ServiceFiles.descargararchivo(rutadescuentoamerreresumen,'descuentoamarreresumen' + hoy.value + '.pdf')
-                }else if( reporte == "3"){
-                    ServiceFiles.descargararchivo(rutadescuentolletalle,'descuentodetalle' + hoy.value + '.pdf')
-                    ServiceFiles.descargararchivo(rutadescuentoamerreresumen,'descuentoamarreresumen' + hoy.value + '.pdf')
-                }
-                //cerramodalcruceferromex(false)
             }
+
+            if(dia != ''){                                                                             
+                taskCrucesTotalesPdfDownload(dia, tag, reporte, tipoABC, 2, 0)                                
+            }
+            if(mes != ''){
+                let diasMes = moment(mes, "YYYY-MM").daysInMonth()                                                            
+                for(let i = 0;  i < diasMes; i++){                                                     
+                    taskCrucesTotalesPdfDownload(moment(mes, "YYYY-MM").add(i, 'days').format('YYYY-MM-DD'), tag, reporte, tipoABC, 2, i)    
+                }                     
+            }
+            if(semana != ''){
+                let diaSemanaInicio = moment(semana.split('-')[0]).add(semana.split('W')[1], 'weeks').startOf('isoweek')
+                for(let i = 0;  i <= 6; i++){                                                                        
+                    taskCrucesTotalesPdfDownload(diaSemanaInicio.add(i, 'days').format('YYYY-MM-DD'), tag, reporte, tipoABC, 2, i)  
+                }  
+            }            
+        }
+        function check_vista_previa_button(dia,mes,semana){
+            //diascf,mesescf,semanacf
+            if(dia != "") return false
+            if(mes != "") return true
+            if(semana != "") return true
+
         }
 
         //Declaracion de las variables para usar en la pantalla
         return {
-        modulos,
-        showModal,
-        showModalTurno,
-        hoy,
-        semana,
-        bloquearinputdias,
-        bloquearinputsemana,
-        bloquearinputmes,
-        bloqueardia,
-        bloquearsemana,// bloqueamos los campos
-        bloquearmes,
-        nombrearchivo,
-        abrirmodalcrucestotales,
-        abrirmodalcrucesferromex,
-        limpiarcrucestotales,
-        limpiarcrucesferromex,
-        generarreportetotalver,
-        generarreportetotaldescargar,
-        generarreportecruceferromexver,
-        generarreportecruceferromexdescargar,
-        cerralmodalcrucestotales,
-        cerramodalcruceferromex,
-        ...toRefs(crucestotales),
-        ...toRefs(crucesferromex)
+            modulos,
+            showModal,
+            loading,
+            showModalTurno,
+            hoy,
+            semana,
+            check_vista_previa_button,
+            bloquearinputdias,
+            bloquearinputsemana,
+            bloquearinputmes,
+            bloqueardia,
+            bloquearsemana,// bloqueamos los campos
+            bloquearmes,
+            nombrearchivo,
+            abrirmodalcrucestotales,
+            abrirmodalcrucesferromex,
+            limpiarcrucestotales,
+            limpiarcrucesferromex,
+            generarreportetotalver,
+            generarreportetotaldescargar,
+            generarreportecruceferromexver,
+            generarreportecruceferromexdescargar,
+            cerralmodalcrucestotales,
+            cerramodalcruceferromex,
+            ...toRefs(crucestotales),
+            ...toRefs(crucesferromex)
         }
     }
 }
@@ -498,6 +457,11 @@ export default {
 }
 .bg-ferromex {
     background-color: #BB2028;
+    padding: 10px 5px;
+}
+
+.bg-ferromex-disable {
+    background-color: grey;
     padding: 10px 5px;
 }
 </style>

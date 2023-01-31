@@ -12,7 +12,7 @@
                   <option value="B">No Economico</option>
                   <option value="C">No Placa</option>
                 </select>
-                  <input id="tag" v-model="tag" class="my-auto bg-white flex border border-gray-200 rounded ml-2 h-6 w-40" placeholder="Buscar" type="text" />
+                  <input id="tag" v-model.trim ="tag" class="my-auto bg-white flex border border-gray-200 rounded ml-2 h-6 w-40" placeholder="Buscar" type="text" />
               </div>
               <div class="w-full inline-flex flex-2 justify-center">
                 <label for="tag" class="text-white my-auto">Estatus:</label>
@@ -45,7 +45,7 @@
               </div>
               <div class="w-full flex-1">
                 <div class="h-full my-auto text-white font-md p-2 w-40">                      
-                  <button :disabled="modalLoading" class="btn-buscar animacion" :class="{'cursor-not-allowed': modalLoading}" @click="showModal = !showModal">Agregar TAG</button>
+                  <button :disabled="modalLoading" class="btn-buscar animacion" :class="{'cursor-not-allowed': modalLoading}" @click="abrirmodal()">Agregar TAG</button>
                 </div>
               </div>
               <div class="w-full flex-2">
@@ -64,37 +64,47 @@
   <Paginacion :total-pages="totalPaginas" :total="100" :current-page="currentPage" :has-more-pages="hasMorePages" @pagechanged="showMore"/> 
   </div>
   <Spinner :modalLoading="modalLoading"/>
+  <Spinner :modalLoading="loading"/>
   <Modal :show="showModal" @cerrarmodal="cerralmodalpadre">
         <h1 class="text-4xl font-bold font-titulo text-center mt-4">Agregar Tag</h1>
             <div class="flex w-full justify-center gap-20 mt-10">
-                <div class="flex flex-col gap-10">
+                <div class="flex flex-col gap-16">
                     <div>
-                        <label for="">TAG</label>
+                        <label for="" class="p-2">TAG</label>
                     </div>
                       <div>
-                        <label for="">Numero de Placa</label>
+                        <label for="" class="p-2">Numero de Placa</label>
                     </div>
                       <div>
-                        <label for="">Numero Economico</label>
+                        <label for="" class="p-2">Numero Economico</label>
                     </div>
                 </div>
                 <div class="flex flex-col gap-10">
                     <div>
-                        <input type="text" class="input" :class="{'border-red-600': validarTag}" v-model="numerotagagregar" @input="limpiarvalidacion()">
+                        <!-- <input type="text" class="input" :class="{'border-red-600': validarTag}" v-model="numerotagagregar" @input="limpiarvalidacion()"> -->
+                        <Multiselect
+                          v-model="numerotagagregar"
+                          :max="1"
+                          :caret="false"
+                          :close-on-select="true"
+                          :searchable="true"
+                          :create-option="true"
+                          :options="tagsprecargados"
+                        />
                         <span v-if="validarTag" class="flex items-center font-medium tracking-wide text-red-500 text-xs mt-1 ml-1">
                         {{validarTagTexto}}
                         </span>
                     </div>
                     <div>
-                        <input type="text" class="input" :class="{'border-red-600': validarTag}" v-model="numeroplaca" @input="limpiarvalidacion()">
-                        <span v-if="validarTag" class="flex items-center font-medium tracking-wide text-red-500 text-xs mt-1 ml-1">
-                        {{validarTagTexto}}
+                        <input type="text" class="relative mx-auto w-full p-2 flex items-center justify-end box-border border border-gray-300 rounded bg-white text-base leading-snug outline-none" :class="{'border-red-600': validarTag}" v-model="numeroplaca" @input="limpiarvalidacion()">
+                        <span v-if="validarPlaca" class="flex items-center font-medium tracking-wide text-red-500 text-xs mt-1 ml-1">
+                        {{validarPlacaTexto}}
                         </span>
                     </div>
                     <div>
-                        <input type="text" class="input" :class="{'border-red-600': validarTag}" v-model="numeroeconomico" @input="limpiarvalidacion()">
-                        <span v-if="validarTag" class="flex items-center font-medium tracking-wide text-red-500 text-xs mt-1 ml-1">
-                        {{validarTagTexto}}
+                        <input type="text" class="relative mx-auto w-full p-2 flex items-center justify-end box-border border border-gray-300 rounded bg-white text-base leading-snug outline-none" :class="{'border-red-600': validarTag}" v-model="numeroeconomico" @input="limpiarvalidacion()">
+                        <span v-if="validarNoEconomico" class="flex items-center font-medium tracking-wide text-red-500 text-xs mt-1 ml-1">
+                        {{validarNoEconomicoTexto}}
                         </span>
                     </div>
                 </div>
@@ -110,12 +120,13 @@ const API = process.env.VUE_APP_URL_API_PRODUCCION
 import TablaMantenimientoTag from "../../components/Tabla-ManteniminetoTags.vue";
 import Navbar from "../../components/Navbar.vue";
 import Footer from "../../components/Footer";
-import ServiceFiles from '../../Servicios/Files-Service'
+import { file }  from '../../Servicios/Files-Service'
 import Paginacion from "../../components/Paginacion.vue"
 import { notify } from "@kyvg/vue3-notification";
 import Spinner from '../../components/Spinner.vue'
 import { ref,reactive,toRefs,onMounted,inject } from 'vue'
 import Modal from "../../components/Modal.vue"
+import Multiselect from '@vueform/multiselect'
 export default {
   name: "BusquedaCruces",
   components: {
@@ -124,10 +135,12 @@ export default {
     Footer,   
     Paginacion,
     Spinner,
-    Modal
+    Modal,
+    Multiselect
   },
   setup() {
     const axios = inject('axios')
+    const { xml_hhtp_request,loading } = file();
     const tipo = ref('A');
     const cruces = ref([]) //Variable para llenar la tabla de tags
     const page = ref(1) //Variable que maneja la paginacion para que se le indique desde donde iniciar
@@ -138,7 +151,8 @@ export default {
     const modalLoading = ref(false) //Variable que muestra el sppiner de carga
     const numRespuesta = ref(10) //Variable de numero de resultados que espera la paginacion
     const showModal = ref(false) //Varible del modal de agregar tag
-    const numerotagagregar = ref('') //Variable del input tag a agregar
+    const numerotagagregar = ref([]) //Variable del input tag a agregar
+    const tagsprecargados = ref([])
     const numeroplaca = ref('')
     const numeroeconomico = ref('')
     const options = ref(['Activo','Inactivo']) //Declaracion de las opciones del select de options 
@@ -150,6 +164,10 @@ export default {
       estatus: undefined,
       fecha: ""
     })
+    const validarNoEconomico = ref(false) //Variable que maneja la validacion del input del tag
+    const validarNoEconomicoTexto = ref(false) //Varible que maneja el texto a mostrar de la validacion del tag
+    const validarPlaca = ref(false) //Variable que maneja la validacion del input del tag
+    const validarPlacaTexto = ref(false) //Varible que maneja el texto a mostrar de la validacion del tag
     //DEclaracion del metodo onMounted que se ocuapa para montar los resultados de los tags
     onMounted(()=>{
         hoy.value = new Date().toISOString().split("T")[0]; //Asignamos el valor de la fecha del dia de hoy
@@ -167,7 +185,6 @@ export default {
         const ruta = encodeURI(`${API}/Ferromex/mantenimientotags/${page.value}/${numRespuesta.value}/${tagruta}/${estatusruta}/${fecharuta}/${noPlacaRuta}/${noEconomico}`)//Declaramos la ruta a consummir
         axios.get(ruta)//Mandamos a llamar la ruta a consumir
         .then((result)=>{
-          console.log(result)
         if(result.status == 200){ //En caso de que la respuesta sea correcta
           modalLoading.value = false//Quitamos el spinner
           totalPaginas.value = result.data.paginas_totales //Asignamos el numero total de paginas
@@ -190,22 +207,52 @@ export default {
           });
         })
     }
+    const abrirmodal = () => {
+      showModal.value = !showModal.value
+      const tag = ' '
+      const ruta = encodeURI(`${API}/ferromex/ViaPassTags/${tag}`) //Ciframos la url para mandarla en el axios
+        axios.get(ruta) //Mandamos a llamar el axios
+        .then((result)=>{
+            let cargatags =  result.data.content
+            console.log(cargatags);
+            cargatags.forEach(element => {
+              let active = false;
+              if(element.active == false){
+                active = true
+              }
+              tagsprecargados.value.push({value: element, label: element.tag,disabled: active,idViatags: element.idViatags })
+            });
+            //{ value: 'batman', label: 'Batman' },
+            console.log(tagsprecargados.value);
+          }).catch((error)=>{
+            console.log(error);
+            notify({ //NOtificamos que no encontramos Tags
+                title:'Sin Información',
+                text:'No se encontraron tags',
+                type: 'warn'
+              });
+          })
+    }
     //Funcion para limipiar la validacion del input del tag
     function limpiarvalidacion() {
       validarTag.value = false //Volvemos falsa la bandera que lleva el control del tag
       validarTagTexto.value = '' //Limpiamos el texto a mostrar de la validacion 
+      validarPlaca.value = false //Volvemos falsa la bandera que lleva el control del tag
+      validarPlacaTexto.value = '' //Limpiamos el texto a mostrar de la validacion 
+      validarNoEconomico.value = false //Volvemos falsa la bandera que lleva el control del tag
+      validarNoEconomicoTexto.value = '' //Limpiamos el texto a mostrar de la validacion 
     }
     //Emit para saber si se cierra el modal
     const cerralmodalpadre = (modal) => {
       showModal.value = modal //Cerramos el modal de agrgar tag
-      numerotagagregar.value = '' //Limpiamos el input de agregar tag
+      numerotagagregar.value = [] //Limpiamos el input de agregar tag
       numeroeconomico.value = ''
       numeroplaca.value = ''
+      tagsprecargados.value = []
       limpiarvalidacion()
     }
     //Función que busca los tags
     function search(tag, estatus, fecha,tipo){
-      console.log(tipo)
       modalLoading.value = true //Abrimos el spinner
       cruces.value = [] // Declaramos el arreglo en vacio
       if(tag == ""){ //Validamos si el campo llega vacio le damos un espacio en blanco 
@@ -261,7 +308,6 @@ export default {
           numeroeconomico = " "
         }
         const ruta = encodeURI(`${API}/ferromex/mantenimientotags/${page.value}/${numRespuesta.value}/${tagRuta}/${estatusurl}/${fechaurl}/${numeroplaca}/${numeroeconomico}`) //Ciframos la url para mandarla en el axios
-        console.log(ruta);
         modalLoading.value = false //Cerramos el spiiner
         axios.get(ruta) //Mandamos a llamar el axios
         .then((result)=>{
@@ -372,7 +418,7 @@ export default {
             title:'Sin Información',
             text:'No puedes limpiar los parametros si estan vacios' ,
             type: 'warn'
-         });
+        });
       }else{
         cruces.value = [] //Limpiamos el arreglo que contendra los datos
         tipo.value = 'A'
@@ -393,7 +439,7 @@ export default {
           totalPaginas.value = result.data.paginas_totales //Asignamos el numero total de paginas
           currentPage.value = result.data.pagina_actual //Asignamos la pagina actual
           cruces.value = result.data.tags
-       }else{
+        }else{
           modalLoading.value = false //Cerramos Spinner
           notify({ //Notificamos que no encontramos Tags
             title:'Sin Información',
@@ -412,18 +458,32 @@ export default {
     }
     //Funcion para agregar tag 
     function agregarTag(tag,np,ne){
-        if(tag == ""){ //Comprobamos si el tag viene vacio
+      console.log(tag);
+      if(tag.length == 0 || np == "" || ne == "") {
+        if(tag.length == 0){ //Comprobamos si el tag viene vacio
           validarTag.value = true //Si es asi declaramos en true nuestra bandera para mostrar el span 
-          validarTagTexto.value = 'El campo del tag no puede ir vacio' //Incluimos el texto del span o por que se esta dando el error
-        }else{ // Si es falso procederemos a dar de alta el tag
+          validarTagTexto.value = 'El Tag no puede ir vacio' //Incluimos el texto del span o por que se esta dando el error
+        }
+        if(np == ""){ //Comprobamos si el tag viene vacio
+          validarPlaca.value = true //Si es asi declaramos en true nuestra bandera para mostrar el span 
+          validarPlacaTexto.value = 'El campo Numero de placa no puede ir vacio' //Incluimos el texto del span o por que se esta dando el error
+        }
+        if(ne == ""){ //Comprobamos si el tag viene vacio
+          validarNoEconomico.value = true //Si es asi declaramos en true nuestra bandera para mostrar el span 
+          validarNoEconomicoTexto.value = 'El campo Numero Economico no puede ir vacio' //Incluimos el texto del span o por que se esta dando el error
+        }
+      }else{ // Si es falso procederemos a dar de alta el tag
+          console.log(tag);
           const tiempoTranscurrido = Date.now(); //Conseguimos la fecha y hora del dia de hoy
           const hoy = new Date(tiempoTranscurrido).toISOString(); //Damos formato iso 86001
           const tagcompleto = { // Creamos objeto para enviar el tag completo 
-            "tag": tag.toUpperCase(), //volvemos a mayusculas todo el contenido de este texto
+            "tag": tag.tag.toUpperCase(), //volvemos a mayusculas todo el contenido de este texto
             "insertionDate": hoy, //Asignamos la fecha y hora ya con su formato
             "active": true, //Mandamos por default el valor de activo
             "vehiclePlate": np,
-            "economicNumber": ne
+            "idUser": "string",
+            "economicNumber": ne,
+            "IDVIATags": tag.idViatags
           }
           const ruta = encodeURI(`${API}/Ferromex/agregartag`) // codificamos la ruta para que tenga el formato URL
           axios.post(ruta,tagcompleto) //Mandamos a llamar el endpoint
@@ -433,11 +493,12 @@ export default {
               text:'El tag se agrego de forma correcta' ,
               type: 'success'
             });
-            numerotagagregar.value = '' //Limpiamos el input
+            numerotagagregar.value = [] //Limpiamos el input
             numeroplaca.value = ''
             numeroeconomico.value = ''
             cargatags()//Mandamos a llamar a la funcion de la carga de todos los tags
           }).catch((error) =>{
+            console.log(error);
             notify({//Enviamos una notificacion
             title:'Upps ocurrio un error ' + error.request.status, //mostramos el numero del error en el titulo
             text: error.request.responseText, //Mostramos el error ocurrido
@@ -505,7 +566,6 @@ export default {
         }
         }
        const ruta = encodeURI(`${API}/ferromex/mantenimientotags/${page}/${numRespuesta.value}/${tagurl}/${estatusurl}/${fechaurl}/${numeroplaca}/${numeroeconomico}`) //Codificamos la url para el end point
-        console.log(ruta)
         modalLoading.value = false //cerramos el spinner
         axios.get(ruta) //Mandamos a llamar el End point
         .then((result)=>{
@@ -557,7 +617,7 @@ export default {
       }
       if(tag == ' ' && estatus == ' ' && fecha == ' '){
         const ruta = encodeURI(`${API}/Ferromex/Download/pdf/mantenimientotags/${tagurl}/${estatus}/${fecha}/${numeroplaca}/${numeroeconomico}`)//Ruta codificado
-        ServiceFiles.xml_hhtp_request(ruta, 'reportemantenimientotags.pdf')//Mandamos a llamar el servicio 
+        xml_hhtp_request(ruta,2,'reportemantenimientotags.pdf')//Mandamos a llamar el servicio 
       }else{ //En caso de ser falso
         let estatusurl = "" //Declaramos variables para la url final
         let fechaurl = fecha //Declaramos variables para la url final
@@ -572,12 +632,13 @@ export default {
           estatusurl = " "//La varible final lleva un espacio en blaco
         }
         const ruta = encodeURI(`${API}/Ferromex/Download/pdf/mantenimientotags/${tagurl}/${estatusurl}/${fechaurl}/${numeroplaca}/${numeroeconomico}`)//Ruta codificado
-        ServiceFiles.xml_hhtp_request(ruta, 'reportemantenimientotags.pdf')//Mandamos a llamar el servicio 
+        xml_hhtp_request(ruta,2, 'reportemantenimientotags.pdf')//Mandamos a llamar el servicio 
       }
     }
 
     return{ 
       cerralmodalpadre,
+      loading,
       numerotagagregar,
       numeroplaca,
       numeroeconomico,
@@ -603,8 +664,14 @@ export default {
       hasMorePages, 
       modalLoading,
       showModal,
+      tagsprecargados,
+      abrirmodal,
       agregarTag,
-      searchchange
+      searchchange,
+      validarNoEconomico,
+      validarNoEconomicoTexto, 
+      validarPlaca,
+      validarPlacaTexto, 
       }
   }
 }
