@@ -130,6 +130,16 @@ export default {
         let filtro = res.filter(res => res.estatus == true)//filtramos sobre los resultados existentes, para solo obtener los que están activos
         for(let i=0; i<filtro.length; i++){ //recorremos la respuesta, y cada que recorremos sumamos un 1 para el siguiente rol
           roles.value.push({'value':filtro[i].nombreRol, 'label':filtro[i].nombreRol})//asignamos los roles existentes a la variable roles, para mostrarlos en el multiselect
+          if(filtro[i].nombreRol == 'PINFRA'){
+            var pin = filtro[i].nombreRol
+            roles.value.pop(pin)
+            console.log(pin);
+          }
+          if(filtro[i].nombreRol == 'AdminIntermodal'){
+            var inter = filtro[i].nombreRol
+            roles.value.pop(inter)
+            console.log(inter);
+          }
         }
       }).catch((error)=>{//si el endpoint tiene un error
         console.log(error.request.response);//Mostramos en consola el error  que nos da el endpoint

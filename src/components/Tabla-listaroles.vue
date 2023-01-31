@@ -12,7 +12,7 @@
           <label class="rounded-full px-20 bg-gray-200 ring-2 ring-gray-500 p-2 text-black 2xl:px-28">Acciones</label>
         </th>
       </tr>
-      <tr v-for="(rol, index) in infoRoles" :key="index">
+      <tr v-for="(rol, index) in infoRoles" :key="index" v-show="rol.nombreRol !='AdminIntermodal' && rol.nombreRol !='PINFRA'">
         <td :class="{'text-gray-400': rol.estatus == false}">{{ rol.nombreRol }}</td>
         <td :class="{'text-gray-400': rol.estatus == false}">
           <span v-if="rol.estatus == true">Activo</span>
