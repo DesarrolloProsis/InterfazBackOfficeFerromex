@@ -1,5 +1,5 @@
 <template>
-  <div class="responsive-table overflow-auto">          
+  <div class="responsive-table">          
     <table class="tftable">
       <tr class="h-10">
         <th>
@@ -28,7 +28,7 @@
         </td>
         <td>
           <div>
-            <Multiselect v-model="accion" placeholder="Sleccione una Acción" @close="acciones_mapper(usuario)" :options="opticones_select_acciones(usuario)" >
+            <Multiselect v-model="accion" placeholder="Seleccione una Acción" @close="acciones_mapper(usuario)" :options="opticones_select_acciones(usuario)" >
               <template v-slot:singleLabel="{ value }">
                 <div class="multiselect-single-label">
                   <img height="26" style="margin: 0 6px 0 0;"> {{ value.name }}
@@ -193,6 +193,16 @@ export default {
       .then((result) => {//Si el endpoint tiene una respuesta correcta
         for(let i=0; i<result.data.roles.length; i++){ //recorremos la respuesta, y cada que recorremos sumamos un 1 para el siguiente rol
           roles.value.push({'value':result.data.roles[i].nombreRol, 'label':result.data.roles[i].nombreRol})//asignamos los roles existentes a la variable roles, para mostrarlos en el multiselect
+          if(result.data.roles[i].nombreRol == 'PINFRA'){
+            var pin = result.data.roles[i].nombreRol
+            roles.value.pop(pin)
+            console.log(pin);
+          }
+          if(result.data.roles[i].nombreRol == 'AdminIntermodal'){
+            var inter = result.data.roles[i].nombreRol
+            roles.value.pop(inter)
+            console.log(inter);
+          }
         }
       }).catch((error)=>{//si el endpoint tiene un error
         console.log(error.request.response);//Mostramos en consola el error  que nos da el endpoint

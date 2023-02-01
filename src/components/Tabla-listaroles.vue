@@ -1,5 +1,5 @@
 <template>
-  <div class="responsive-table overflow-auto">
+  <div class="responsive-table">
     <table class="tftable">
       <tr class="h-10">
         <th>
@@ -20,7 +20,7 @@
         </td>
         <td class="w-66">
           <div class="w-66 mx-auto">
-            <Multiselect v-model="value" placeholder="Sleccione una Acción" @close="acciones_mapper(rol)" label="name" trackBy="name" :options="opticones_select_acciones(rol,index)" :searchable="true">
+            <Multiselect v-model="value" placeholder="Seleccione una Acción" @close="acciones_mapper(rol)" label="name" trackBy="name" :options="opticones_select_acciones(rol,index)" :searchable="true">
               <template v-slot:singleLabel="{ value }">
                 <div class="multiselect-single-label">
                   <img height="26" style="margin: 0 6px 0 0;" :src="value.icon"> {{ value.name }}
