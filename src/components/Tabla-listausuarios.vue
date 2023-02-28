@@ -18,7 +18,7 @@
           <label class="rounded-full px-20 bg-gray-200 ring-2 ring-gray-500 p-2 text-black 2xl:px-28">Acciones</label>
         </th>
       </tr>
-      <tr v-for="(usuario, index) in dataUsuarios" :key="index">
+      <tr v-for="(usuario, index) in dataUsuarios" :key="index" v-show="usuario.nombreUsuario !='AdmPROSIS'">
         <td :class="{'text-gray-400': !usuario.estatus}">{{ usuario.nombreUsuario }}</td>
         <td :class="{'text-gray-400': !usuario.estatus}">{{ usuario.nombreCompleto }}</td>
         <td :class="{'text-gray-400': !usuario.estatus}">{{ usuario.rol }}</td>
