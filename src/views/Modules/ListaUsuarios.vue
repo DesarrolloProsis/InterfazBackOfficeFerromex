@@ -140,6 +140,11 @@ export default {
             roles.value.pop(inter)
             console.log(inter);
           }
+          if(filtro[i].nombreRol == 'Admin'){
+            var adm = filtro[i].nombreRol
+            roles.value.pop(adm)
+            console.log(adm);
+          }
         }
       }).catch((error)=>{//si el endpoint tiene un error
         console.log(error.request.response);//Mostramos en consola el error  que nos da el endpoint
