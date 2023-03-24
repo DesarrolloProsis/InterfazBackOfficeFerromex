@@ -55,7 +55,7 @@
             <h1 class="text-xl font-bold font-titulo text-center mt-2 mb-4">Solo se puede seleccionar ya sea dia,año/mes o semana</h1>
     </Modal>
     <Modal :show="showModalReporteDia" @cerrarmodal="cerramodaloperativos">
-        <h1 class="text-4xl font-bold font-titulo text-center mt-4">Reporte Dia</h1>
+        <h1 class="text-4xl font-bold font-titulo text-center mt-4">Reporte Operativo</h1>
             <div class="flex w-full justify-center gap-20 mt-10">
                 <div class="flex flex-col gap-10">
                     <div>
@@ -66,6 +66,12 @@
                     </div>
                     <div>
                         <label for="">ViA</label>
+                    </div>
+                    <div>
+                        <label for="">No. Cajero</label>
+                    </div>
+                    <div>
+                        <label for="">Turno</label>
                     </div>
                     <div>
                         <label>Tipo de Reporte*</label>
@@ -87,19 +93,31 @@
                         </select>
                     </div>
                     <div>
+                        <input type="number" class="input" v-model="NoCajero">
+                    </div>
+                    <div>
+                        <select class="input" v-model="Turno"  placeholder="XXXXX">
+                        <option value="undefined">Seleccione una opción</option>
+                        <option value="1">Turno 1  00:00 a las 06:00</option>
+                        <option value="2">Turno 2 06:01 a las 14:00</option>
+                        <option value="3">Turno 3 14:01 a las 22:00</option>
+                        <option value="4">Turno 4 22:00 a las 23:59</option>
+                        </select>
+                    </div>
+                    <div>
                         <select class="input" v-model="tiportedia"  placeholder="XXXXX">
                         <option value="undefined" disabled>Seleccione una opción</option>
                         <option value="1">Operativo Detalle</option>
                         <option value="2">Opertativo Concentrado</option>
                         <option value="3">Ambos</option>
                         </select>
-                    </div>
+                    </div>        
                 </div>
             </div>
             <div class="flex flex-col w-full items-center justify-center mt-10 mb-8">
                 <div>
-                    <button class="border w-40 bg-ferromex text-white ferromex-color" :class="{'cursor-not-allowed' : bloquearbutton}" @click="reporteverdia(fecha,carril,tiportedia)">Vista previa</button>
-                    <button class="border w-40 bg-ferromex text-white ferromex-color ml-8" :class="{'cursor-not-allowed' : bloquearbutton}" @click="reportedescargardia(fecha,carril,tiportedia)">Descargar Reporte</button>
+                    <button class="border w-40 bg-ferromex text-white ferromex-color" :class="{'cursor-not-allowed' : bloquearbutton}" @click="reporteverdia(fecha,carril,tiportedia, NoCajero, Turno)">Vista previa</button>
+                    <button class="border w-40 bg-ferromex text-white ferromex-color ml-8" :class="{'cursor-not-allowed' : bloquearbutton}" @click="reportedescargardia(fecha,carril,tiportedia, NoCajero, Turno)">Descargar Reporte</button>
                 </div>
             </div>
             <h1 class="text-xl font-bold font-titulo text-center mt-2 mb-4">* Campo Obligatorio</h1>
@@ -133,6 +151,8 @@ export default {
         const { xml_hhtp_request,loading } = file();
         const modulos = ref([])
         const carriles = ref([])
+        const NoCajero = ref("")
+        const Turno = ref("undefined")
         const showModal = ref(false)
         const showModalReporteDia = ref(false)
         const bloquear = ref(false)
@@ -304,10 +324,13 @@ export default {
                 //cerramodalconcentradoferromex(false)
             }
         }
-        function reporteverdia(fecha,carril,tipo){
+        function reporteverdia(fecha,carril,tipo, noCajero, turno){
             let urlfecha = ""
+            let urlCajero = ""
+            let urlTurno = ""
             let urlcarril = ""
-            nombrearchivo.value = ""
+            nombrearchivo.value = ""            
+
             if(carril == undefined){
                 urlcarril = " "
             }else{
@@ -318,6 +341,18 @@ export default {
             }else{
                 urlfecha = fecha
             }
+            if(noCajero == ''){
+                urlCajero = " "
+            }else {
+                urlCajero = noCajero
+            }     
+            if(turno == ""){
+                urlTurno = " "
+            }else {
+                urlTurno = turno
+            }
+            
+
             if(urlfecha == " "){
                 notify({
                     title:'Sin Fecha',
@@ -338,8 +373,8 @@ export default {
                     type: 'error'
                 });
             }else{
-                const rutadetalle = encodeURI(`${API}/Ferromex/Download/pdf/reporteOperativo/detalles/${urlcarril}/${urlfecha}`)
-                const rutaconcentrado = encodeURI(`${API}/Ferromex/Download/pdf/reporteOperativo/concentrado/${urlcarril}/${urlfecha}`)
+                const rutadetalle = encodeURI(`${API}/Ferromex/Download/pdf/reporteOperativo/detalles/${urlcarril}/${urlfecha}/${urlCajero}/${urlTurno}`)                
+                const rutaconcentrado = encodeURI(`${API}/Ferromex/Download/pdf/reporteOperativo/concentrado/${urlcarril}/${urlfecha}/${urlCajero}/${urlTurno}`)
                 if(tipo == 1){
                     xml_hhtp_request(rutadetalle,1)
                 }else if(tipo == 2){
@@ -351,10 +386,13 @@ export default {
                 //cerramodalconcentradoferromex(false)
             }
         }
-        function reportedescargardia(fecha,carril,tipo){
+        function reportedescargardia(fecha,carril,tipo, noCajero, turno){
             let urlfecha = ""
+            let urlCajero = ""
+            let urlTurno = ""
             let urlcarril = ""
             nombrearchivo.value = ""
+
             if(carril == undefined){
                 urlcarril = " "
             }else{
@@ -365,6 +403,19 @@ export default {
             }else{
                 urlfecha = fecha
             }
+            if(noCajero == ''){
+                urlCajero = " "
+            }else {
+                urlCajero = noCajero
+            }     
+            if(turno == ""){
+                urlTurno = " "
+            }else {
+                urlTurno = turno
+            }
+            
+
+
             if(urlfecha == " "){
                 notify({
                     title:'Sin Fecha',
@@ -386,8 +437,8 @@ export default {
                     type: 'error'
                 });
             }else{
-                const rutadetalle = encodeURI(`${API}/Ferromex/Download/pdf/reporteOperativo/detalles/${urlcarril}/${urlfecha}`)
-                const rutaconcentrado = encodeURI(`${API}/Ferromex/Download/pdf/reporteOperativo/concentrado/${urlcarril}/${urlfecha}`)
+                const rutadetalle = encodeURI(`${API}/Ferromex/Download/pdf/reporteOperativo/detalles/${urlcarril}/${urlfecha}/${urlCajero}/${urlTurno}`)
+                const rutaconcentrado = encodeURI(`${API}/Ferromex/Download/pdf/reporteOperativo/concentrado/${urlcarril}/${urlfecha}/${urlCajero}/${urlTurno}`)
                 if(tipo == 1){
                     xml_hhtp_request(rutadetalle,2,'OperativoDetalle' + fecha + '.pdf')
                 }else if(tipo == 2){
@@ -403,7 +454,9 @@ export default {
         return {
             modulos,
             loading,
-            carriles, 
+            carriles,
+            NoCajero,
+            Turno, 
             showModal,
             showModalReporteDia,
             bloquear,
