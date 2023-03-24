@@ -96,9 +96,9 @@
                         <input type="number" class="input" v-model="NoCajero">
                     </div>
                     <div>
-                        <select class="input" v-model="Turno"  placeholder="XXXXX">
+                        <select class="input" v-model="turno"  placeholder="XXXXX">
                         <option value="undefined">Seleccione una opción</option>
-                        <option value="1">Turno 1  00:00 a las 06:00</option>
+                        <option value="1">Turno 1 00:00 a las 06:00</option>
                         <option value="2">Turno 2 06:01 a las 14:00</option>
                         <option value="3">Turno 3 14:01 a las 22:00</option>
                         <option value="4">Turno 4 22:00 a las 23:59</option>
@@ -116,8 +116,8 @@
             </div>
             <div class="flex flex-col w-full items-center justify-center mt-10 mb-8">
                 <div>
-                    <button class="border w-40 bg-ferromex text-white ferromex-color" :class="{'cursor-not-allowed' : bloquearbutton}" @click="reporteverdia(fecha,carril,tiportedia, NoCajero, Turno)">Vista previa</button>
-                    <button class="border w-40 bg-ferromex text-white ferromex-color ml-8" :class="{'cursor-not-allowed' : bloquearbutton}" @click="reportedescargardia(fecha,carril,tiportedia, NoCajero, Turno)">Descargar Reporte</button>
+                    <button class="border w-40 bg-ferromex text-white ferromex-color" :class="{'cursor-not-allowed' : bloquearbutton}" @click="reporteverdia(fecha,carril,tiportedia, NoCajero, turno)">Vista previa</button>
+                    <button class="border w-40 bg-ferromex text-white ferromex-color ml-8" :class="{'cursor-not-allowed' : bloquearbutton}" @click="reportedescargardia(fecha,carril,tiportedia, NoCajero, turno)">Descargar Reporte</button>
                 </div>
             </div>
             <h1 class="text-xl font-bold font-titulo text-center mt-2 mb-4">* Campo Obligatorio</h1>
@@ -152,7 +152,7 @@ export default {
         const modulos = ref([])
         const carriles = ref([])
         const NoCajero = ref("")
-        const Turno = ref("undefined")
+        const turno = ref("")
         const showModal = ref(false)
         const showModalReporteDia = ref(false)
         const bloquear = ref(false)
@@ -346,7 +346,7 @@ export default {
             }else {
                 urlCajero = noCajero
             }     
-            if(turno == ""){
+            if(turno == '' || turno == undefined){
                 urlTurno = " "
             }else {
                 urlTurno = turno
@@ -456,7 +456,7 @@ export default {
             loading,
             carriles,
             NoCajero,
-            Turno, 
+            turno, 
             showModal,
             showModalReporteDia,
             bloquear,
