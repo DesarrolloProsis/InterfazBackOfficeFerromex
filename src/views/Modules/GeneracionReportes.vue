@@ -98,10 +98,11 @@
                     <div>
                         <select class="input" v-model="turno"  placeholder="XXXXX">
                         <option value="undefined">Seleccione una opción</option>
-                        <option value="1">Turno 1 00:00 a las 06:00</option>
+                        <option v-for="(item, index) in listTurnos" :key="index" :value="item.id" >{{ item.text }}</option>
+                        <!-- <option value="1">Turno 1 00:00 a las 06:00</option>
                         <option value="2">Turno 2 06:01 a las 14:00</option>
                         <option value="3">Turno 3 14:01 a las 22:00</option>
-                        <option value="4">Turno 4 22:00 a las 23:59</option>
+                        <option value="4">Turno 4 22:00 a las 23:59</option> -->
                         </select>
                     </div>
                     <div>
@@ -152,7 +153,8 @@ export default {
         const modulos = ref([])
         const carriles = ref([])
         const NoCajero = ref("")
-        const turno = ref("")
+        let listTurnos = ref([])
+        const turno = ref("undefined")
         const showModal = ref(false)
         const showModalReporteDia = ref(false)
         const bloquear = ref(false)
@@ -172,6 +174,8 @@ export default {
             carril: undefined,
             fecha:''
         })
+
+
 
         axios.get(`${API}/Ferromex/modules?roleName=${decoded.role}`) //enpoint que trae los modulos que puede ver el rol del usuario
         .then((result) => {        
@@ -256,6 +260,19 @@ export default {
         function bloquearinputsreportedia(){
             bloquear.value = true // bloqueamos los campos
             bloquearbutton.value = false
+
+            //llenar lista de turnos
+            axios.get(`${API}/Controller/Turnos?dia=${this.fecha}`) //enpoint que trae los modulos que puede ver el rol del usuario
+            .then((result) => {        
+                listTurnos.value = result.data.content                           
+            })
+            .catch((err)=>{
+                listTurnos.value = [{
+                    text: "Turno 1",
+                    id: 1
+                }]
+                console.log(err);
+            })
         }
         function concentradoFerromexver(dias,meses,semana){
             let urldias = ""
@@ -455,6 +472,7 @@ export default {
             loading,
             carriles,
             NoCajero,
+            listTurnos,
             turno, 
             showModal,
             showModalReporteDia,
