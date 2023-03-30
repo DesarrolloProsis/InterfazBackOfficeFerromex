@@ -98,7 +98,7 @@
                     <div>
                         <select class="input" v-model="turno"  placeholder="XXXXX">
                         <option value="undefined">Seleccione una opción</option>
-                        <option v-for="(item, index) in listTurnos" :key="index" :value="item.id" >{{ item.text }}</option>
+                        <option v-for="(item, index) in listTurnos" :key="index" :value="item.id" >{{ item.text }}  </option>
                         <!-- <option value="1">Turno 1 00:00 a las 06:00</option>
                         <option value="2">Turno 2 06:01 a las 14:00</option>
                         <option value="3">Turno 3 14:01 a las 22:00</option>
@@ -262,9 +262,10 @@ export default {
             bloquearbutton.value = false
 
             //llenar lista de turnos
-            axios.get(`${API}/Controller/Turnos?dia=${this.fecha}`) //enpoint que trae los modulos que puede ver el rol del usuario
-            .then((result) => {        
-                listTurnos.value = result.data.content                           
+            axios.get(`${API}/Ferromex/turnos/${this.fecha}`) //enpoint que trae los modulos que puede ver el rol del usuario
+            .then((result) => {   
+                console.log(result);     
+                listTurnos.value = result.data.content                          
             })
             .catch((err)=>{
                 listTurnos.value = [{
