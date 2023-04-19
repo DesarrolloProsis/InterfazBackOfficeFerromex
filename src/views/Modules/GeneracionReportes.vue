@@ -393,12 +393,52 @@ export default {
                 const rutadetalle = encodeURI(`${API}/Ferromex/Download/pdf/reporteOperativo/detalles/${urlcarril}/${urlfecha}/${urlCajero}/${urlTurno}`)                
                 const rutaconcentrado = encodeURI(`${API}/Ferromex/Download/pdf/reporteOperativo/concentrado/${urlcarril}/${urlfecha}/${urlCajero}/${urlTurno}`)
                 if(tipo == 1){
-                    xml_hhtp_request(rutadetalle,1)
+                    loading.value = true
+                    axios.get(rutadetalle)
+                    .then(()=>{
+                        xml_hhtp_request(rutadetalle,1)
+                    }).catch(() =>{
+                        loading.value = false
+                        notify({
+                            title:'Sin Datos',
+                            text:'No se tienen datos para el carril o cajero en el turno seleccionado',
+                            type: 'error'
+                        });
+                    })
+                    //xml_hhtp_request(rutadetalle,1)
                 }else if(tipo == 2){
-                    xml_hhtp_request(rutaconcentrado,1)
+                    loading.value = true
+                    axios.get(rutaconcentrado)
+                    .then(()=>{
+                        xml_hhtp_request(rutaconcentrado,1)
+                    }).catch(() =>{
+                        loading.value = false
+                        notify({
+                            title:'Sin Datos',
+                            text:'No se tienen datos para el carril o cajero en el turno seleccionado',
+                            type: 'error'
+                        });
+                    })
+                    //xml_hhtp_request(rutaconcentrado,1)
                 }else if(tipo == 3){
-                    xml_hhtp_request(rutadetalle,1)
-                    xml_hhtp_request(rutaconcentrado,1)
+                    loading.value = true
+                    axios.get(rutadetalle)
+                    .then(()=>{
+                        axios.get(rutaconcentrado)
+                            .then(()=>{
+                                xml_hhtp_request(rutadetalle,1)
+                                xml_hhtp_request(rutaconcentrado,1)
+                            })
+                    }).catch(() =>{
+                        loading.value = false
+                        notify({
+                            title:'Sin Datos',
+                            text:'No se tienen datos para el carril o cajero en el turno seleccionado',
+                            type: 'error'
+                        });
+                    })
+                    //xml_hhtp_request(rutadetalle,1)
+                    //xml_hhtp_request(rutaconcentrado,1)
                 }
                 //cerramodalconcentradoferromex(false)
             }
@@ -457,12 +497,52 @@ export default {
                 const rutadetalle = encodeURI(`${API}/Ferromex/Download/pdf/reporteOperativo/detalles/${urlcarril}/${urlfecha}/${urlCajero}/${urlTurno}`)
                 const rutaconcentrado = encodeURI(`${API}/Ferromex/Download/pdf/reporteOperativo/concentrado/${urlcarril}/${urlfecha}/${urlCajero}/${urlTurno}`)
                 if(tipo == 1){
-                    xml_hhtp_request(rutadetalle,2,'OperativoDetalle' + fecha + '.pdf')
+                    loading.value = true
+                    axios.get(rutadetalle)
+                    .then(()=>{
+                        xml_hhtp_request(rutadetalle,2,'OperativoDetalle' + fecha + '.pdf')
+                    }).catch(() =>{
+                        loading.value = false
+                        notify({
+                            title:'Sin Datos',
+                            text:'No se tienen datos para el carril o cajero en el turno seleccionado',
+                            type: 'error'
+                        });
+                    })
+                    //xml_hhtp_request(rutadetalle,2,'OperativoDetalle' + fecha + '.pdf')
                 }else if(tipo == 2){
-                    xml_hhtp_request(rutaconcentrado,2,'OperativoConcentrado' + fecha + '.pdf')
+                    loading.value = true
+                    axios.get(rutaconcentrado)
+                    .then(()=>{
+                        xml_hhtp_request(rutaconcentrado,2,'OperativoConcentrado' + fecha + '.pdf')
+                    }).catch(() =>{
+                        loading.value = false
+                        notify({
+                            title:'Sin Datos',
+                            text:'No se tienen datos para el carril o cajero en el turno seleccionado',
+                            type: 'error'
+                        });
+                    })
+                    //xml_hhtp_request(rutaconcentrado,2,'OperativoConcentrado' + fecha + '.pdf')
                 }else if(tipo == 3){
-                    xml_hhtp_request(rutadetalle,2,'OperativoDetalle' + fecha + '.pdf')
-                    xml_hhtp_request(rutaconcentrado,2,'OperativoConcentrado' + fecha + '.pdf')
+                    loading.value = true
+                    axios.get(rutadetalle)
+                    .then(()=>{
+                        axios.get(rutaconcentrado)
+                            .then(()=>{
+                                xml_hhtp_request(rutadetalle,2,'OperativoDetalle' + fecha + '.pdf')
+                                xml_hhtp_request(rutaconcentrado,2,'OperativoConcentrado' + fecha + '.pdf')
+                            })
+                    }).catch(() =>{
+                        loading.value = false
+                        notify({
+                            title:'Sin Datos',
+                            text:'No se tienen datos para el carril o cajero en el turno seleccionado',
+                            type: 'error'
+                        });
+                    })
+                    //xml_hhtp_request(rutadetalle,2,'OperativoDetalle' + fecha + '.pdf')
+                    //xml_hhtp_request(rutaconcentrado,2,'OperativoConcentrado' + fecha + '.pdf')
                 }
                 //cerramodalconcentradoferromex(false)
             }
