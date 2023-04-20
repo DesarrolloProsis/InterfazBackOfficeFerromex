@@ -139,8 +139,6 @@ export default {
     function modulosExistente(){//Función para obtener todos los modulos registrados
       axios.get(`${API}/Ferromex/modules`)//Endpoint que trae todos los modulos que existen
       .then((result)=>{//Si el endpoint tiene una respuesta correcta
-          console.log(result)
-          console.log(ModulesService.GetModulosWhitSubModulo(result.data.content))
           modulosExistentes.value = result.data.content
           modulosExistentesMap.value = ModulesService.GetModulosWhitSubModulo(result.data.content)  
       })
@@ -150,7 +148,6 @@ export default {
       //modulos.value = []
       axios.get(`${API}/Ferromex/modules?roleName=${rol.nombreRol}`)//Endpoint que trae los módulos asignados a un rol en especificio, si no le mandamos ningún rol, trae todos los módulos
       .then((result)=>{//Si el endpoint tiene una respuesta correcta                               
-        console.log(result)
         asignarModulos.value = result.data.content.map(x => x.id); //Pasamos ese valor al vmodel correspondiente para que lo lea y si es asi sea marcadado en la casilla
       })
     }
@@ -164,7 +161,6 @@ export default {
           duration:5000,
         });
       }else{//Si se seleccionó mínimo un módulo, se puede hacer la actualización
-      console.log(modulos)
         let data = {//literal que alamacena el nombre del rol y los módulos, para enviarlo en le body del endpoint
           'roleName': rol,
           'modules': modulos.map(x => x)

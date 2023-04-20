@@ -133,17 +133,14 @@ export default {
           if(filtro[i].nombreRol == 'PINFRA'){
             var pin = filtro[i].nombreRol
             roles.value.pop(pin)
-            console.log(pin);
           }
           if(filtro[i].nombreRol == 'AdminIntermodal'){
             var inter = filtro[i].nombreRol
             roles.value.pop(inter)
-            console.log(inter);
           }
           if(filtro[i].nombreRol == 'Admin'){
             var adm = filtro[i].nombreRol
             roles.value.pop(adm)
-            console.log(adm);
           }
         }
       }).catch((error)=>{//si el endpoint tiene un error

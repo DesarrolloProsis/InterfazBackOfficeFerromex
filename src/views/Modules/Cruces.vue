@@ -165,9 +165,8 @@ export default {
 
         axios.get(`${API}/Ferromex/modules?roleName=${decoded.role}`) //enpoint que trae los modulos que puede ver el rol del usuario
         .then((result) => {        
-          let  { subModulos } = ModulesService.GetMolduleAndSubModule(result.data.content)      
-          console.log(subModulos)      
-          modulos.value = subModulos.filter(x => x.parentModule == route.params.id)                
+            let  { subModulos } = ModulesService.GetMolduleAndSubModule(result.data.content)         
+            modulos.value = subModulos.filter(x => x.parentModule == route.params.id)                
         })
         .catch((err)=>{console.log(err);})
         
@@ -238,8 +237,7 @@ export default {
         //Funcion para generar reporte cruces totales
         function  taskReporteTotalPdfDownload(fechaTest, vistaPrevia, i) {
             setTimeout(function() {
-                let urlWhitSpace = " "
-                console.log(fechaTest)      
+                let urlWhitSpace = " "      
                 let ruta = encodeURI(`${API}/Ferromex/Download/pdf/crucestotales/reporteCruces/${fechaTest}/${urlWhitSpace}/${urlWhitSpace}`)                                   
                 vistaPrevia == 1 
                     ? xml_hhtp_request(ruta,vistaPrevia)    
@@ -316,7 +314,6 @@ export default {
 
                 let urlWhitSpace = " "               
                 let { tagRuta, numeroplaca, numeroeconomico } = selectTipoPdf()                     
-                console.log(`${API}/Ferromex/Download/pdf/crucesferromex/descuentodetallesamarre/${dia}/${urlWhitSpace}/${urlWhitSpace}/${tagRuta}/${numeroplaca}/${numeroeconomico}`)
                 let rutadescuentolletalle = encodeURI(`${API}/Ferromex/Download/pdf/crucesferromex/descuentodetallesamarre/${dia}/${urlWhitSpace}/${urlWhitSpace}/${tagRuta}/${numeroplaca}/${numeroeconomico}`)
                 let rutadescuentoamerreresumen = encodeURI(`${API}/Ferromex/Download/pdf/crucesferromex/descuentoamarreresumen/${dia}/${urlWhitSpace}/${urlWhitSpace}/${tagRuta}/${numeroplaca}/${numeroeconomico}`)
                 if(tipoReporte == "1"){

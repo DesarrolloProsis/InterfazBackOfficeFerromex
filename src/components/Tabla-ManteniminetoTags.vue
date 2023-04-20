@@ -90,7 +90,6 @@ export default {
     }//Cerramos funcion
     //Funcion que determina la accion del modal de advertencia
       function accion(texto){ //Se abre la funcion con el parametro del texto esta la utilizamos para decidir que accion realizar
-        console.log(infotag.value)
         const tag = { //Declaracion del objeto a enviar
             "tag" : infotag.value.tag,
             "insertionDate": infotag.value.insertionDate,
@@ -162,7 +161,6 @@ export default {
       return filtroOpciones  //Regresamos la lista de acciones filtrada
     }
     function acciones_mapper(item){//Asignación de funciones de la lista de opciones que hay en el menú de acciones
-      console.log(item);
       if(select.value == '0'){ //Apartir del value del multiselect asignamos un valor al texto 
         showModalAdvertencia.value = !showModalAdvertencia.value //Abrimos nuestro modal de advertencia
         texto.value = "activar"//Si es 0 el texto sera habilitar

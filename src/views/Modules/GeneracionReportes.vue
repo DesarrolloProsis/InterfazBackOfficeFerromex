@@ -179,8 +179,8 @@ export default {
 
         axios.get(`${API}/Ferromex/modules?roleName=${decoded.role}`) //enpoint que trae los modulos que puede ver el rol del usuario
         .then((result) => {        
-          let  { subModulos } = ModulesService.GetMolduleAndSubModule(result.data.content)            
-          modulos.value = subModulos.filter(x => x.parentModule == route.params.id)      
+            let  { subModulos } = ModulesService.GetMolduleAndSubModule(result.data.content)            
+            modulos.value = subModulos.filter(x => x.parentModule == route.params.id)      
         })
         .catch((err)=>{console.log(err);})
 
@@ -264,7 +264,6 @@ export default {
             //llenar lista de turnos
             axios.get(`${API}/Ferromex/turnos/${this.fecha}`) //enpoint que trae los modulos que puede ver el rol del usuario
             .then((result) => {   
-                console.log(result);     
                 listTurnos.value = result.data.content                          
             })
             .catch((err)=>{

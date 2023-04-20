@@ -41,11 +41,9 @@ export default {
     const modules = ref([]) //Constante que va a almacenar el array de modulos que se van a mostrar
     let idModulo = route.params.id
     console.log(idModulo)
-           
     axios.get(`${API}/Ferromex/modules?roleName=${decoded.role}`) //enpoint que trae los modulos que puede ver el rol del usuario
     .then((result) => {        
-      let  { subModulos } = ModulesService.GetMolduleAndSubModule(result.data.content)    
-      console.log(subModulos)        
+      let  { subModulos } = ModulesService.GetMolduleAndSubModule(result.data.content)  
       modules.value = subModulos.filter(x => x.parentModule == route.params.id)      
     })
     .catch((err)=>{console.log(err);})

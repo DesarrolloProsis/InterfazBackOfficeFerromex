@@ -214,7 +214,6 @@ export default {
         axios.get(ruta) //Mandamos a llamar el axios
         .then((result)=>{
             let cargatags =  result.data.content
-            console.log(cargatags);
             cargatags.forEach(element => {
               let active = false;
               if(element.active == false){
@@ -222,8 +221,6 @@ export default {
               }
               tagsprecargados.value.push({value: element, label: element.tag,disabled: active,idViatags: element.idViatags })
             });
-            //{ value: 'batman', label: 'Batman' },
-            console.log(tagsprecargados.value);
           }).catch((error)=>{
             console.log(error);
             notify({ //NOtificamos que no encontramos Tags
@@ -473,7 +470,6 @@ export default {
           validarNoEconomicoTexto.value = 'El campo Numero Economico no puede ir vacio' //Incluimos el texto del span o por que se esta dando el error
         }
       }else{ // Si es falso procederemos a dar de alta el tag
-          console.log(tag);
           const tiempoTranscurrido = Date.now(); //Conseguimos la fecha y hora del dia de hoy
           const hoy = new Date(tiempoTranscurrido).toISOString(); //Damos formato iso 86001
           const tagcompleto = { // Creamos objeto para enviar el tag completo 

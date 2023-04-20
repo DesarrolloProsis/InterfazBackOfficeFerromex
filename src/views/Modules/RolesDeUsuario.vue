@@ -113,7 +113,6 @@ export default {
       modulosExistentes.value = []//Vaciamos la constante que obtine los módulos existentes
       axios.get(`${API}/Ferromex/modules`)//Endpoint que trae todos los modulos que existen
       .then((result)=>{//Si el endpoint tiene una respuesta correcta
-        console.log(result);
         result.data.content.forEach((e) => {//reiteracion y comprobacion si es un submodulo
         if({}.hasOwnProperty.call(e,'parentModule') == false){
         modulosExistentes.value.push({'text':e.nameModule, 'value':e.id,})//asignamos los roles existentes a la variable roles, para mostrarlos en el multiselect

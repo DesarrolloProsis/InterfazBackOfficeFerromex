@@ -132,8 +132,6 @@ export default {
         numeroTotalPaginas.value = Math.ceil(result.data.content / objSearch.numeroDeFilas)        
       })
       .catch((err)=>{console.log(err); modalLoading.value = false})
-      
-      console.log(`${API}/Ferromex/ActividadUsuario/${objSearch.paginaActual}/${objSearch.numeroDeFilas}/${objSearch.dia != "" ? objSearch.dia : whiteSpace}/${objSearch.semana != "" ? objSearch.semana : whiteSpace}/${objSearch.mes != "" ? objSearch.mes : whiteSpace}/${objSearch.nombre != "" ? objSearch.nombre : whiteSpace}/${objSearch.rol != "" ? objSearch.rol : whiteSpace}/${objSearch.accion != "" ? objSearch.accion : whiteSpace}`)
       axios.get(`${API}/Ferromex/ActividadUsuario/${objSearch.paginaActual}/${objSearch.numeroDeFilas}/${objSearch.dia != "" ? objSearch.dia : whiteSpace}/${objSearch.semana != "" ? objSearch.semana : whiteSpace}/${objSearch.mes != "" ? objSearch.mes : whiteSpace}/${objSearch.nombre != "" ? objSearch.nombre : whiteSpace}/${objSearch.rol != "" ? objSearch.rol : whiteSpace}/${objSearch.accion != "" ? objSearch.accion : whiteSpace}`)
       .then((result) => {               
         infoActividades.value = result.data.content
@@ -148,10 +146,6 @@ export default {
       infoActividades.value = []
       modalLoading.value = true
       objSearch.paginaActual = pagina
-
-
-
-      console.log(`${API}/Ferromex/ActividadUsuario/${objSearch.paginaActual}/${objSearch.numeroDeFilas}/${objSearch.dia != "" ? objSearch.dia : whiteSpace}/${objSearch.semana != "" ? objSearch.semana : whiteSpace}/${objSearch.mes != "" ? objSearch.mes : whiteSpace}/${objSearch.nombre != "" ? objSearch.nombre : whiteSpace}/${objSearch.rol != "" ? objSearch.rol : whiteSpace}/${objSearch.accion != "" ? objSearch.accion : whiteSpace}`)
       axios.get(`${API}/Ferromex/ActividadUsuario/${objSearch.paginaActual}/${objSearch.numeroDeFilas}/${objSearch.dia != "" ? objSearch.dia : whiteSpace}/${objSearch.semana != "" ? objSearch.semana : whiteSpace}/${objSearch.mes != "" ? objSearch.mes : whiteSpace}/${objSearch.nombre != "" ? objSearch.nombre : whiteSpace}/${objSearch.rol != "" ? objSearch.rol : whiteSpace}/${objSearch.accion != "" ? objSearch.accion : whiteSpace}`)
       .then((result) => {                
         infoActividades.value = result.data.content
@@ -175,8 +169,7 @@ export default {
       objSearch.accion = "" 
 
       axios.get(`${API}/Ferromex/ActividadUsuarioCount/${objSearch.dia != "" ? objSearch.dia : whiteSpace}/${objSearch.semana != "" ? objSearch.semana : whiteSpace}/${objSearch.mes != "" ? objSearch.mes : whiteSpace}/${objSearch.nombre != "" ? objSearch.nombre : whiteSpace}/${objSearch.rol != "" ? objSearch.rol : whiteSpace}/${objSearch.accion != "" ? objSearch.accion : whiteSpace}`)
-      .then((result) => {   
-        console.log(result)       
+      .then((result) => {     
         if(result.data.content > objSearch.numeroDeFilas)     
           numeroTotalPaginas.value = Math.ceil(result.data.content / objSearch.numeroDeFilas)  
         else
@@ -193,8 +186,7 @@ export default {
     }
 
     function descargar_pdf_actividades(){
-      let whiteSpace = "%20"     
-      console.log(`${API}/Ferromex/Download/pdf/reporteActividadUsuario/${objSearch.dia != "" ? objSearch.dia : whiteSpace}/${objSearch.semana != "" ? objSearch.semana : whiteSpace}/${objSearch.mes != "" ? objSearch.mes : whiteSpace}/${objSearch.nombre != "" ? objSearch.nombre : whiteSpace}/${objSearch.rol != "" ? objSearch.rol : whiteSpace}/${objSearch.accion != "" ? objSearch.accion : whiteSpace}`)
+      let whiteSpace = "%20"
       let ruta = `${API}/Ferromex/Download/pdf/reporteActividadUsuario/${objSearch.dia != "" ? objSearch.dia : whiteSpace}/${objSearch.semana != "" ? objSearch.semana : whiteSpace}/${objSearch.mes != "" ? objSearch.mes : whiteSpace}/${objSearch.nombre != "" ? objSearch.nombre : whiteSpace}/${objSearch.rol != "" ? objSearch.rol : whiteSpace}/${objSearch.accion != "" ? objSearch.accion : whiteSpace}`
       xml_hhtp_request(ruta, 2, "ActividadUsuario.pdf")
     }

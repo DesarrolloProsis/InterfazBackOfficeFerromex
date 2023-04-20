@@ -196,17 +196,14 @@ export default {
           if(result.data.roles[i].nombreRol == 'PINFRA'){
             var pin = result.data.roles[i].nombreRol
             roles.value.pop(pin)
-            console.log(pin);
           }
           if(result.data.roles[i].nombreRol == 'AdminIntermodal'){
             var inter = result.data.roles[i].nombreRol
             roles.value.pop(inter)
-            console.log(inter);
           }
           if(result.data.roles[i].nombreRol == 'Admin'){
             var adm = result.data.roles[i].nombreRol
             roles.value.pop(adm)
-            console.log(adm);
           }
         }
       }).catch((error)=>{//si el endpoint tiene un error
