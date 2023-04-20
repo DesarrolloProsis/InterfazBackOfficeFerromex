@@ -5,7 +5,7 @@ import { notify } from "@kyvg/vue3-notification";
 
 export const file = () => {
   const loading = ref(false);
-function xml_hhtp_request(urlToFile,tipo,name){  
+function xml_hhtp_request(urlToFile,tipo,name,vista){  
     loading.value = true; 
     var oReq = new XMLHttpRequest();  
     oReq.open("GET", urlToFile, true);    
@@ -26,8 +26,9 @@ function xml_hhtp_request(urlToFile,tipo,name){
           }else if (tipo == 2){
             loading.value = false; 
             saveAs(file, name); 
-        }
+          }
         }else{
+        
           loading.value = false; 
           notify({
             title:'Archivo Vacio',
@@ -36,12 +37,22 @@ function xml_hhtp_request(urlToFile,tipo,name){
           });
         }
       }else {
-        loading.value = false; 
-        notify({
-          title:'Archivo Dañado',
-          text:'No se pudo generar el reporte por favor intentelo mas tarde',
-          type: 'error'
-        });
+        if(vista)
+        {
+          loading.value = false;
+          notify({
+            title:'Sin Datos',
+            text:'No se tienen datos para el carril o cajero en el turno seleccionado',
+            type: 'error'
+          });
+        }else{
+          loading.value = false; 
+          notify({
+            title:'Archivo Dañado',
+            text:'No se pudo generar el reporte por favor intentelo mas tarde',
+            type: 'error'
+          });
+        }
       }
       //saveAs(file, nameFile);  
     };            
