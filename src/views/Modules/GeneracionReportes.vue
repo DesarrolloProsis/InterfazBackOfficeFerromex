@@ -240,6 +240,7 @@ export default {
             reportedia.carril = undefined
             reportedia.fecha = ''
             tiportedia.value = undefined
+            listTurnos.value = []
         }
         //Funcion para bloquear los inputs de mes y semana en caso de ser seleccionado el de dia
         function bloquearinputs(){
