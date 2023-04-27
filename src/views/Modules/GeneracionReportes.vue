@@ -109,7 +109,7 @@
                         <select class="input" v-model="tiportedia"  placeholder="XXXXX">
                         <option value="undefined" disabled>Seleccione una opción</option>
                         <option value="1">Operativo Detalle</option>
-                        <option value="2">Opertativo Concentrado</option>
+                        <option value="2">Operativo Concentrado</option>
                         <option value="3">Ambos</option>
                         </select>
                     </div>        
